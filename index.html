@@ -444,6 +444,36 @@
       </div>
     </div>
     <div class="settings-section">
+      <div class="settings-section-title">Share Location Lists</div>
+      <div class="settings-group">
+        <div class="settings-row" onclick="openBulkShare('jumuah')">
+          <div class="settings-row-icon">📿</div>
+          <div class="settings-row-body">
+            <div class="settings-row-title">All Jumuah Mosques</div>
+            <div class="settings-row-sub">Generate card — share on WhatsApp Status</div>
+          </div>
+          <div class="settings-row-right">›</div>
+        </div>
+        <div class="settings-row" onclick="openBulkShare('eid')">
+          <div class="settings-row-icon">🌙</div>
+          <div class="settings-row-body">
+            <div class="settings-row-title">All Eid Prayer Grounds</div>
+            <div class="settings-row-sub">Generate card — share on WhatsApp Status</div>
+          </div>
+          <div class="settings-row-right">›</div>
+        </div>
+        <div class="settings-row" onclick="openBulkShare('all')">
+          <div class="settings-row-icon">🕌</div>
+          <div class="settings-row-body">
+            <div class="settings-row-title">All Locations (Full List)</div>
+            <div class="settings-row-sub">Generate card — all 28 locations A–Z</div>
+          </div>
+          <div class="settings-row-right">›</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
       <div class="settings-section-title">About</div>
       <div class="settings-group">
         <div class="settings-row static"><div class="settings-row-icon">🗺️</div><div class="settings-row-body"><div class="settings-row-title">Coverage</div><div class="settings-row-sub">Abuja (FCT) · Expanding to all Nigeria</div></div></div>
@@ -508,6 +538,31 @@
       <button class="share-btn share-copy" id="shareCopyBtn">📋 Copy</button>
     </div>
     <button class="share-close" onclick="closeShareSheet()">Close</button>
+  </div>
+</div>
+
+<!-- BULK SHARE OVERLAY -->
+<div class="share-overlay" id="bulkOverlay" onclick="closeBulkOverlay(event)">
+  <div class="share-sheet" id="bulkSheet">
+    <div class="share-sheet-handle"></div>
+    <div class="share-sheet-title" id="bulkTitle">Generating card...</div>
+
+    <!-- Canvas preview -->
+    <div style="border-radius:12px;overflow:hidden;margin-bottom:12px;background:#0a3d2e;display:flex;align-items:center;justify-content:center;min-height:200px" id="bulkPreviewWrap">
+      <canvas id="bulkCanvas" style="width:100%;border-radius:12px;display:block"></canvas>
+    </div>
+
+    <div style="font-size:11px;color:var(--tm);text-align:center;margin-bottom:12px;line-height:1.6">
+      Tap <b style="color:var(--tp)">Save Card</b> to download · Then share from your gallery on WhatsApp Status
+    </div>
+
+    <button class="share-btn" id="bulkSaveBtn" style="width:100%;margin-bottom:8px;background:var(--gd);color:var(--white);height:48px;border-radius:12px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+      📸 Save Card as Image
+    </button>
+    <button class="share-btn share-whatsapp" id="bulkWhatsappBtn" style="width:100%;margin-bottom:8px">
+      💬 Share Text List on WhatsApp
+    </button>
+    <button class="share-close" onclick="closeBulkSheet()">Close</button>
   </div>
 </div>
 
@@ -1285,6 +1340,269 @@ function wrapText(ctx, text, x, y, maxW, lineH){
 
 function closeShare(e){
   if(e.target === document.getElementById('shareOverlay')) closeShareSheet();
+}
+
+/* ══ BULK SHARE CARD ══ */
+
+var currentBulkFilter = 'all';
+
+function openBulkShare(filter){
+  currentBulkFilter = filter;
+  var titles = {
+    'jumuah': '📿 All Jumuah Mosques — Abuja',
+    'eid':    '🌙 All Eid Prayer Grounds — Abuja',
+    'all':    '🕌 All Prayer Locations — Abuja'
+  };
+  document.getElementById('bulkTitle').textContent = titles[filter] || 'Prayer Locations';
+  document.getElementById('bulkOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
+
+  /* Generate card after short delay so overlay renders first */
+  setTimeout(function(){ generateBulkCard(filter); }, 100);
+}
+
+function closeBulkSheet(){
+  document.getElementById('bulkOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
+}
+
+function closeBulkOverlay(e){
+  if(e.target === document.getElementById('bulkOverlay')) closeBulkSheet();
+}
+
+function generateBulkCard(filter){
+  /* Get filtered + sorted list */
+  var list = LOCATIONS.slice();
+  if(filter === 'jumuah') list = list.filter(function(l){ return l.type==='jumuah' || l.type==='both'; });
+  if(filter === 'eid')    list = list.filter(function(l){ return l.type==='eid'    || l.type==='both'; });
+  list.sort(function(a,b){ return a.name.localeCompare(b.name); });
+
+  var W   = 1080;
+  var ROW = 72;       /* height per mosque row */
+  var HEADER = 220;   /* header block */
+  var FOOTER = 160;   /* footer block */
+  var PAD = 40;
+  var H = HEADER + (list.length * ROW) + PAD + FOOTER;
+
+  var canvas = document.getElementById('bulkCanvas');
+  canvas.width  = W;
+  canvas.height = H;
+
+  var ctx = canvas.getContext('2d');
+
+  /* ── Full background ── */
+  var grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0,   '#0f5c42');
+  grad.addColorStop(0.3, '#0a3d2e');
+  grad.addColorStop(1,   '#071f18');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  /* ── Subtle grid pattern ── */
+  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+  ctx.lineWidth = 1;
+  for(var gx=0; gx<W; gx+=60){ ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+  for(var gy=0; gy<H; gy+=60){ ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+
+  /* ── Header background ── */
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  roundRect(ctx, 0, 0, W, HEADER, {tl:0,tr:0,bl:0,br:0});
+  ctx.fill();
+
+  /* ── App name ── */
+  ctx.font = 'bold 64px sans-serif';
+  ctx.fillStyle = '#22c98a';
+  ctx.fillText('Deen', PAD, 80);
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.fillText('Locator', PAD + ctx.measureText('Deen').width, 80);
+
+  /* ── Subtitle / filter label ── */
+  var subtitles = {
+    'jumuah': 'Jumuah (Friday) Prayer Mosques · Abuja, FCT',
+    'eid':    'Eid Prayer Grounds · Abuja, FCT',
+    'all':    'All Prayer Locations · Abuja, FCT'
+  };
+  ctx.font = '36px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.fillText(subtitles[filter], PAD, 128);
+
+  /* ── Date ── */
+  var now = new Date();
+  var days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var dateStr = days[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+  ctx.font = '30px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.fillText(dateStr, PAD, 170);
+
+  /* ── Location count badge ── */
+  var countText = list.length + ' locations';
+  ctx.font = 'bold 26px sans-serif';
+  var bw = ctx.measureText(countText).width + 40;
+  ctx.fillStyle = 'rgba(34,201,138,0.2)';
+  roundRect(ctx, W - PAD - bw, 148, bw, 40, 20);
+  ctx.fill();
+  ctx.fillStyle = '#22c98a';
+  ctx.textAlign = 'right';
+  ctx.fillText(countText, W - PAD - 20, 174);
+  ctx.textAlign = 'left';
+
+  /* ── Divider ── */
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fillRect(PAD, HEADER - 10, W - PAD*2, 1);
+
+  /* ── Mosque rows ── */
+  list.forEach(function(loc, i){
+    var y = HEADER + i * ROW;
+    var isEven = i % 2 === 0;
+
+    /* Row background */
+    ctx.fillStyle = isEven ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.1)';
+    ctx.fillRect(0, y, W, ROW);
+
+    /* Type dot */
+    var dotColor = loc.type==='eid'?'#d4a843':loc.type==='both'?'#a78bfa':'#22c98a';
+    ctx.beginPath();
+    ctx.arc(PAD + 14, y + ROW/2, 8, 0, Math.PI*2);
+    ctx.fillStyle = dotColor;
+    ctx.fill();
+
+    /* Number */
+    ctx.font = '24px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillText((i+1)+'.', PAD + 32, y + ROW/2 + 8);
+
+    /* Mosque name */
+    ctx.font = 'bold 32px sans-serif';
+    ctx.fillStyle = '#ffffff';
+    var name = loc.name;
+    /* Truncate if too long */
+    while(ctx.measureText(name).width > 650 && name.length > 10){
+      name = name.slice(0, -1);
+    }
+    if(name !== loc.name) name = name.trim() + '…';
+    ctx.fillText(name, PAD + 78, y + ROW/2 - 4);
+
+    /* Area */
+    ctx.font = '24px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fillText(loc.area, PAD + 78, y + ROW/2 + 24);
+
+    /* Prayer time */
+    var timeStr = loc.jumuahTime || loc.eidTime || '—';
+    ctx.font = 'bold 30px sans-serif';
+    ctx.fillStyle = '#f0c96a';
+    ctx.textAlign = 'right';
+    ctx.fillText(timeStr, W - PAD, y + ROW/2 + 8);
+    ctx.textAlign = 'left';
+  });
+
+  /* ── Footer divider ── */
+  var footerY = HEADER + list.length * ROW + PAD;
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fillRect(PAD, footerY, W - PAD*2, 1);
+
+  /* ── Footer background ── */
+  ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  ctx.fillRect(0, footerY + 10, W, FOOTER - 10);
+
+  /* ── Footer app link ── */
+  ctx.font = 'bold 40px sans-serif';
+  ctx.fillStyle = '#22c98a';
+  ctx.fillText('📱 DeenLocator', PAD, footerY + 70);
+
+  ctx.font = '32px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.fillText('Find the nearest mosque instantly — Free', PAD, footerY + 112);
+
+  ctx.font = 'bold 30px sans-serif';
+  ctx.fillStyle = '#22c98a';
+  ctx.fillText('mi2now.github.io/deenlocator', PAD, footerY + 150);
+
+  /* Right side of footer */
+  ctx.font = '28px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.textAlign = 'right';
+  ctx.fillText('Powered by 2now Technology', W - PAD, footerY + 70);
+  ctx.fillText('+234 806 590 0110', W - PAD, footerY + 112);
+  ctx.fillText('wa.me/2348065900110', W - PAD, footerY + 150);
+  ctx.textAlign = 'left';
+
+  /* ── Wire buttons ── */
+  document.getElementById('bulkSaveBtn').onclick = function(){
+    saveBulkCard(canvas, filter);
+  };
+
+  document.getElementById('bulkWhatsappBtn').onclick = function(){
+    shareBulkText(list, filter);
+  };
+}
+
+function saveBulkCard(canvas, filter){
+  var btn = document.getElementById('bulkSaveBtn');
+  var orig = btn.innerHTML;
+  btn.innerHTML = '⏳ Saving...';
+  btn.disabled = true;
+
+  var labels = {jumuah:'jumuah-mosques', eid:'eid-grounds', all:'all-locations'};
+  var fname = 'deenlocator-' + (labels[filter]||'list') + '-abuja.png';
+
+  canvas.toBlob(function(blob){
+    var file = new File([blob], fname, {type:'image/png'});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      navigator.share({
+        files:  [file],
+        title:  'DeenLocator — Abuja Prayer Locations',
+        text:   'Find Eid & Jumuah prayer locations in Abuja\nmi2now.github.io/deenlocator'
+      }).then(function(){
+        btn.innerHTML = orig; btn.disabled = false;
+      }).catch(function(){
+        triggerDownload(canvas, fname);
+        btn.innerHTML = orig; btn.disabled = false;
+        showToast('✅ Card saved — share from your gallery!');
+      });
+    } else {
+      triggerDownload(canvas, fname);
+      btn.innerHTML = orig; btn.disabled = false;
+      showToast('✅ Card saved — share from your gallery!');
+    }
+  }, 'image/png');
+}
+
+function shareBulkText(list, filter){
+  var labels = {jumuah:'📿 Jumuah (Friday) Mosques', eid:'🌙 Eid Prayer Grounds', all:'🕌 All Prayer Locations'};
+  var now = new Date();
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var dateStr = days[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+
+  var lines = [];
+  lines.push('🕌 *DeenLocator — Abuja*');
+  lines.push('*' + (labels[filter]||'Prayer Locations') + '*');
+  lines.push(dateStr);
+  lines.push('');
+  lines.push('━━━━━━━━━━━━━━━━━━━━━');
+
+  list.forEach(function(loc, i){
+    var time = loc.jumuahTime || loc.eidTime || '—';
+    var dot  = loc.type==='eid'?'🌙':loc.type==='both'?'🕌':'📿';
+    lines.push(dot + ' *' + loc.name + '*');
+    lines.push('   📍 ' + loc.area + '  🕐 ' + time);
+    lines.push('');
+  });
+
+  lines.push('━━━━━━━━━━━━━━━━━━━━━');
+  lines.push('📱 *Find more on DeenLocator*');
+  lines.push('mi2now.github.io/deenlocator');
+  lines.push('');
+  lines.push('Powered by *2now Technology*');
+  lines.push('📞 +234 806 590 0110');
+
+  var text = lines.join('\n');
+  var waUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
+  window.open(waUrl, '_blank');
 }
 
 function shareApp(){
