@@ -14,6 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script src="locations.js"></script>
   <style>
@@ -243,8 +244,8 @@
     .share-sheet-title{font-size:14px;font-weight:700;color:var(--tp);margin-bottom:14px;text-align:center}
 
     /* Visual share card */
-    .share-card{border-radius:16px;overflow:hidden;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
-    .share-card-top{background:linear-gradient(135deg,#0a3d2e,#0f5c42);padding:18px 18px 14px}
+    .share-card{border-radius:16px;overflow:hidden;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.15);font-family:"Plus Jakarta Sans",sans-serif}
+    .share-card-top{background:linear-gradient(135deg,#0a3d2e,#0f5c42);padding:18px 18px 14px;font-family:"Plus Jakarta Sans",sans-serif}
     .share-card-logo-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
     .share-card-logo-icon{width:28px;height:28px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
     .share-card-app-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.9)}
@@ -271,6 +272,7 @@
     .share-whatsapp{background:#25D366;color:var(--white)}
     .share-copy{background:var(--cd);color:var(--ts)}
     .share-close{width:100%;height:44px;margin-top:4px;border-radius:12px;border:1.5px solid var(--cd);background:var(--white);font-family:inherit;font-size:13px;font-weight:600;color:var(--tm);cursor:pointer}
+    .share-save{height:46px;border-radius:12px;border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent}
 
     /* TOAST */
     .toast{position:fixed;bottom:calc(var(--nh) + 16px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--gd);color:var(--white);padding:10px 20px;border-radius:30px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:600;white-space:nowrap;max-width:90%}
@@ -500,6 +502,8 @@
       <button class="share-btn share-whatsapp" id="shareWhatsappBtn">💬 WhatsApp</button>
       <button class="share-btn share-copy" id="shareCopyBtn">📋 Copy Text</button>
     </div>
+    <button class="share-btn share-save" id="shareSaveBtn" style="width:100%;margin-top:8px;background:var(--gd);color:var(--white)">⬇ Save Card as Image</button>
+    <div style="font-size:11px;color:var(--tm);text-align:center;margin:8px 0 4px;line-height:1.5">Save the card → open your gallery → share on WhatsApp Status or any platform</div>
     <button class="share-close" onclick="closeShareSheet()">Close</button>
   </div>
 </div>
@@ -945,7 +949,7 @@ function buildShareText(loc){
   lines.push('✅ GPS — nearest mosque to you');
   lines.push('✅ Prayer times · Map · Navigation');
   lines.push('');
-  lines.push('🔗 Try it: https://2nowtechnology.github.io/deenlocator');
+  lines.push('🔗 Try it: https://mi2now.github.io/deenlocator');
   lines.push('');
   lines.push('─ Powered by *2now Technology* ─');
   lines.push('📞 +234 806 590 0110');
@@ -995,6 +999,9 @@ function openShare(id){
     var waUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
     window.open(waUrl, '_blank');
   };
+  document.getElementById('shareSaveBtn').onclick = function(){
+    saveShareCard(loc.name);
+  };
   document.getElementById('shareCopyBtn').onclick = function(){
     navigator.clipboard.writeText(text.replace(/\*/g,'')).then(function(){
       showToast('📋 Copied to clipboard!');
@@ -1015,6 +1022,58 @@ function closeShareSheet(){
   document.documentElement.style.overflow = '';
 }
 
+function saveShareCard(locName){
+  var btn = document.getElementById('shareSaveBtn');
+  var origText = btn.innerHTML;
+  btn.innerHTML = '⏳ Generating image...';
+  btn.disabled = true;
+
+  var card = document.getElementById('shareCard');
+
+  html2canvas(card, {
+    scale: 3,
+    useCORS: true,
+    backgroundColor: null,
+    logging: false
+  }).then(function(canvas){
+    /* Try native share with file (works on Android Chrome) */
+    canvas.toBlob(function(blob){
+      var file = new File([blob], 'deenlocator-' + locName.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '.png', {type:'image/png'});
+      if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+        navigator.share({
+          files: [file],
+          title: locName + ' — DeenLocator',
+          text: 'Found on DeenLocator by 2now Technology'
+        }).then(function(){
+          btn.innerHTML = origText; btn.disabled = false;
+        }).catch(function(){
+          /* fallback to download */
+          downloadCanvas(canvas, locName);
+          btn.innerHTML = origText; btn.disabled = false;
+        });
+      } else {
+        /* Download as image — user then shares from gallery */
+        downloadCanvas(canvas, locName);
+        btn.innerHTML = origText; btn.disabled = false;
+        showToast('✅ Card saved! Share from your gallery');
+      }
+    }, 'image/png');
+  }).catch(function(err){
+    console.log('html2canvas error:', err);
+    btn.innerHTML = origText; btn.disabled = false;
+    showToast('❌ Could not generate card — try Copy Text instead');
+  });
+}
+
+function downloadCanvas(canvas, name){
+  var link = document.createElement('a');
+  link.download = 'deenlocator-' + name.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '.png';
+  link.href = canvas.toDataURL('image/png');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 function closeShare(e){
   if(e.target === document.getElementById('shareOverlay')) closeShareSheet();
 }
@@ -1032,7 +1091,7 @@ function shareApp(){
     '✅ Installable as a phone app',
     '',
     '🔗 Open DeenLocator:',
-    'https://2nowtechnology.github.io/deenlocator',
+    'https://mi2now.github.io/deenlocator',
     '',
     '━━━━━━━━━━━━━━━━━━━━━',
     'Powered by *2now Technology*',
