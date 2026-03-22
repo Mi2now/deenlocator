@@ -7,9 +7,12 @@
   <meta name="description" content="DeenLocator — Find Eid & Friday prayer locations across Abuja. Powered by 2now Technology."/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="application-name" content="DeenLocator"/>
+  <link rel="apple-touch-startup-image" href="/deenlocator/icon-512.png"/>
   <meta name="apple-mobile-web-app-title" content="DeenLocator"/>
-  <link rel="manifest" href="manifest.json"/>
-  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="manifest" href="/deenlocator/manifest.json"/>
+  <link rel="apple-touch-icon" href="/deenlocator/icon-192.png"/>
   <title>DeenLocator — Abuja Prayer Locator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -395,7 +398,7 @@
       <div class="pt-big-label">time remaining</div>
     </div>
     <div class="pt-edit-bar">
-      <div class="pt-edit-bar-text">Default Abuja times shown. Tap <b>Edit</b> to set your mosque's exact times.</div>
+      <div class="pt-edit-bar-text">Times fetched daily for Abuja. Tap <b>Edit</b> to set your mosque's exact times.</div>
       <button class="pt-edit-btn" id="ptEditBtn" onclick="toggleEdit()">Edit</button>
     </div>
     <div class="pt-cards" id="ptCards"></div>
@@ -569,6 +572,66 @@ function loadPrayers(){ try{ var s=localStorage.getItem('dl_prayers'); if(s) ret
 function savePrayers(a){ try{ localStorage.setItem('dl_prayers',JSON.stringify(a)); }catch(e){} }
 var PRAYERS = loadPrayers();
 
+/* ── Fetch accurate prayer times from AlAdhan API ── */
+function fetchPrayerTimes(){
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2,'0');
+  var mm = String(today.getMonth()+1).padStart(2,'0');
+  var yyyy = today.getFullYear();
+  var url = 'https://api.aladhan.com/v1/timingsByCity?city=Abuja&country=Nigeria&method=3&date='+dd+'-'+mm+'-'+yyyy;
+
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(!data || !data.data || !data.data.timings) return;
+      var t = data.data.timings;
+      function parseAPITime(str){
+        var parts = str.split(':');
+        return {h:parseInt(parts[0]), m:parseInt(parts[1])};
+      }
+      var fresh = [
+        Object.assign({}, DEFAULT_PRAYERS[0], parseAPITime(t.Fajr)),
+        Object.assign({}, DEFAULT_PRAYERS[1], parseAPITime(t.Dhuhr)),
+        Object.assign({}, DEFAULT_PRAYERS[2], parseAPITime(t.Asr)),
+        Object.assign({}, DEFAULT_PRAYERS[3], parseAPITime(t.Maghrib)),
+        Object.assign({}, DEFAULT_PRAYERS[4], parseAPITime(t.Isha))
+      ];
+      /* Only update if user hasn't manually edited */
+      var userEdited = localStorage.getItem('dl_prayers_edited');
+      if(!userEdited){
+        PRAYERS = fresh;
+        /* Cache for today */
+        var cacheKey = 'dl_api_'+yyyy+mm+dd;
+        try{ localStorage.setItem(cacheKey, JSON.stringify(fresh)); }catch(e){}
+        updateBanner();
+        renderPtCards();
+        showToast('🕐 Prayer times updated for today');
+      }
+    })
+    .catch(function(){ /* silent fail — use stored times */ });
+}
+
+/* Load cached API times for today first, then fetch fresh */
+function initPrayerTimes(){
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2,'0');
+  var mm = String(today.getMonth()+1).padStart(2,'0');
+  var yyyy = today.getFullYear();
+  var cacheKey = 'dl_api_'+yyyy+mm+dd;
+  var userEdited = localStorage.getItem('dl_prayers_edited');
+  if(!userEdited){
+    try{
+      var cached = localStorage.getItem(cacheKey);
+      if(cached){
+        PRAYERS = JSON.parse(cached);
+        updateBanner();
+      }
+    }catch(e){}
+    /* Fetch fresh times */
+    fetchPrayerTimes();
+  }
+}
+
 function fmtTime(h,m){ var s=h>=12?'PM':'AM',h12=h%12||12; return h12+':'+(m<10?'0':'')+m+' '+s; }
 function parseTime(str){
   var mm=str.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i); if(!mm) return null;
@@ -607,18 +670,23 @@ function toggleEdit(){
     document.querySelectorAll('.pt-time-input').forEach(function(inp,i){
       var p=parseTime(inp.value); if(p){PRAYERS[i].h=p.h;PRAYERS[i].m=p.m;}
     });
-    savePrayers(PRAYERS); updateBanner(); showToast('✅ Prayer times saved!');
+    savePrayers(PRAYERS);
+    try{ localStorage.setItem('dl_prayers_edited','1'); }catch(e){}
+    updateBanner(); showToast('✅ Your custom times saved!');
     btn.textContent='Edit'; btn.classList.remove('saving');
   } else { btn.textContent='Save'; btn.classList.add('saving'); }
   renderPtCards();
 }
 
 function resetTimes(){
+  try{ localStorage.removeItem('dl_prayers_edited'); }catch(e){}
   PRAYERS=JSON.parse(JSON.stringify(DEFAULT_PRAYERS)); savePrayers(PRAYERS);
   ptEditing=false;
   document.getElementById('ptEditBtn').textContent='Edit';
   document.getElementById('ptEditBtn').classList.remove('saving');
-  renderPtCards(); updateBanner(); showToast('🔄 Reset to default Abuja times');
+  renderPtCards(); updateBanner();
+  fetchPrayerTimes();
+  showToast('🔄 Fetching accurate Abuja times...');
 }
 
 function renderPtCards(){
@@ -1290,7 +1358,7 @@ sc.addEventListener('click',function(){si.value='';searchQuery='';sc.style.displ
 /* ══ SERVICE WORKER (PWA) ══ */
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('sw.js')
+    navigator.serviceWorker.register('/deenlocator/sw.js')
       .then(function(){console.log('DeenLocator SW ready');})
       .catch(function(e){console.log('SW',e);});
   });
@@ -1301,6 +1369,7 @@ document.getElementById('settingsLocCount').textContent=LOCATIONS.length+' verif
 buildAreaDropdown();
 renderCards();
 initGPS();
+initPrayerTimes();
 </script>
 </body>
 </html>
