@@ -14,7 +14,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script src="locations.js"></script>
   <style>
@@ -239,14 +238,14 @@
     /* SHARE SHEET */
     .share-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:5000;display:none;align-items:flex-end;justify-content:center}
     .share-overlay.show{display:flex}
-    .share-sheet{background:var(--white);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+    .share-sheet{background:var(--white);border-radius:20px 20px 0 0;padding:16px 16px 24px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto}
     .share-sheet-handle{width:40px;height:4px;background:var(--cd);border-radius:2px;margin:0 auto 16px}
     .share-sheet-title{font-size:14px;font-weight:700;color:var(--tp);margin-bottom:14px;text-align:center}
 
     /* Visual share card */
     .share-card{border-radius:16px;overflow:hidden;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.15);font-family:"Plus Jakarta Sans",sans-serif}
-    .share-card-top{background:linear-gradient(135deg,#0a3d2e,#0f5c42);padding:18px 18px 14px;font-family:"Plus Jakarta Sans",sans-serif}
-    .share-card-logo-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+    .share-card-top{background:linear-gradient(135deg,#0a3d2e,#0f5c42);padding:14px 16px 12px;font-family:"Plus Jakarta Sans",sans-serif}
+    .share-card-logo-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
     .share-card-logo-icon{width:28px;height:28px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
     .share-card-app-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.9)}
     .share-card-app-name span{color:#22c98a}
@@ -256,15 +255,15 @@
     .share-card-times{display:flex;gap:10px;flex-wrap:wrap}
     .share-card-time-pill{background:rgba(255,255,255,.12);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;color:#fff}
     .share-card-time-pill span{display:block;font-size:10px;color:rgba(255,255,255,.55);font-weight:400;margin-bottom:1px}
-    .share-card-bottom{background:#f3efe6;padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+    .share-card-bottom{background:#f3efe6;padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
     .share-card-address{font-size:11px;color:#5a5a5a;flex:1;margin-right:10px;line-height:1.4}
     .share-card-qr-placeholder{font-size:22px;flex-shrink:0}
-    .share-card-footer{background:#0a3d2e;padding:8px 18px;display:flex;align-items:center;justify-content:space-between}
+    .share-card-footer{background:#0a3d2e;padding:7px 16px;display:flex;align-items:center;justify-content:space-between}
     .share-card-footer-text{font-size:10px;color:rgba(255,255,255,.6)}
     .share-card-footer-contact{font-size:10px;color:#22c98a;font-weight:600}
 
     /* Text preview */
-    .share-text-preview{background:var(--bg);border-radius:12px;padding:12px 14px;margin-bottom:14px;border:1px solid var(--cd);max-height:120px;overflow-y:auto}
+    .share-text-preview{background:var(--bg);border-radius:12px;padding:10px 12px;margin-bottom:10px;border:1px solid var(--cd);max-height:80px;overflow-y:auto}
     .share-text-preview-content{font-size:11px;color:var(--ts);line-height:1.7;white-space:pre-line}
 
     .share-actions{display:flex;gap:8px;margin-bottom:8px}
@@ -494,16 +493,17 @@
     </div>
 
     <!-- TEXT PREVIEW -->
+    <div style="font-size:11px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Message text (for WhatsApp / Copy)</div>
     <div class="share-text-preview">
       <div class="share-text-preview-content" id="sharePreviewText"></div>
     </div>
 
+    <!-- Save card — most prominent -->
+    <button class="share-btn" id="shareSaveBtn" onclick="saveShareCard(currentShareLoc)" style="width:100%;margin-bottom:8px;background:var(--gd);color:var(--white);height:48px;border-radius:12px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">📸 Save Card as Image — Share on Status</button>
     <div class="share-actions">
-      <button class="share-btn share-whatsapp" id="shareWhatsappBtn">💬 WhatsApp</button>
-      <button class="share-btn share-copy" id="shareCopyBtn">📋 Copy Text</button>
+      <button class="share-btn share-whatsapp" id="shareWhatsappBtn">💬 WhatsApp Text</button>
+      <button class="share-btn share-copy" id="shareCopyBtn">📋 Copy</button>
     </div>
-    <button class="share-btn share-save" id="shareSaveBtn" style="width:100%;margin-top:8px;background:var(--gd);color:var(--white)">⬇ Save Card as Image</button>
-    <div style="font-size:11px;color:var(--tm);text-align:center;margin:8px 0 4px;line-height:1.5">Save the card → open your gallery → share on WhatsApp Status or any platform</div>
     <button class="share-close" onclick="closeShareSheet()">Close</button>
   </div>
 </div>
@@ -893,6 +893,7 @@ function navTo_id(id){navById(id);}
 
 /* ══ RICH SHARE SHEET ══ */
 var shareLocId = null;
+var currentShareLoc = null;
 
 function buildShareText(loc){
   var lines = [];
@@ -962,6 +963,7 @@ function openShare(id){
   var loc = LOCATIONS.find(function(l){return l.id===id;});
   if(!loc) return;
   shareLocId = id;
+  currentShareLoc = loc;
 
   /* ── Populate visual card ── */
   var type  = loc.type==='eid'?'Eid Prayer Ground':loc.type==='both'?'Eid + Jumuah Mosque':'Jumuah Mosque';
@@ -999,9 +1001,7 @@ function openShare(id){
     var waUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
     window.open(waUrl, '_blank');
   };
-  document.getElementById('shareSaveBtn').onclick = function(){
-    saveShareCard(loc.name);
-  };
+  /* Save btn uses global currentShareLoc */
   document.getElementById('shareCopyBtn').onclick = function(){
     navigator.clipboard.writeText(text.replace(/\*/g,'')).then(function(){
       showToast('📋 Copied to clipboard!');
@@ -1022,56 +1022,197 @@ function closeShareSheet(){
   document.documentElement.style.overflow = '';
 }
 
-function saveShareCard(locName){
+function saveShareCard(loc){
   var btn = document.getElementById('shareSaveBtn');
   var origText = btn.innerHTML;
-  btn.innerHTML = '⏳ Generating image...';
+  btn.innerHTML = '⏳ Generating...';
   btn.disabled = true;
 
-  var card = document.getElementById('shareCard');
+  try {
+    var canvas = document.createElement('canvas');
+    var W = 1080, H = 1350; /* portrait Instagram/WhatsApp size */
+    canvas.width  = W;
+    canvas.height = H;
+    var ctx = canvas.getContext('2d');
 
-  html2canvas(card, {
-    scale: 3,
-    useCORS: true,
-    backgroundColor: null,
-    logging: false
-  }).then(function(canvas){
-    /* Try native share with file (works on Android Chrome) */
+    /* ── Background gradient ── */
+    var grad = ctx.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0, '#0f5c42');
+    grad.addColorStop(1, '#0a3d2e');
+    ctx.fillStyle = grad;
+    roundRect(ctx, 0, 0, W, H, 60);
+    ctx.fill();
+
+    /* ── Top pattern dots ── */
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    for(var r=0;r<8;r++) for(var c=0;c<8;c++){
+      ctx.beginPath();
+      ctx.arc(80+c*140, 80+r*140, 18, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    /* ── App name row ── */
+    ctx.font = 'bold 48px sans-serif';
+    ctx.fillStyle = '#22c98a';
+    ctx.fillText('Deen', 80, 130);
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.fillText('Locator', 80 + ctx.measureText('Deen').width, 130);
+
+    ctx.font = '34px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fillText('by 2now Technology', 80, 175);
+
+    /* ── Divider line ── */
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    ctx.fillRect(80, 200, W-160, 2);
+
+    /* ── Type badge ── */
+    var type  = loc.type==='eid'?'Eid Prayer Ground':loc.type==='both'?'Eid + Jumuah Mosque':'Jumuah (Friday) Mosque';
+    var bgBadge = loc.type==='eid'?'#fef3c7':loc.type==='both'?'#ede9fe':'#d1fae5';
+    var fcBadge = loc.type==='eid'?'#92400e':loc.type==='both'?'#4c1d95':'#065f46';
+    ctx.fillStyle = bgBadge;
+    roundRect(ctx, 80, 230, ctx.measureText(type).width + 48, 56, 28);
+    ctx.fill();
+    ctx.font = 'bold 30px sans-serif';
+    ctx.fillStyle = fcBadge;
+    ctx.fillText(type, 104, 268);
+
+    /* ── Mosque name ── */
+    ctx.font = 'bold 72px sans-serif';
+    ctx.fillStyle = '#ffffff';
+    wrapText(ctx, loc.name, 80, 380, W-160, 86);
+
+    /* ── Address ── */
+    ctx.font = '38px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.65)';
+    wrapText(ctx, '📍 ' + (loc.address || loc.area + ', Abuja'), 80, 530, W-160, 48);
+
+    /* ── Prayer time pills ── */
+    var pillY = 640;
+    var pillData = [];
+    if(loc.jumuahTime) pillData.push({label:'Jumuah (Fri)', time: loc.jumuahTime});
+    if(loc.eidTime)    pillData.push({label:'Eid Prayer',   time: loc.eidTime});
+    if(loc.imam && loc.imam !== 'To be announced') pillData.push({label:'Imam', time: loc.imam});
+
+    pillData.forEach(function(p, i){
+      var px = 80 + i * 320;
+      if(px + 280 > W) return;
+      ctx.fillStyle = 'rgba(255,255,255,0.12)';
+      roundRect(ctx, px, pillY, 300, 110, 20);
+      ctx.fill();
+      ctx.font = '28px sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.fillText(p.label, px+20, pillY+42);
+      ctx.font = 'bold 38px sans-serif';
+      ctx.fillStyle = '#f0c96a';
+      ctx.fillText(p.time, px+20, pillY+90);
+    });
+
+    /* ── Divider ── */
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    ctx.fillRect(80, 800, W-160, 2);
+
+    /* ── Maps link ── */
+    var mapsLink = 'maps.google.com → ' + loc.name;
+    ctx.font = '34px sans-serif';
+    ctx.fillStyle = '#22c98a';
+    ctx.fillText('🗺  Get Directions on Google Maps', 80, 870);
+    ctx.font = '28px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fillText('google.com/maps → Search: ' + loc.name, 80, 912);
+
+    /* ── Bottom section ── */
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    roundRect(ctx, 0, H-280, W, 280, {tl:0,tr:0,br:60,bl:60});
+    ctx.fill();
+
+    ctx.font = 'bold 42px sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('📱 Try DeenLocator — Free App', 80, H-210);
+
+    ctx.font = '32px sans-serif';
+    ctx.fillStyle = '#22c98a';
+    ctx.fillText('mi2now.github.io/deenlocator', 80, H-155);
+
+    ctx.font = '30px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.fillText('Find Eid & Jumuah locations in Abuja instantly', 80, H-110);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillRect(80, H-80, W-160, 1);
+
+    ctx.font = '28px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fillText('Powered by 2now Technology  ·  +234 806 590 0110', 80, H-45);
+
+    /* ── Share or download ── */
     canvas.toBlob(function(blob){
-      var file = new File([blob], 'deenlocator-' + locName.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '.png', {type:'image/png'});
+      var fname = 'deenlocator-' + loc.name.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '.png';
+      var file  = new File([blob], fname, {type:'image/png'});
+
+      /* Android Chrome — native share with image */
       if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
         navigator.share({
           files: [file],
-          title: locName + ' — DeenLocator',
-          text: 'Found on DeenLocator by 2now Technology'
+          title: loc.name + ' — DeenLocator',
+          text:  'Found on DeenLocator by 2now Technology\nmi2now.github.io/deenlocator'
         }).then(function(){
           btn.innerHTML = origText; btn.disabled = false;
         }).catch(function(){
-          /* fallback to download */
-          downloadCanvas(canvas, locName);
+          triggerDownload(canvas, fname);
           btn.innerHTML = origText; btn.disabled = false;
         });
       } else {
-        /* Download as image — user then shares from gallery */
-        downloadCanvas(canvas, locName);
+        /* Fallback — download to gallery */
+        triggerDownload(canvas, fname);
         btn.innerHTML = origText; btn.disabled = false;
-        showToast('✅ Card saved! Share from your gallery');
+        showToast('✅ Card saved! Find it in your gallery to share');
       }
     }, 'image/png');
-  }).catch(function(err){
-    console.log('html2canvas error:', err);
+
+  } catch(err){
+    console.log('Card error:', err);
     btn.innerHTML = origText; btn.disabled = false;
-    showToast('❌ Could not generate card — try Copy Text instead');
-  });
+    showToast('❌ Card failed — use Copy Text or WhatsApp button');
+  }
 }
 
-function downloadCanvas(canvas, name){
-  var link = document.createElement('a');
-  link.download = 'deenlocator-' + name.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '.png';
-  link.href = canvas.toDataURL('image/png');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+function triggerDownload(canvas, fname){
+  var a = document.createElement('a');
+  a.download = fname;
+  a.href = canvas.toDataURL('image/png');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+/* Draw rounded rectangle */
+function roundRect(ctx, x, y, w, h, r){
+  if(typeof r === 'number') r = {tl:r,tr:r,br:r,bl:r};
+  ctx.beginPath();
+  ctx.moveTo(x + r.tl, y);
+  ctx.lineTo(x + w - r.tr, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r.tr);
+  ctx.lineTo(x+w, y+h-r.br);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r.br, y+h);
+  ctx.lineTo(x+r.bl, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r.bl);
+  ctx.lineTo(x, y+r.tl);
+  ctx.quadraticCurveTo(x, y, x+r.tl, y);
+  ctx.closePath();
+}
+
+/* Wrap long text */
+function wrapText(ctx, text, x, y, maxW, lineH){
+  var words = text.split(' '), line = '', lines = [];
+  for(var i=0;i<words.length;i++){
+    var test = line + words[i] + ' ';
+    if(ctx.measureText(test).width > maxW && line !== ''){
+      lines.push(line.trim()); line = words[i]+' ';
+    } else { line = test; }
+  }
+  if(line) lines.push(line.trim());
+  lines.forEach(function(l,i){ ctx.fillText(l, x, y + i*lineH); });
 }
 
 function closeShare(e){
