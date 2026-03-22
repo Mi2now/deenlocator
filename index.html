@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#0a3d2e" />
+  <meta name="description" content="DeenLocator — Find Eid & Friday prayer locations across Abuja. Powered by 2now Technology." />
+  <title>DeenLocator — Abuja Prayer Locator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Load our location data -->
+  <script src="locations.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-dark:   #0a3d2e;
+      --green-mid:    #0f5c42;
+      --green-light:  #1a7a58;
+      --green-glow:   #22c98a;
+      --gold:         #d4a843;
+      --gold-light:   #f0c96a;
+      --cream:        #f9f5ee;
+      --cream-dark:   #ede8de;
+      --text-primary: #1a1a1a;
+      --text-secondary:#5a5a5a;
+      --text-muted:   #9a9a9a;
+      --white:        #ffffff;
+      --bg:           #f3efe6;
+      --radius-sm:    8px;
+      --radius-md:    14px;
+      --nav-height:   64px;
+      --header-height:64px;
+      --shadow-sm:    0 2px 8px rgba(0,0,0,0.07);
+      --shadow-md:    0 4px 20px rgba(0,0,0,0.11);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    /* ── HEADER ── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--green-dark);
+      height: var(--header-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+
+    .header-brand { display: flex; align-items: center; gap: 10px; }
+
+    .header-logo {
+      width: 38px; height: 38px;
+      background: var(--green-light);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+
+    .app-name {
+      font-size: 19px; font-weight: 700;
+      color: var(--white); letter-spacing: -0.3px; line-height: 1;
+    }
+    .app-name span { color: var(--green-glow); }
+
+    .app-sub {
+      font-size: 10px; color: rgba(255,255,255,0.45);
+      font-weight: 500; margin-top: 2px;
+    }
+
+    .header-btn {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: rgba(255,255,255,0.1); border: none;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; font-size: 18px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .header-btn:active { background: rgba(255,255,255,0.2); }
+
+    /* ── PRAYER BANNER ── */
+    .prayer-banner {
+      background: linear-gradient(135deg, var(--green-mid), var(--green-dark));
+      padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .prayer-label {
+      font-size: 10px; color: var(--green-glow);
+      font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 3px;
+    }
+    .prayer-name { font-size: 20px; font-weight: 700; color: var(--white); line-height: 1.1; }
+    .prayer-time-text { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 3px; }
+    .prayer-countdown {
+      font-size: 26px; font-weight: 700; color: var(--gold-light);
+      font-variant-numeric: tabular-nums; text-align: right; line-height: 1;
+    }
+    .prayer-countdown-label { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 4px; text-align: right; }
+
+    /* ── SEARCH ── */
+    .search-wrap { padding: 14px 16px 4px; }
+
+    .search-bar {
+      display: flex; align-items: center;
+      background: var(--white); border-radius: var(--radius-md);
+      border: 1.5px solid var(--cream-dark);
+      padding: 0 14px; height: 46px; gap: 10px;
+      transition: border-color 0.2s;
+    }
+    .search-bar:focus-within { border-color: var(--green-light); }
+    .search-icon { font-size: 15px; opacity: 0.4; flex-shrink: 0; }
+    .search-input {
+      flex: 1; border: none; outline: none;
+      font-family: inherit; font-size: 14px;
+      color: var(--text-primary); background: transparent;
+    }
+    .search-input::placeholder { color: var(--text-muted); }
+    .search-clear {
+      background: none; border: none; cursor: pointer;
+      font-size: 16px; color: var(--text-muted); padding: 4px;
+      display: none; -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ── FILTER ROW 1: TYPE TABS ── */
+    .filter-tabs {
+      display: flex; gap: 8px;
+      padding: 12px 16px 0;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .filter-tabs::-webkit-scrollbar { display: none; }
+
+    .tab {
+      flex-shrink: 0; height: 36px; padding: 0 16px;
+      border-radius: 20px; border: 1.5px solid var(--cream-dark);
+      background: var(--white); font-family: inherit;
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+      cursor: pointer; transition: all 0.18s;
+      -webkit-tap-highlight-color: transparent; white-space: nowrap;
+    }
+    .tab.active {
+      background: var(--green-dark);
+      border-color: var(--green-dark); color: var(--white);
+    }
+    .tab:active { opacity: 0.7; }
+
+    /* ── FILTER ROW 2: AREA + SORT ── */
+    .filter-bar {
+      display: flex; gap: 8px;
+      padding: 10px 16px 0; align-items: center;
+    }
+
+    .filter-select {
+      flex: 1; height: 36px; padding: 0 10px;
+      border-radius: 10px; border: 1.5px solid var(--cream-dark);
+      background: var(--white); font-family: inherit;
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+      cursor: pointer; outline: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a9a9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+    }
+    .filter-select:focus { border-color: var(--green-light); }
+
+    .sort-select {
+      height: 36px; padding: 0 10px;
+      border-radius: 10px; border: 1.5px solid var(--cream-dark);
+      background: var(--white); font-family: inherit;
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+      cursor: pointer; outline: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a9a9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px; white-space: nowrap;
+    }
+    .sort-select:focus { border-color: var(--green-light); }
+
+    /* ── NEAREST BANNER ── */
+    .nearest-badge {
+      display: flex; align-items: center; gap: 10px;
+      margin: 12px 16px 0;
+      background: var(--green-dark);
+      border-radius: var(--radius-md); padding: 12px 14px;
+    }
+    .nearest-icon { font-size: 20px; flex-shrink: 0; }
+    .nearest-label {
+      font-size: 10px; font-weight: 700; color: var(--green-glow);
+      letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px;
+    }
+    .nearest-name { font-size: 13px; font-weight: 600; color: var(--white); line-height: 1.3; }
+    .nearest-dist { font-size: 11px; color: rgba(255,255,255,0.5); }
+    .nearest-btn {
+      margin-left: auto; background: var(--green-glow);
+      color: var(--green-dark); border: none; border-radius: 8px;
+      font-family: inherit; font-size: 12px; font-weight: 700;
+      padding: 8px 14px; cursor: pointer; flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nearest-btn:active { opacity: 0.8; }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 16px 16px 8px;
+    }
+    .section-title { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+    .section-count {
+      font-size: 11px; color: var(--text-muted);
+      background: var(--cream-dark);
+      padding: 3px 10px; border-radius: 20px; font-weight: 600;
+    }
+
+    /* ── CARDS LIST ── */
+    .cards-list {
+      padding: 0 16px;
+      display: flex; flex-direction: column; gap: 10px;
+      padding-bottom: calc(var(--nav-height) + 32px);
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.04);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: box-shadow 0.2s;
+    }
+    .card:active { box-shadow: none; }
+
+    .card-collapsed {
+      display: flex; align-items: stretch; min-height: 82px;
+    }
+
+    .card-accent { width: 5px; flex-shrink: 0; }
+    .accent-green { background: var(--green-light); }
+    .accent-gold  { background: var(--gold); }
+    .accent-both  { background: linear-gradient(180deg, var(--green-light) 50%, var(--gold) 50%); }
+
+    .card-body {
+      flex: 1; padding: 12px 10px 12px 14px;
+      display: flex; flex-direction: column;
+      justify-content: center; gap: 3px; min-width: 0;
+    }
+
+    .card-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 6px;
+    }
+
+    .card-name {
+      font-size: 14px; font-weight: 700;
+      color: var(--text-primary); line-height: 1.3; flex: 1;
+    }
+
+    .card-badge {
+      font-size: 10px; font-weight: 700;
+      padding: 3px 7px; border-radius: 20px;
+      flex-shrink: 0; text-transform: uppercase;
+      letter-spacing: 0.2px; white-space: nowrap;
+    }
+    .badge-eid    { background: #fef3c7; color: #92400e; }
+    .badge-jumuah { background: #d1fae5; color: #065f46; }
+    .badge-both   { background: #ede9fe; color: #4c1d95; }
+
+    .card-area { font-size: 11px; color: var(--text-muted); }
+
+    .card-meta {
+      display: flex; align-items: center;
+      gap: 12px; margin-top: 4px;
+    }
+    .card-time { font-size: 12px; font-weight: 600; color: var(--green-mid); }
+    .card-distance { font-size: 11px; color: var(--text-muted); }
+
+    .card-chevron {
+      width: 40px; display: flex; align-items: center;
+      justify-content: center; color: var(--text-muted);
+      font-size: 18px; flex-shrink: 0;
+      transition: transform 0.25s;
+    }
+    .card.open .card-chevron { transform: rotate(90deg); }
+
+    /* ── EXPANDED PANEL ── */
+    .card-expanded {
+      display: none;
+      border-top: 1px solid var(--cream-dark);
+      padding: 14px 16px 16px;
+      flex-direction: column; gap: 12px;
+    }
+    .card.open .card-expanded { display: flex; }
+
+    .exp-row { display: flex; flex-direction: column; gap: 3px; }
+
+    .exp-label {
+      font-size: 10px; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .exp-value { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .exp-value.muted { color: var(--text-muted); font-weight: 400; font-style: italic; }
+
+    .exp-address { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+    .exp-divider {
+      height: 1px; background: var(--cream-dark); margin: 0 -16px;
+    }
+
+    /* Contact buttons */
+    .exp-contact-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .exp-btn {
+      flex: 1; min-width: 100px; height: 38px;
+      border-radius: 10px; border: none;
+      font-family: inherit; font-size: 12px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 6px;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.15s;
+      text-decoration: none;
+    }
+    .exp-btn:active { opacity: 0.75; }
+
+    .btn-call { background: #d1fae5; color: #065f46; }
+    .btn-whatsapp { background: #dcfce7; color: #14532d; }
+    .btn-disabled {
+      background: var(--cream-dark); color: var(--text-muted);
+      cursor: default; font-weight: 500;
+    }
+
+    /* Live stream */
+    .exp-stream {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--cream-dark); border-radius: 10px;
+      padding: 10px 14px;
+    }
+    .exp-stream-icon { font-size: 20px; flex-shrink: 0; }
+    .exp-stream-text { font-size: 12px; color: var(--text-muted); }
+    .exp-stream-text strong { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 1px; }
+    .exp-stream-badge {
+      margin-left: auto; background: var(--cream-dark);
+      border: 1px solid var(--cream-dark); border-radius: 6px;
+      font-size: 10px; font-weight: 700; color: var(--text-muted);
+      padding: 3px 8px; flex-shrink: 0; white-space: nowrap;
+    }
+
+    /* Navigate button */
+    .btn-navigate {
+      width: 100%; height: 46px;
+      background: var(--green-dark); color: var(--white);
+      border: none; border-radius: 12px;
+      font-family: inherit; font-size: 14px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 8px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-navigate:active { opacity: 0.85; }
+
+    /* Bottom action row */
+    .exp-bottom-row { display: flex; gap: 8px; }
+
+    .btn-notify {
+      flex: 1; height: 38px; border-radius: 10px;
+      border: 1.5px solid var(--cream-dark);
+      background: var(--white); font-family: inherit;
+      font-size: 12px; font-weight: 700; color: var(--text-secondary);
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 6px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-notify:active { background: var(--cream-dark); }
+
+    .btn-share {
+      flex: 1; height: 38px; border-radius: 10px;
+      border: 1.5px solid var(--cream-dark);
+      background: var(--white); font-family: inherit;
+      font-size: 12px; font-weight: 700; color: var(--text-secondary);
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 6px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-share:active { background: var(--cream-dark); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center; padding: 48px 20px;
+      display: none; flex-direction: column;
+      align-items: center; gap: 8px;
+    }
+    .empty-state.show { display: flex; }
+    .empty-state-icon { font-size: 44px; margin-bottom: 4px; }
+    .empty-state-title { font-size: 15px; font-weight: 700; color: var(--text-secondary); }
+    .empty-state-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      padding: 28px 20px 16px;
+      margin-bottom: calc(var(--nav-height) + 8px);
+      border-top: 1px solid var(--cream-dark);
+      margin-top: 8px;
+    }
+    .footer-name { font-size: 16px; font-weight: 700; color: var(--green-dark); margin-bottom: 4px; }
+    .footer-name span { color: var(--green-light); }
+    .footer-tag { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; }
+    .footer-links {
+      display: flex; align-items: center;
+      justify-content: center; gap: 14px;
+      flex-wrap: wrap; margin-bottom: 12px;
+    }
+    .footer-link { font-size: 12px; color: var(--green-mid); text-decoration: none; font-weight: 600; }
+    .footer-dot { color: var(--cream-dark); }
+    .footer-copy { font-size: 11px; color: var(--text-muted); }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      height: var(--nav-height);
+      background: var(--white);
+      border-top: 1px solid var(--cream-dark);
+      display: flex; align-items: center;
+      z-index: 200; padding: 0 8px;
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 3px; height: 100%; cursor: pointer;
+      border: none; background: none;
+      font-family: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-item:active { opacity: 0.6; }
+    .nav-icon { font-size: 22px; line-height: 1; }
+    .nav-label { font-size: 10px; font-weight: 600; color: var(--text-muted); }
+    .nav-item.active .nav-label { color: var(--green-mid); }
+
+    /* ── TOAST NOTIFICATION ── */
+    .toast {
+      position: fixed; bottom: calc(var(--nav-height) + 16px);
+      left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--green-dark); color: white;
+      padding: 10px 20px; border-radius: 30px;
+      font-size: 13px; font-weight: 600;
+      opacity: 0; transition: all 0.3s;
+      pointer-events: none; z-index: 300;
+      white-space: nowrap; max-width: 90%;
+    }
+    .toast.show {
+      opacity: 1; transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="header-logo">🕌</div>
+      <div>
+        <div class="app-name">Deen<span>Locator</span></div>
+        <div class="app-sub">Abuja, Nigeria · by 2now Technology</div>
+      </div>
+    </div>
+    <button class="header-btn">⚙️</button>
+  </header>
+
+  <!-- PRAYER BANNER -->
+  <div class="prayer-banner">
+    <div>
+      <div class="prayer-label">Next Prayer</div>
+      <div class="prayer-name" id="nextPrayerName">—</div>
+      <div class="prayer-time-text" id="nextPrayerTime">Loading...</div>
+    </div>
+    <div>
+      <div class="prayer-countdown" id="countdown">--:--:--</div>
+      <div class="prayer-countdown-label">time remaining</div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="searchInput" type="text"
+        placeholder="Search mosque or area..." autocomplete="off" />
+      <button class="search-clear" id="searchClear">✕</button>
+    </div>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="filter-tabs">
+    <button class="tab active" data-filter="all">All Locations</button>
+    <button class="tab" data-filter="eid">Eid Prayer</button>
+    <button class="tab" data-filter="jumuah">Jumuʼah (Friday)</button>
+  </div>
+
+  <!-- AREA + SORT BAR -->
+  <div class="filter-bar">
+    <select class="filter-select" id="areaSelect">
+      <option value="">All Areas</option>
+    </select>
+    <select class="sort-select" id="sortSelect">
+      <option value="az">A → Z</option>
+      <option value="za">Z → A</option>
+      <option value="nearest">Nearest</option>
+      <option value="time">Prayer Time</option>
+    </select>
+  </div>
+
+  <!-- NEAREST BANNER -->
+  <div class="nearest-badge" id="nearestBanner" style="display:none">
+    <div class="nearest-icon">📍</div>
+    <div style="flex:1;min-width:0">
+      <div class="nearest-label">Nearest to you</div>
+      <div class="nearest-name" id="nearestName">Detecting...</div>
+      <div class="nearest-dist" id="nearestDist"></div>
+    </div>
+    <button class="nearest-btn" id="nearestBtn">Navigate</button>
+  </div>
+
+  <!-- SECTION HEADER -->
+  <div class="section-header">
+    <span class="section-title">Prayer Locations</span>
+    <span class="section-count" id="locationCount">0 locations</span>
+  </div>
+
+  <!-- CARDS -->
+  <div class="cards-list" id="cardsList"></div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-state-icon">🔍</div>
+    <div class="empty-state-title">No locations found</div>
+    <div class="empty-state-text">Try a different search term<br>or change the filter.</div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-name">Deen<span>Locator</span></div>
+    <div class="footer-tag">Find your nearest prayer location in seconds</div>
+    <div class="footer-links">
+      <a class="footer-link" href="https://wa.me/2348065900110" target="_blank">💬 WhatsApp</a>
+      <span class="footer-dot">·</span>
+      <a class="footer-link" href="tel:+2348065900110">📞 +234 806 590 0110</a>
+    </div>
+    <div class="footer-copy">© 2025 2now Technology · All rights reserved</div>
+  </footer>
+
+</div><!-- end .app -->
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item active">
+    <span class="nav-icon">🕌</span>
+    <span class="nav-label">Locations</span>
+  </button>
+  <button class="nav-item">
+    <span class="nav-icon">🗺️</span>
+    <span class="nav-label">Map</span>
+  </button>
+  <button class="nav-item">
+    <span class="nav-icon">🕐</span>
+    <span class="nav-label">Prayer Times</span>
+  </button>
+  <button class="nav-item">
+    <span class="nav-icon">⚙️</span>
+    <span class="nav-label">Settings</span>
+  </button>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ══ SCRIPTS ══ -->
+<script>
+
+/* ═══════════════════════════════════════════
+   1. PRAYER TIMES  (Abuja approximate times)
+═══════════════════════════════════════════ */
+var PRAYER_TIMES = [
+  { name: 'Fajr',    hour: 5,  min: 15 },
+  { name: 'Dhuhr',   hour: 12, min: 30 },
+  { name: 'Asr',     hour: 15, min: 45 },
+  { name: 'Maghrib', hour: 18, min: 30 },
+  { name: 'Isha',    hour: 20, min: 0  }
+];
+
+function getNextPrayer() {
+  var now = new Date();
+  var nowMins = now.getHours() * 60 + now.getMinutes();
+  for (var i = 0; i < PRAYER_TIMES.length; i++) {
+    var p = PRAYER_TIMES[i];
+    var pMins = p.hour * 60 + p.min;
+    if (pMins > nowMins) return p;
+  }
+  return PRAYER_TIMES[0]; // wrap to Fajr
+}
+
+function formatTime(h, m) {
+  var suffix = h >= 12 ? 'PM' : 'AM';
+  var h12 = h % 12 || 12;
+  return h12 + ':' + String(m).padStart(2,'0') + ' ' + suffix;
+}
+
+function updatePrayerBanner() {
+  var p = getNextPrayer();
+  document.getElementById('nextPrayerName').textContent = p.name;
+  document.getElementById('nextPrayerTime').textContent = 'Today · ' + formatTime(p.hour, p.min);
+
+  var now  = new Date();
+  var next = new Date();
+  next.setHours(p.hour, p.min, 0, 0);
+  if (next <= now) next.setDate(next.getDate() + 1);
+  var diff = next - now;
+  var h = String(Math.floor(diff / 3600000)).padStart(2,'0');
+  var m = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
+  var s = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
+  document.getElementById('countdown').textContent = h + ':' + m + ':' + s;
+}
+setInterval(updatePrayerBanner, 1000);
+updatePrayerBanner();
+
+
+/* ═══════════════════════════════════════════
+   2. GPS — NEAREST LOCATION
+═══════════════════════════════════════════ */
+var userLat = null, userLng = null;
+
+function calcDistance(lat1, lng1, lat2, lng2) {
+  var R = 6371;
+  var dLat = (lat2 - lat1) * Math.PI / 180;
+  var dLng = (lng2 - lng1) * Math.PI / 180;
+  var a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+          Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
+          Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function formatDist(km) {
+  return km < 1 ? Math.round(km * 1000) + ' m' : km.toFixed(1) + ' km';
+}
+
+function initGPS() {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+    showNearest();
+    renderCards(); // re-render with distances
+  }, function() {
+    // GPS denied — silently continue without it
+  });
+}
+
+function showNearest() {
+  if (userLat === null) return;
+  var best = null, bestDist = Infinity;
+  LOCATIONS.forEach(function(loc) {
+    var d = calcDistance(userLat, userLng, loc.lat, loc.lng);
+    if (d < bestDist) { bestDist = d; best = loc; }
+  });
+  if (!best) return;
+  document.getElementById('nearestBanner').style.display = 'flex';
+  document.getElementById('nearestName').textContent = best.name;
+  document.getElementById('nearestDist').textContent = formatDist(bestDist) + ' away';
+  document.getElementById('nearestBtn').onclick = function() { navigateTo(best); };
+}
+
+
+/* ═══════════════════════════════════════════
+   3. BUILD AREA DROPDOWN from real data
+═══════════════════════════════════════════ */
+function buildAreaDropdown() {
+  var areas = [];
+  LOCATIONS.forEach(function(loc) {
+    if (areas.indexOf(loc.area) === -1) areas.push(loc.area);
+  });
+  areas.sort();
+  var sel = document.getElementById('areaSelect');
+  areas.forEach(function(a) {
+    var opt = document.createElement('option');
+    opt.value = a; opt.textContent = a;
+    sel.appendChild(opt);
+  });
+}
+
+
+/* ═══════════════════════════════════════════
+   4. RENDER CARDS
+═══════════════════════════════════════════ */
+var activeFilter = 'all';
+var activeArea   = '';
+var activeSort   = 'az';
+var searchQuery  = '';
+
+function getFilteredSorted() {
+  var list = LOCATIONS.slice();
+
+  // Type filter
+  if (activeFilter !== 'all') {
+    list = list.filter(function(l) {
+      return l.type === activeFilter || l.type === 'both';
+    });
+  }
+
+  // Area filter
+  if (activeArea) {
+    list = list.filter(function(l) { return l.area === activeArea; });
+  }
+
+  // Search
+  if (searchQuery) {
+    var q = searchQuery.toLowerCase();
+    list = list.filter(function(l) {
+      return l.name.toLowerCase().includes(q) ||
+             l.area.toLowerCase().includes(q) ||
+             (l.address || '').toLowerCase().includes(q);
+    });
+  }
+
+  // Sort
+  if (activeSort === 'az') {
+    list.sort(function(a,b) { return a.name.localeCompare(b.name); });
+  } else if (activeSort === 'za') {
+    list.sort(function(a,b) { return b.name.localeCompare(a.name); });
+  } else if (activeSort === 'nearest' && userLat !== null) {
+    list.sort(function(a,b) {
+      return calcDistance(userLat,userLng,a.lat,a.lng) -
+             calcDistance(userLat,userLng,b.lat,b.lng);
+    });
+  } else if (activeSort === 'time') {
+    list.sort(function(a,b) {
+      var at = a.jumuahTime || a.eidTime || 'ZZ';
+      var bt = b.jumuahTime || b.eidTime || 'ZZ';
+      return at.localeCompare(bt);
+    });
+  }
+
+  return list;
+}
+
+function badgeHTML(type) {
+  if (type === 'eid')    return '<span class="card-badge badge-eid">Eid</span>';
+  if (type === 'jumuah') return '<span class="card-badge badge-jumuah">Jumuʼah</span>';
+  if (type === 'both')   return '<span class="card-badge badge-both">Eid + Jumuʼah</span>';
+  return '';
+}
+
+function accentClass(type) {
+  if (type === 'eid')  return 'accent-gold';
+  if (type === 'both') return 'accent-both';
+  return 'accent-green';
+}
+
+function timeDisplay(loc) {
+  if (loc.type === 'jumuah') return loc.jumuahTime ? '🕐 Friday ' + loc.jumuahTime : '';
+  if (loc.type === 'eid')    return loc.eidTime    ? '🕐 Eid ' + loc.eidTime       : '';
+  if (loc.type === 'both') {
+    var parts = [];
+    if (loc.jumuahTime) parts.push('Fri ' + loc.jumuahTime);
+    if (loc.eidTime)    parts.push('Eid ' + loc.eidTime);
+    return '🕐 ' + parts.join(' · ');
+  }
+  return '';
+}
+
+function distDisplay(loc) {
+  if (userLat === null) return '';
+  var d = calcDistance(userLat, userLng, loc.lat, loc.lng);
+  return '📍 ' + formatDist(d);
+}
+
+function renderCards() {
+  var list  = getFilteredSorted();
+  var el    = document.getElementById('cardsList');
+  var empty = document.getElementById('emptyState');
+  var count = document.getElementById('locationCount');
+
+  count.textContent = list.length + ' location' + (list.length !== 1 ? 's' : '');
+
+  if (list.length === 0) {
+    el.innerHTML = '';
+    empty.classList.add('show');
+    return;
+  }
+  empty.classList.remove('show');
+
+  el.innerHTML = list.map(function(loc, i) {
+    var time = timeDisplay(loc);
+    var dist = distDisplay(loc);
+    var contactCall = loc.phone
+      ? '<a class="exp-btn btn-call" href="tel:' + loc.phone + '">📞 Call Mosque</a>'
+      : '<button class="exp-btn btn-disabled" disabled>📞 No number yet</button>';
+    var contactWA = loc.whatsapp
+      ? '<a class="exp-btn btn-whatsapp" href="https://wa.me/' + loc.whatsapp + '" target="_blank">💬 WhatsApp</a>'
+      : '<button class="exp-btn btn-disabled" disabled>💬 Not listed</button>';
+
+    return '<div class="card" data-id="' + loc.id + '" style="animation:fadeUp 0.3s ease ' + (i*0.04) + 's both">' +
+      '<div class="card-collapsed">' +
+        '<div class="card-accent ' + accentClass(loc.type) + '"></div>' +
+        '<div class="card-body">' +
+          '<div class="card-top">' +
+            '<div class="card-name">' + loc.name + '</div>' +
+            badgeHTML(loc.type) +
+          '</div>' +
+          '<div class="card-area">' + loc.area + (loc.city !== 'Abuja' ? ', ' + loc.city : '') + '</div>' +
+          '<div class="card-meta">' +
+            (time ? '<span class="card-time">' + time + '</span>' : '') +
+            (dist ? '<span class="card-distance">' + dist + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="card-chevron">›</div>' +
+      '</div>' +
+      '<div class="card-expanded">' +
+        '<div class="exp-row">' +
+          '<div class="exp-label">Address</div>' +
+          '<div class="exp-address">' + (loc.address || loc.area + ', Abuja') + '</div>' +
+        '</div>' +
+        '<div class="exp-divider"></div>' +
+        '<div class="exp-row">' +
+          '<div class="exp-label">Imam</div>' +
+          '<div class="exp-value ' + (loc.imam === 'To be announced' ? 'muted' : '') + '">' + (loc.imam || 'To be announced') + '</div>' +
+        '</div>' +
+        '<div class="exp-divider"></div>' +
+        '<div class="exp-row">' +
+          '<div class="exp-label">Contact</div>' +
+          '<div class="exp-contact-row">' + contactCall + contactWA + '</div>' +
+        '</div>' +
+        '<div class="exp-divider"></div>' +
+        '<div class="exp-stream">' +
+          '<div class="exp-stream-icon">📺</div>' +
+          '<div class="exp-stream-text"><strong>Live Stream / Events</strong>Feature coming soon</div>' +
+          '<span class="exp-stream-badge">Coming Soon</span>' +
+        '</div>' +
+        '<button class="btn-navigate" onclick="navigateTo_id(' + loc.id + ')">🗺 Get Directions</button>' +
+        '<div class="exp-bottom-row">' +
+          '<button class="btn-notify" onclick="notifyMe(\'' + loc.name.replace(/'/g,"\\'") + '\')">🔔 Notify Me</button>' +
+          '<button class="btn-share" onclick="shareLocation(' + loc.id + ')">↗ Share</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  // Attach toggle listeners
+  el.querySelectorAll('.card').forEach(function(card) {
+    card.querySelector('.card-collapsed').addEventListener('click', function() {
+      var isOpen = card.classList.contains('open');
+      // Close all
+      el.querySelectorAll('.card.open').forEach(function(c) { c.classList.remove('open'); });
+      if (!isOpen) card.classList.add('open');
+    });
+  });
+}
+
+
+/* ═══════════════════════════════════════════
+   5. NAVIGATION
+═══════════════════════════════════════════ */
+function navigateTo(loc) {
+  var q = encodeURIComponent(loc.name + ', ' + loc.area + ', Abuja, Nigeria');
+  window.open('https://www.google.com/maps/search/?api=1&query=' + q, '_blank');
+}
+
+function navigateTo_id(id) {
+  var loc = LOCATIONS.find(function(l) { return l.id === id; });
+  if (loc) navigateTo(loc);
+}
+
+
+/* ═══════════════════════════════════════════
+   6. NOTIFY ME (placeholder — Phase 2 feature)
+═══════════════════════════════════════════ */
+function notifyMe(name) {
+  showToast('🔔 Notifications coming soon for ' + name.split(' ').slice(0,2).join(' '));
+}
+
+
+/* ═══════════════════════════════════════════
+   7. SHARE
+═══════════════════════════════════════════ */
+function shareLocation(id) {
+  var loc = LOCATIONS.find(function(l) { return l.id === id; });
+  if (!loc) return;
+  var text = '🕌 ' + loc.name + '\n📍 ' + loc.area + ', Abuja\n\nFind it on DeenLocator — powered by 2now Technology\nhttps://wa.me/2348065900110';
+  if (navigator.share) {
+    navigator.share({ title: loc.name, text: text });
+  } else {
+    navigator.clipboard.writeText(text).then(function() {
+      showToast('📋 Location info copied!');
+    });
+  }
+}
+
+
+/* ═══════════════════════════════════════════
+   8. TOAST
+═══════════════════════════════════════════ */
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2800);
+}
+
+
+/* ═══════════════════════════════════════════
+   9. FILTER + SORT EVENT LISTENERS
+═══════════════════════════════════════════ */
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    tab.classList.add('active');
+    activeFilter = tab.dataset.filter;
+    document.getElementById('searchInput').value = '';
+    searchQuery = '';
+    document.getElementById('searchClear').style.display = 'none';
+    renderCards();
+  });
+});
+
+document.getElementById('areaSelect').addEventListener('change', function() {
+  activeArea = this.value;
+  renderCards();
+});
+
+document.getElementById('sortSelect').addEventListener('change', function() {
+  activeSort = this.value;
+  renderCards();
+});
+
+var searchInput = document.getElementById('searchInput');
+var searchClear = document.getElementById('searchClear');
+
+searchInput.addEventListener('input', function() {
+  searchQuery = this.value.trim();
+  searchClear.style.display = searchQuery ? 'block' : 'none';
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelector('[data-filter="all"]').classList.add('active');
+  activeFilter = 'all';
+  renderCards();
+});
+
+searchClear.addEventListener('click', function() {
+  searchInput.value = '';
+  searchQuery = '';
+  searchClear.style.display = 'none';
+  renderCards();
+});
+
+/* Bottom nav */
+document.querySelectorAll('.nav-item').forEach(function(item) {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
+    item.classList.add('active');
+  });
+});
+
+
+/* ═══════════════════════════════════════════
+   10. INITIALISE
+═══════════════════════════════════════════ */
+buildAreaDropdown();
+renderCards();
+initGPS();
+
+</script>
+</body>
+</html>
