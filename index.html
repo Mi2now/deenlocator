@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <meta name="theme-color" content="#0a3d2e"/>
   <meta name="description" content="DeenLocator — Find Eid & Friday prayer locations across Abuja. Powered by 2now Technology."/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="DeenLocator"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
   <title>DeenLocator — Abuja Prayer Locator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -36,37 +41,48 @@
     .screen.active{display:flex}
 
     /* SCREEN 1: LOCATIONS */
-    .prayer-banner{background:linear-gradient(135deg,var(--gm),var(--gd));padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+    .prayer-banner{background:linear-gradient(135deg,var(--gm),var(--gd));padding:16px 20px 14px;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
     .prayer-label{font-size:10px;color:var(--gg);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}
     .prayer-name{font-size:20px;font-weight:700;color:var(--white);line-height:1.1}
     .prayer-time-text{font-size:12px;color:rgba(255,255,255,.5);margin-top:3px}
+    .prayer-greg{font-size:11px;color:rgba(255,255,255,.6);font-weight:500;margin-top:5px}
     .prayer-countdown{font-size:26px;font-weight:700;color:var(--gold-l);font-variant-numeric:tabular-nums;text-align:right;line-height:1}
-    .prayer-countdown-label{font-size:10px;color:rgba(255,255,255,.4);margin-top:4px;text-align:right}
+    .prayer-countdown-label{font-size:10px;color:rgba(255,255,255,.4);margin-top:3px;text-align:right}
+    .prayer-hijri{font-size:11px;color:var(--gold-l);font-weight:600;margin-top:5px;text-align:right;opacity:.85}
+
+    /* Hijri date bar */
+    
+
     .search-wrap{padding:14px 16px 4px;flex-shrink:0}
     .search-bar{display:flex;align-items:center;background:var(--white);border-radius:var(--rm);border:1.5px solid var(--cd);padding:0 14px;height:46px;gap:10px;transition:border-color .2s}
     .search-bar:focus-within{border-color:var(--gl)}
     .search-icon{font-size:15px;opacity:.4;flex-shrink:0}
     .search-input{flex:1;border:none;outline:none;font-family:inherit;font-size:14px;color:var(--tp);background:transparent}
     .search-input::placeholder{color:var(--tm)}
-    .search-clear{background:none;border:none;cursor:pointer;font-size:16px;color:var(--tm);padding:4px;display:none;-webkit-tap-highlight-color:transparent}
+    .search-clear{background:none;border:none;cursor:pointer;font-size:15px;color:var(--tm);padding:4px;display:none;-webkit-tap-highlight-color:transparent}
+
     .filter-tabs{display:flex;gap:8px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
     .filter-tabs::-webkit-scrollbar{display:none}
     .tab{flex-shrink:0;height:36px;padding:0 16px;border-radius:20px;border:1.5px solid var(--cd);background:var(--white);font-family:inherit;font-size:13px;font-weight:600;color:var(--ts);cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
     .tab.active{background:var(--gd);border-color:var(--gd);color:var(--white)}
     .tab:active{opacity:.7}
+
     .filter-bar{display:flex;gap:8px;padding:10px 16px 0;align-items:center;flex-shrink:0}
     .filter-select,.sort-select{height:36px;padding:0 28px 0 10px;border-radius:10px;border:1.5px solid var(--cd);background:var(--white);font-family:inherit;font-size:13px;font-weight:600;color:var(--ts);cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a9a9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
     .filter-select{flex:1}
     .filter-select:focus,.sort-select:focus{border-color:var(--gl)}
+
     .nearest-badge{display:flex;align-items:center;gap:10px;margin:12px 16px 0;background:var(--gd);border-radius:var(--rm);padding:12px 14px;flex-shrink:0}
     .nearest-icon{font-size:20px;flex-shrink:0}
     .nearest-label{font-size:10px;font-weight:700;color:var(--gg);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px}
     .nearest-name{font-size:13px;font-weight:600;color:var(--white);line-height:1.3}
     .nearest-dist{font-size:11px;color:rgba(255,255,255,.5)}
     .nearest-btn{margin-left:auto;background:var(--gg);color:var(--gd);border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;padding:8px 14px;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+
     .section-header{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px;flex-shrink:0}
     .section-title{font-size:15px;font-weight:700;color:var(--tp)}
     .section-count{font-size:11px;color:var(--tm);background:var(--cd);padding:3px 10px;border-radius:20px;font-weight:600}
+
     .cards-list{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px}
     .card{background:var(--white);border-radius:var(--rm);box-shadow:var(--sh);overflow:hidden;border:1px solid rgba(0,0,0,.04);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:box-shadow .2s}
     .card:active{box-shadow:none}
@@ -79,11 +95,13 @@
     .card-badge{font-size:10px;font-weight:700;padding:3px 7px;border-radius:20px;flex-shrink:0;text-transform:uppercase;letter-spacing:.2px;white-space:nowrap}
     .badge-eid{background:#fef3c7;color:#92400e}.badge-jumuah{background:#d1fae5;color:#065f46}.badge-both{background:#ede9fe;color:#4c1d95}
     .card-area{font-size:11px;color:var(--tm)}
-    .card-meta{display:flex;align-items:center;gap:12px;margin-top:4px}
+    .card-meta{display:flex;align-items:center;gap:12px;margin-top:4px;flex-wrap:wrap}
     .card-time{font-size:12px;font-weight:600;color:var(--gm)}
     .card-distance{font-size:11px;color:var(--tm);font-weight:600;background:var(--cd);padding:1px 7px;border-radius:10px}
-    .card-chevron{width:40px;display:flex;align-items:center;justify-content:center;color:var(--tm);font-size:18px;flex-shrink:0;transition:transform .25s}
-    .card.open .card-chevron{transform:rotate(90deg)}
+    .card-chevron{width:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .card-chevron-inner{width:28px;height:28px;border-radius:8px;background:var(--gd);color:var(--white);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:transform .25s;flex-shrink:0}
+    .card.open .card-chevron-inner{transform:rotate(90deg)}
+
     .card-expanded{display:none;border-top:1px solid var(--cd);padding:14px 16px 16px;flex-direction:column;gap:12px}
     .card.open .card-expanded{display:flex}
     .exp-row{display:flex;flex-direction:column;gap:3px}
@@ -100,33 +118,26 @@
     .exp-stream-text{font-size:12px;color:var(--tm)}
     .exp-stream-text strong{display:block;font-size:13px;color:var(--ts);margin-bottom:1px}
     .exp-stream-badge{margin-left:auto;background:var(--white);border-radius:6px;font-size:10px;font-weight:700;color:var(--tm);padding:3px 8px;flex-shrink:0}
-    .btn-navigate{width:100%;height:46px;background:var(--gd);color:var(--white);border:none;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent}
+    .btn-navigate{width:100%;height:44px;background:var(--gd);color:var(--white);border:none;border-radius:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent}
     .btn-navigate:active{opacity:.85}
     .exp-bottom-row{display:flex;gap:8px}
     .btn-notify,.btn-share{flex:1;height:38px;border-radius:10px;border:1.5px solid var(--cd);background:var(--white);font-family:inherit;font-size:12px;font-weight:700;color:var(--ts);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;-webkit-tap-highlight-color:transparent}
+    .btn-share{background:var(--gd);color:var(--white);border-color:var(--gd)}
+
     .empty-state{text-align:center;padding:48px 20px;display:none;flex-direction:column;align-items:center;gap:8px}
     .empty-state.show{display:flex}
-    .empty-icon{font-size:44px;margin-bottom:4px}
-    .empty-title{font-size:15px;font-weight:700;color:var(--ts)}
-    .empty-text{font-size:13px;color:var(--tm);line-height:1.6}
 
-    /* SCREEN 2: MAP — Leaflet */
+    /* SCREEN 2: MAP */
     .map-filter-bar{display:flex;gap:8px;padding:10px 16px;background:var(--white);border-bottom:1px solid var(--cd);overflow-x:auto;scrollbar-width:none;flex-shrink:0}
     .map-filter-bar::-webkit-scrollbar{display:none}
     .map-tab{flex-shrink:0;height:34px;padding:0 14px;border-radius:20px;border:1.5px solid var(--cd);background:var(--white);font-family:inherit;font-size:12px;font-weight:600;color:var(--ts);cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap;transition:all .18s}
     .map-tab.active{background:var(--gd);border-color:var(--gd);color:var(--white)}
-
-    /* Nearest strip above map */
     .map-nearest{background:var(--gd);padding:9px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
     .map-nearest-label{font-size:10px;font-weight:700;color:var(--gg);text-transform:uppercase;letter-spacing:.6px;flex-shrink:0}
     .map-nearest-name{font-size:12px;font-weight:600;color:var(--white);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .map-nearest-dist{font-size:11px;color:rgba(255,255,255,.55);flex-shrink:0;margin-right:4px}
     .map-nearest-btn{background:var(--gg);color:var(--gd);border:none;border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;padding:5px 12px;cursor:pointer;flex-shrink:0}
-
-    /* Leaflet map fills remaining space */
-    #map{flex:1;min-height:300px;z-index:1}
-
-    /* Nearest list below map */
+    #map{height:320px;z-index:1;flex-shrink:0}
     .map-list-title{font-size:13px;font-weight:700;color:var(--tp);padding:14px 16px 8px;flex-shrink:0}
     .map-list{padding:0 16px 12px;display:flex;flex-direction:column;gap:8px;flex-shrink:0}
     .map-list-row{display:flex;align-items:center;gap:12px;background:var(--white);border-radius:10px;padding:11px 14px;cursor:pointer;border:1px solid var(--cd);-webkit-tap-highlight-color:transparent}
@@ -138,36 +149,25 @@
     .map-list-meta{font-size:11px;color:var(--tm);margin-top:1px}
     .map-list-dist{font-size:11px;font-weight:700;color:var(--gm);flex-shrink:0;background:var(--cd);padding:2px 8px;border-radius:10px}
     .map-list-nav{font-size:11px;font-weight:700;color:var(--gm);background:none;border:none;cursor:pointer;flex-shrink:0;padding:4px 0}
-
-    /* Leaflet popup custom */
     .leaflet-popup-content-wrapper{border-radius:12px!important;box-shadow:0 4px 20px rgba(0,0,0,.15)!important;padding:0!important}
     .leaflet-popup-content{margin:0!important}
     .leaflet-popup-tip-container{display:none}
-    .map-popup{padding:14px;min-width:190px;max-width:230px;font-family:"Plus Jakarta Sans",sans-serif}
-    .map-popup-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;margin-bottom:6px}
-    .map-popup-name{font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:3px;line-height:1.3}
-    .map-popup-area{font-size:11px;color:#9a9a9a;margin-bottom:3px}
-    .map-popup-time{font-size:11px;font-weight:600;color:#0f5c42;margin-bottom:6px}
-    .map-popup-dist{font-size:11px;color:#9a9a9a;margin-bottom:10px}
-    .map-popup-btn{width:100%;height:32px;background:#0a3d2e;color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:"Plus Jakarta Sans",sans-serif}
 
     /* SCREEN 3: PRAYER TIMES */
     .pt-hero{background:linear-gradient(160deg,var(--gd),var(--gm));padding:24px 24px 28px;text-align:center;flex-shrink:0}
     .pt-city{font-size:11px;color:var(--gg);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
-    .pt-date{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:18px;font-weight:500}
+    .pt-date{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:4px;font-weight:500}
+    .pt-hijri{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:14px}
     .pt-next-label{font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
     .pt-next-name{font-size:32px;font-weight:700;color:var(--white);line-height:1;margin-bottom:3px}
     .pt-next-time{font-size:17px;color:var(--gg);font-weight:600;margin-bottom:14px}
     .pt-big-countdown{font-size:42px;font-weight:700;color:var(--gold-l);font-variant-numeric:tabular-nums;line-height:1}
     .pt-big-label{font-size:11px;color:rgba(255,255,255,.4);margin-top:6px}
-
-    /* Edit bar */
     .pt-edit-bar{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--white);border-bottom:1px solid var(--cd);flex-shrink:0}
     .pt-edit-bar-text{flex:1;font-size:12px;color:var(--ts);line-height:1.4}
     .pt-edit-bar-text b{color:var(--tp)}
     .pt-edit-btn{flex-shrink:0;height:30px;padding:0 14px;background:var(--gd);color:var(--white);border:none;border-radius:8px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
     .pt-edit-btn.saving{background:var(--gg);color:var(--gd)}
-
     .pt-cards{padding:16px 16px 0;display:flex;flex-direction:column;gap:10px}
     .pt-card{background:var(--white);border-radius:var(--rm);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border:1px solid var(--cd);box-shadow:var(--sh)}
     .pt-card.current{background:var(--gd);border-color:var(--gd)}
@@ -182,10 +182,8 @@
     .pt-card-time{font-size:17px;font-weight:700;color:var(--gm);font-variant-numeric:tabular-nums}
     .pt-card.current .pt-card-time{color:var(--gold-l)}
     .pt-now-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--gg);color:var(--gd)}
-    /* Editable time input */
     .pt-time-input{font-size:16px;font-weight:700;color:var(--gm);font-variant-numeric:tabular-nums;border:none;border-bottom:2px solid var(--gg);background:transparent;outline:none;font-family:inherit;width:88px;text-align:right;padding:2px 0}
     .pt-card.current .pt-time-input{color:var(--gold-l);border-bottom-color:rgba(255,255,255,.5)}
-
     .pt-jumuah{margin:14px 16px 0;background:var(--gd);border-radius:var(--rm);padding:14px 16px;display:flex;align-items:center;gap:14px;flex-shrink:0}
     .pt-jumuah-icon{font-size:24px;flex-shrink:0}
     .pt-jumuah-label{font-size:10px;font-weight:700;color:var(--gg);text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px}
@@ -193,7 +191,7 @@
     .pt-jumuah-sub{font-size:11px;color:rgba(255,255,255,.55);margin-top:2px}
     .pt-note{margin:12px 16px 0;background:var(--cd);border-radius:10px;padding:11px 14px;font-size:12px;color:var(--ts);line-height:1.6}
     .pt-note strong{display:block;font-size:13px;color:var(--tp);margin-bottom:3px}
-    .pt-reset{text-align:center;padding:12px 16px;flex-shrink:0}
+    .pt-reset{text-align:center;padding:12px 16px 0}
     .pt-reset-btn{background:none;border:none;font-family:inherit;font-size:12px;color:var(--tm);cursor:pointer;text-decoration:underline;padding:4px}
 
     /* SCREEN 4: SETTINGS */
@@ -237,14 +235,49 @@
     .nav-item.active .nav-icon{transform:scale(1.12)}
     .nav-item.active::after{content:"";position:absolute;bottom:6px;width:4px;height:4px;border-radius:50%;background:var(--gm)}
 
+    /* SHARE SHEET */
+    .share-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:5000;display:none;align-items:flex-end;justify-content:center}
+    .share-overlay.show{display:flex}
+    .share-sheet{background:var(--white);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+    .share-sheet-handle{width:40px;height:4px;background:var(--cd);border-radius:2px;margin:0 auto 16px}
+    .share-sheet-title{font-size:14px;font-weight:700;color:var(--tp);margin-bottom:14px;text-align:center}
+
+    /* Visual share card */
+    .share-card{border-radius:16px;overflow:hidden;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+    .share-card-top{background:linear-gradient(135deg,#0a3d2e,#0f5c42);padding:18px 18px 14px}
+    .share-card-logo-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+    .share-card-logo-icon{width:28px;height:28px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .share-card-app-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.9)}
+    .share-card-app-name span{color:#22c98a}
+    .share-card-badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;margin-bottom:8px}
+    .share-card-mosque-name{font-size:18px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:4px}
+    .share-card-area{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:12px}
+    .share-card-times{display:flex;gap:10px;flex-wrap:wrap}
+    .share-card-time-pill{background:rgba(255,255,255,.12);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;color:#fff}
+    .share-card-time-pill span{display:block;font-size:10px;color:rgba(255,255,255,.55);font-weight:400;margin-bottom:1px}
+    .share-card-bottom{background:#f3efe6;padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+    .share-card-address{font-size:11px;color:#5a5a5a;flex:1;margin-right:10px;line-height:1.4}
+    .share-card-qr-placeholder{font-size:22px;flex-shrink:0}
+    .share-card-footer{background:#0a3d2e;padding:8px 18px;display:flex;align-items:center;justify-content:space-between}
+    .share-card-footer-text{font-size:10px;color:rgba(255,255,255,.6)}
+    .share-card-footer-contact{font-size:10px;color:#22c98a;font-weight:600}
+
+    /* Text preview */
+    .share-text-preview{background:var(--bg);border-radius:12px;padding:12px 14px;margin-bottom:14px;border:1px solid var(--cd);max-height:120px;overflow-y:auto}
+    .share-text-preview-content{font-size:11px;color:var(--ts);line-height:1.7;white-space:pre-line}
+
+    .share-actions{display:flex;gap:8px;margin-bottom:8px}
+    .share-btn{flex:1;height:46px;border-radius:12px;border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent}
+    .share-whatsapp{background:#25D366;color:var(--white)}
+    .share-copy{background:var(--cd);color:var(--ts)}
+    .share-close{width:100%;height:44px;margin-top:4px;border-radius:12px;border:1.5px solid var(--cd);background:var(--white);font-family:inherit;font-size:13px;font-weight:600;color:var(--tm);cursor:pointer}
+
     /* TOAST */
-    .toast{position:fixed;bottom:calc(var(--nh) + 16px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--gd);color:var(--white);padding:10px 20px;border-radius:30px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:300;white-space:nowrap;max-width:90%}
+    .toast{position:fixed;bottom:calc(var(--nh) + 16px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--gd);color:var(--white);padding:10px 20px;border-radius:30px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:600;white-space:nowrap;max-width:90%}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-    /* Screen 2 uses flexbox for map height */
-    #screen-map{overflow:hidden}
-
     @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
@@ -267,10 +300,12 @@
         <div class="prayer-label">Next Prayer</div>
         <div class="prayer-name" id="nextPrayerName">—</div>
         <div class="prayer-time-text" id="nextPrayerTime">Loading...</div>
+        <div class="prayer-greg" id="gregDate">—</div>
       </div>
-      <div>
+      <div style="text-align:right">
         <div class="prayer-countdown" id="countdown">--:--:--</div>
         <div class="prayer-countdown-label">time remaining</div>
+        <div class="prayer-hijri" id="hijriDate">—</div>
       </div>
     </div>
     <div class="search-wrap">
@@ -305,18 +340,21 @@
     </div>
     <div class="section-header">
       <span class="section-title">Prayer Locations</span>
-      <span class="section-count" id="locationCount">0 locations</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="section-count" id="locationCount">0 locations</span>
+        <button id="refreshBtn" onclick="refreshLocation()" style="width:32px;height:32px;border-radius:8px;border:1.5px solid var(--cd);background:var(--white);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent" title="Refresh my location">🔄</button>
+      </div>
     </div>
     <div class="cards-list" id="cardsList"></div>
     <div class="empty-state" id="emptyState">
-      <div class="empty-icon">🔍</div>
-      <div class="empty-title">No locations found</div>
-      <div class="empty-text">Try a different search<br>or change the filter.</div>
+      <div style="font-size:44px;margin-bottom:4px">🔍</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ts)">No locations found</div>
+      <div style="font-size:13px;color:var(--tm);line-height:1.6">Try a different search or filter.</div>
     </div>
     <footer style="text-align:center;padding:24px 20px 8px;border-top:1px solid var(--cd);margin-top:8px;flex-shrink:0">
-      <div style="font-size:15px;font-weight:700;color:var(--gd);margin-bottom:4px">Deen<span style="color:var(--gl)">Locator</span></div>
-      <div style="font-size:11px;color:var(--tm);margin-bottom:12px">Find your nearest prayer location in seconds</div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:10px">
+      <div style="font-size:14px;font-weight:700;color:var(--gd);margin-bottom:3px">Deen<span style="color:var(--gl)">Locator</span></div>
+      <div style="font-size:11px;color:var(--tm);margin-bottom:10px">Find your nearest prayer location in seconds</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:8px;flex-wrap:wrap">
         <a href="https://wa.me/2348065900110" target="_blank" style="font-size:12px;color:var(--gm);text-decoration:none;font-weight:600">💬 WhatsApp</a>
         <span style="color:var(--cd)">·</span>
         <a href="tel:+2348065900110" style="font-size:12px;color:var(--gm);text-decoration:none;font-weight:600">📞 +234 806 590 0110</a>
@@ -325,10 +363,10 @@
     </footer>
   </div>
 
-  <!-- SCREEN 2: MAP (Leaflet) -->
+  <!-- SCREEN 2: MAP -->
   <div class="screen" id="screen-map">
     <div class="map-filter-bar">
-      <button class="map-tab active" data-mf="all">🕌 All (28)</button>
+      <button class="map-tab active" data-mf="all">🕌 All</button>
       <button class="map-tab" data-mf="eid">🌙 Eid Only</button>
       <button class="map-tab" data-mf="jumuah">📿 Jumuʼah Only</button>
     </div>
@@ -348,6 +386,7 @@
     <div class="pt-hero">
       <div class="pt-city">Abuja, Nigeria</div>
       <div class="pt-date" id="ptDate">—</div>
+      <div class="pt-hijri" id="ptHijri">—</div>
       <div class="pt-next-label">Next Prayer</div>
       <div class="pt-next-name" id="ptNextName">—</div>
       <div class="pt-next-time" id="ptNextTime">—</div>
@@ -355,7 +394,7 @@
       <div class="pt-big-label">time remaining</div>
     </div>
     <div class="pt-edit-bar">
-      <div class="pt-edit-bar-text">Default Abuja times shown. Tap <b>Edit</b> to set your mosque's exact times — saved on your device.</div>
+      <div class="pt-edit-bar-text">Default Abuja times shown. Tap <b>Edit</b> to set your mosque's exact times.</div>
       <button class="pt-edit-btn" id="ptEditBtn" onclick="toggleEdit()">Edit</button>
     </div>
     <div class="pt-cards" id="ptCards"></div>
@@ -369,7 +408,7 @@
     </div>
     <div class="pt-note">
       <strong>📌 About these times</strong>
-      Approximate times for Abuja FCT. Use Edit to personalise for your mosque — your changes are saved on your phone only.
+      Approximate times for Abuja FCT. Tap Edit to personalise for your mosque — saved on your phone.
     </div>
     <div class="pt-reset">
       <button class="pt-reset-btn" onclick="resetTimes()">Reset to default Abuja times</button>
@@ -387,9 +426,9 @@
     <div class="settings-section">
       <div class="settings-section-title">Notifications</div>
       <div class="settings-group">
-        <div class="settings-row static"><div class="settings-row-icon">🔔</div><div class="settings-row-body"><div class="settings-row-title">Prayer Time Alerts</div><div class="settings-row-sub">Coming soon — notify before each prayer</div></div><label class="toggle"><input type="checkbox" disabled/><span class="toggle-slider"></span></label></div>
-        <div class="settings-row static"><div class="settings-row-icon">🕌</div><div class="settings-row-body"><div class="settings-row-title">Jumuʼah Reminder</div><div class="settings-row-sub">Coming soon — Friday prayer alert</div></div><label class="toggle"><input type="checkbox" disabled/><span class="toggle-slider"></span></label></div>
-        <div class="settings-row static"><div class="settings-row-icon">📢</div><div class="settings-row-body"><div class="settings-row-title">Mosque Announcements</div><div class="settings-row-sub">Coming soon — events and updates</div></div><label class="toggle"><input type="checkbox" disabled/><span class="toggle-slider"></span></label></div>
+        <div class="settings-row static"><div class="settings-row-icon">🔔</div><div class="settings-row-body"><div class="settings-row-title">Prayer Time Alerts</div><div class="settings-row-sub">Coming soon</div></div><label class="toggle"><input type="checkbox" disabled/><span class="toggle-slider"></span></label></div>
+        <div class="settings-row static"><div class="settings-row-icon">🕌</div><div class="settings-row-body"><div class="settings-row-title">Jumuʼah Reminder</div><div class="settings-row-sub">Coming soon</div></div><label class="toggle"><input type="checkbox" disabled/><span class="toggle-slider"></span></label></div>
+        <div class="settings-row static"><div class="settings-row-icon">📢</div><div class="settings-row-body"><div class="settings-row-title">Mosque Announcements</div><div class="settings-row-sub">Coming soon</div></div><label class="toggle"><input type="checkbox" disabled/><span class="toggle-slider"></span></label></div>
       </div>
     </div>
     <div class="settings-section">
@@ -416,21 +455,104 @@
 
 </div><!-- end .app -->
 
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button class="nav-item active" data-screen="locations"><span class="nav-icon">🕌</span><span class="nav-label">Locations</span></button>
   <button class="nav-item" data-screen="map"><span class="nav-icon">🗺️</span><span class="nav-label">Map</span></button>
   <button class="nav-item" data-screen="prayer"><span class="nav-icon">🕐</span><span class="nav-label">Prayer Times</span></button>
   <button class="nav-item" data-screen="settings"><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></button>
 </nav>
+
+<!-- SHARE SHEET -->
+<div class="share-overlay" id="shareOverlay" onclick="closeShare(event)">
+  <div class="share-sheet" id="shareSheet">
+    <div class="share-sheet-handle"></div>
+    <div class="share-sheet-title">Share this Mosque</div>
+
+    <!-- VISUAL SHARE CARD -->
+    <div class="share-card" id="shareCard">
+      <div class="share-card-top">
+        <div class="share-card-logo-row">
+          <div class="share-card-logo-icon">🕌</div>
+          <div class="share-card-app-name">Deen<span>Locator</span></div>
+        </div>
+        <div class="share-card-badge" id="scBadge"></div>
+        <div class="share-card-mosque-name" id="scName"></div>
+        <div class="share-card-area" id="scArea"></div>
+        <div class="share-card-times" id="scTimes"></div>
+      </div>
+      <div class="share-card-bottom">
+        <div class="share-card-address" id="scAddress"></div>
+        <div class="share-card-qr-placeholder">📍</div>
+      </div>
+      <div class="share-card-footer">
+        <div class="share-card-footer-text">Powered by 2now Technology</div>
+        <div class="share-card-footer-contact">+234 806 590 0110</div>
+      </div>
+    </div>
+
+    <!-- TEXT PREVIEW -->
+    <div class="share-text-preview">
+      <div class="share-text-preview-content" id="sharePreviewText"></div>
+    </div>
+
+    <div class="share-actions">
+      <button class="share-btn share-whatsapp" id="shareWhatsappBtn">💬 WhatsApp</button>
+      <button class="share-btn share-copy" id="shareCopyBtn">📋 Copy Text</button>
+    </div>
+    <button class="share-close" onclick="closeShareSheet()">Close</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 var LOGO='data:image/png;base64,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';
 
+/* ══ LOGO ══ */
 document.getElementById('settingsLogo').src = LOGO;
 document.getElementById('footerLogo').src   = LOGO;
 
-/* ══ PRAYER TIMES DATA ══ */
+/* ══ HIJRI DATE ══ */
+function getHijriDate(){
+  try{
+    var d = new Date();
+    var hijri = new Intl.DateTimeFormat('en-u-ca-islamic', {
+      day:'numeric', month:'long', year:'numeric'
+    }).format(d);
+    return hijri;
+  }catch(e){
+    /* Manual fallback — approximate conversion */
+    var JD = Math.floor((new Date().getTime()/86400000) + 2440587.5);
+    var l = JD - 1948440 + 10632;
+    var n = Math.floor((l-1)/10631);
+    l = l - 10631*n + 354;
+    var j = Math.floor((10985-l)/5316)*Math.floor(50*l/17719) + Math.floor(l/5670)*Math.floor(43*l/15238);
+    l = l - Math.floor((30-j)/15)*Math.floor(17719*j/50) - Math.floor(j/16)*Math.floor(15238*j/43) + 29;
+    var month = Math.floor(24*l/709);
+    var day = l - Math.floor(709*month/24);
+    var year = 30*n + j - 30;
+    var months = ['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Awwal','Jumada al-Thani','Rajab',"Sha'ban",'Ramadan','Shawwal','Dhul Qadah','Dhul Hijjah'];
+    return day + ' ' + months[month-1] + ' ' + year + ' AH';
+  }
+}
+
+function setHijriDate(){
+  var now = new Date();
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var greg = days[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+  var h = getHijriDate();
+  var elGreg  = document.getElementById('gregDate');
+  var elHijri = document.getElementById('hijriDate');
+  var elPtHijri = document.getElementById('ptHijri');
+  if(elGreg)   elGreg.textContent  = greg;
+  if(elHijri)  elHijri.textContent = h;
+  if(elPtHijri) elPtHijri.textContent = greg + '  ·  ' + h;
+}
+setHijriDate();
+
+/* ══ PRAYER TIMES ══ */
 var DEFAULT_PRAYERS = [
   {name:'Fajr',    arabic:'الفجر',  icon:'🌙', h:5,  m:15},
   {name:'Dhuhr',   arabic:'الظهر',  icon:'☀️', h:12, m:30},
@@ -439,33 +561,27 @@ var DEFAULT_PRAYERS = [
   {name:'Isha',    arabic:'العشاء', icon:'🌙', h:20, m:0 }
 ];
 
-function loadPrayers(){
-  try{ var s=localStorage.getItem('dl_prayers'); if(s) return JSON.parse(s); }catch(e){}
-  return JSON.parse(JSON.stringify(DEFAULT_PRAYERS));
-}
-function savePrayers(a){ try{ localStorage.setItem('dl_prayers', JSON.stringify(a)); }catch(e){} }
+function loadPrayers(){ try{ var s=localStorage.getItem('dl_prayers'); if(s) return JSON.parse(s); }catch(e){} return JSON.parse(JSON.stringify(DEFAULT_PRAYERS)); }
+function savePrayers(a){ try{ localStorage.setItem('dl_prayers',JSON.stringify(a)); }catch(e){} }
 var PRAYERS = loadPrayers();
 
-function fmtTime(h,m){ var s=h>=12?'PM':'AM', h12=h%12||12; return h12+':'+(m<10?'0':'')+m+' '+s; }
-
+function fmtTime(h,m){ var s=h>=12?'PM':'AM',h12=h%12||12; return h12+':'+(m<10?'0':'')+m+' '+s; }
 function parseTime(str){
-  var mm = str.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-  if(!mm) return null;
-  var h=parseInt(mm[1]), mn=parseInt(mm[2]), ap=mm[3].toUpperCase();
-  if(ap==='PM' && h!==12) h+=12;
-  if(ap==='AM' && h===12) h=0;
+  var mm=str.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i); if(!mm) return null;
+  var h=parseInt(mm[1]),mn=parseInt(mm[2]),ap=mm[3].toUpperCase();
+  if(ap==='PM'&&h!==12)h+=12; if(ap==='AM'&&h===12)h=0;
   if(h<0||h>23||mn<0||mn>59) return null;
-  return {h:h, m:mn};
+  return{h:h,m:mn};
 }
 
 function getNext(){
-  var now=new Date(), nm=now.getHours()*60+now.getMinutes();
-  for(var i=0;i<PRAYERS.length;i++) if(PRAYERS[i].h*60+PRAYERS[i].m>nm) return {p:PRAYERS[i],i:i};
-  return {p:PRAYERS[0],i:0};
+  var now=new Date(),nm=now.getHours()*60+now.getMinutes();
+  for(var i=0;i<PRAYERS.length;i++) if(PRAYERS[i].h*60+PRAYERS[i].m>nm) return{p:PRAYERS[i],i:i};
+  return{p:PRAYERS[0],i:0};
 }
 
 function cdStr(h,m){
-  var now=new Date(), next=new Date();
+  var now=new Date(),next=new Date();
   next.setHours(h,m,0,0); if(next<=now) next.setDate(next.getDate()+1);
   var d=next-now;
   return String(Math.floor(d/3600000)).padStart(2,'0')+':'+String(Math.floor((d%3600000)/60000)).padStart(2,'0')+':'+String(Math.floor((d%60000)/1000)).padStart(2,'0');
@@ -479,47 +595,37 @@ function updateBanner(){
 }
 setInterval(updateBanner,1000); updateBanner();
 
-/* ══ PRAYER SCREEN ══ */
-var ptEditing = false;
-
+var ptEditing=false;
 function toggleEdit(){
-  ptEditing = !ptEditing;
-  var btn = document.getElementById('ptEditBtn');
+  ptEditing=!ptEditing;
+  var btn=document.getElementById('ptEditBtn');
   if(!ptEditing){
-    /* Save */
     document.querySelectorAll('.pt-time-input').forEach(function(inp,i){
-      var p = parseTime(inp.value);
-      if(p){ PRAYERS[i].h=p.h; PRAYERS[i].m=p.m; }
+      var p=parseTime(inp.value); if(p){PRAYERS[i].h=p.h;PRAYERS[i].m=p.m;}
     });
-    savePrayers(PRAYERS);
-    updateBanner();
-    showToast('✅ Prayer times saved!');
+    savePrayers(PRAYERS); updateBanner(); showToast('✅ Prayer times saved!');
     btn.textContent='Edit'; btn.classList.remove('saving');
-  } else {
-    btn.textContent='Save'; btn.classList.add('saving');
-  }
+  } else { btn.textContent='Save'; btn.classList.add('saving'); }
   renderPtCards();
 }
 
 function resetTimes(){
-  PRAYERS = JSON.parse(JSON.stringify(DEFAULT_PRAYERS));
-  savePrayers(PRAYERS);
+  PRAYERS=JSON.parse(JSON.stringify(DEFAULT_PRAYERS)); savePrayers(PRAYERS);
   ptEditing=false;
-  var btn=document.getElementById('ptEditBtn');
-  btn.textContent='Edit'; btn.classList.remove('saving');
-  renderPtCards(); updateBanner();
-  showToast('🔄 Reset to default Abuja times');
+  document.getElementById('ptEditBtn').textContent='Edit';
+  document.getElementById('ptEditBtn').classList.remove('saving');
+  renderPtCards(); updateBanner(); showToast('🔄 Reset to default Abuja times');
 }
 
 function renderPtCards(){
-  var now=new Date(), nm=now.getHours()*60+now.getMinutes(), r=getNext();
-  document.getElementById('ptCards').innerHTML = PRAYERS.map(function(pr,i){
-    var pmin=pr.h*60+pr.m, cls='pt-card', badge='';
+  var now=new Date(),nm=now.getHours()*60+now.getMinutes(),r=getNext();
+  document.getElementById('ptCards').innerHTML=PRAYERS.map(function(pr,i){
+    var pmin=pr.h*60+pr.m,cls='pt-card',badge='';
     if(pmin<nm) cls+=' passed';
-    else if(i===r.i){ cls+=' current'; badge='<div class="pt-now-badge">Now</div>'; }
-    var timeEl = ptEditing
-      ? '<input class="pt-time-input" value="'+fmtTime(pr.h,pr.m)+'" placeholder="e.g. 5:15 AM"/>'
-      : '<div class="pt-card-time">'+fmtTime(pr.h,pr.m)+'</div>';
+    else if(i===r.i){cls+=' current';badge='<div class="pt-now-badge">Now</div>';}
+    var timeEl=ptEditing
+      ?'<input class="pt-time-input" value="'+fmtTime(pr.h,pr.m)+'" placeholder="5:15 AM"/>'
+      :'<div class="pt-card-time">'+fmtTime(pr.h,pr.m)+'</div>';
     return '<div class="'+cls+'"><div class="pt-card-left"><div class="pt-card-icon">'+pr.icon+'</div><div><div class="pt-card-name">'+pr.name+'</div><div class="pt-card-arabic">'+pr.arabic+'</div></div></div><div class="pt-card-right">'+timeEl+badge+'</div></div>';
   }).join('');
 }
@@ -530,7 +636,7 @@ function updatePrayerScreen(){
   var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('ptDate').textContent=days[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
   if(window._ptT) clearInterval(window._ptT);
-  window._ptT = setInterval(function(){
+  window._ptT=setInterval(function(){
     var r=getNext();
     document.getElementById('ptBigCountdown').textContent=cdStr(r.p.h,r.p.m);
     document.getElementById('ptNextName').textContent=r.p.name;
@@ -544,20 +650,19 @@ function updatePrayerScreen(){
 }
 
 /* ══ GPS ══ */
-var userLat=null, userLng=null;
-
+var userLat=null,userLng=null;
 function calcDist(a,b,c,d){
-  var R=6371, dL=(c-a)*Math.PI/180, dG=(d-b)*Math.PI/180;
+  var R=6371,dL=(c-a)*Math.PI/180,dG=(d-b)*Math.PI/180;
   var x=Math.sin(dL/2)*Math.sin(dL/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dG/2)*Math.sin(dG/2);
   return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
 }
-function fmtDist(km){ return km<1 ? Math.round(km*1000)+' m' : km.toFixed(1)+' km'; }
+function fmtDist(km){return km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km';}
 
 function getBest(filter){
   if(userLat===null) return null;
-  var list = filter==='all' ? LOCATIONS : LOCATIONS.filter(function(l){return l.type===filter||l.type==='both';});
-  var best=null, bd=Infinity;
-  list.forEach(function(l){ var d=calcDist(userLat,userLng,l.lat,l.lng); if(d<bd){bd=d;best=Object.assign({},l,{_dist:d});} });
+  var list=filter==='all'?LOCATIONS:LOCATIONS.filter(function(l){return l.type===filter||l.type==='both';});
+  var best=null,bd=Infinity;
+  list.forEach(function(l){var d=calcDist(userLat,userLng,l.lat,l.lng);if(d<bd){bd=d;best=Object.assign({},l,{_dist:d});}});
   return best;
 }
 
@@ -567,8 +672,37 @@ function initGPS(){
     userLat=pos.coords.latitude; userLng=pos.coords.longitude;
     showNearest(); renderCards(); refreshMapNearest(); buildMapList(mapFilter);
     if(leafMap) addUserPin();
-  });
+  }, function(){
+    /* GPS denied or failed — silent */
+  }, {enableHighAccuracy:true, timeout:10000});
 }
+
+function refreshLocation(){
+  /* Spin the button */
+  var btn = document.getElementById('refreshBtn');
+  if(btn){ btn.style.animation='spin .6s linear'; btn.disabled=true; }
+  if(!navigator.geolocation){ showToast('📍 GPS not available on this device'); return; }
+  navigator.geolocation.getCurrentPosition(function(pos){
+    userLat=pos.coords.latitude; userLng=pos.coords.longitude;
+    showNearest(); renderCards(); refreshMapNearest(); buildMapList(mapFilter);
+    if(leafMap) addUserPin();
+    if(btn){ btn.style.animation=''; btn.disabled=false; }
+    showToast('📍 Location updated!');
+  }, function(){
+    if(btn){ btn.style.animation=''; btn.disabled=false; }
+    showToast('📍 Could not get location — check GPS');
+  }, {enableHighAccuracy:true, timeout:8000});
+}
+
+/* Auto-refresh GPS every 90 seconds */
+setInterval(function(){
+  if(!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(function(pos){
+    userLat=pos.coords.latitude; userLng=pos.coords.longitude;
+    showNearest(); renderCards(); refreshMapNearest();
+    if(leafMap) buildMapList(mapFilter);
+  }, function(){}, {enableHighAccuracy:false, timeout:5000});
+}, 90000);
 
 function showNearest(){
   var b=getBest('all'); if(!b) return;
@@ -579,7 +713,7 @@ function showNearest(){
 }
 
 /* ══ MAP (Leaflet) ══ */
-var leafMap=null, mapMarkers=[], userPin=null, mapFilter='all';
+var leafMap=null,mapMarkers=[],userPin=null,mapFilter='all';
 
 function pinIcon(type){
   var c=type==='eid'?'#d4a843':type==='both'?'#7c3aed':'#1a7a58';
@@ -592,14 +726,14 @@ function popupHTML(loc){
   var fc=loc.type==='eid'?'#92400e':loc.type==='both'?'#4c1d95':'#065f46';
   var bt=loc.type==='eid'?'Eid':loc.type==='both'?'Eid + Jumuah':'Jumuah';
   var time=loc.jumuahTime?'🕐 Fri '+loc.jumuahTime:loc.eidTime?'🕐 Eid '+loc.eidTime:'';
-  var dist=userLat!==null?'<div class="map-popup-dist">📏 '+fmtDist(calcDist(userLat,userLng,loc.lat,loc.lng))+' away</div>':'';
-  return '<div class="map-popup">'
-    +'<div class="map-popup-badge" style="background:'+bg+';color:'+fc+'">'+bt+'</div>'
-    +'<div class="map-popup-name">'+loc.name+'</div>'
-    +'<div class="map-popup-area">'+loc.area+', Abuja</div>'
-    +(time?'<div class="map-popup-time">'+time+'</div>':'')
+  var dist=userLat!==null?'<div style="font-size:11px;color:#9a9a9a;margin-bottom:8px">📏 '+fmtDist(calcDist(userLat,userLng,loc.lat,loc.lng))+' away</div>':'';
+  return '<div style="padding:14px;min-width:190px;max-width:230px;font-family:\'Plus Jakarta Sans\',sans-serif">'
+    +'<span style="display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:'+bg+';color:'+fc+';text-transform:uppercase;margin-bottom:6px">'+bt+'</span>'
+    +'<div style="font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:3px;line-height:1.3">'+loc.name+'</div>'
+    +'<div style="font-size:11px;color:#9a9a9a;margin-bottom:'+(time?'3':'8')+'px">'+loc.area+', Abuja</div>'
+    +(time?'<div style="font-size:11px;font-weight:600;color:#0f5c42;margin-bottom:8px">'+time+'</div>':'')
     +dist
-    +'<button class="map-popup-btn" onclick="navById('+loc.id+')">🗺 Get Directions</button>'
+    +'<button onclick="navById('+loc.id+')" style="width:100%;height:32px;background:#0a3d2e;color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:sans-serif">🗺 Get Directions</button>'
     +'</div>';
 }
 
@@ -614,7 +748,6 @@ function addUserPin(){
 function buildMarkers(filter){
   mapMarkers.forEach(function(m){leafMap.removeLayer(m);}); mapMarkers=[];
   var list=filter==='all'?LOCATIONS:LOCATIONS.filter(function(l){return l.type===filter||l.type==='both';});
-  /* Update tab counts */
   var ec=LOCATIONS.filter(function(l){return l.type==='eid'||l.type==='both';}).length;
   var jc=LOCATIONS.filter(function(l){return l.type==='jumuah'||l.type==='both';}).length;
   document.querySelector('[data-mf="all"]').textContent='🕌 All ('+LOCATIONS.length+')';
@@ -637,55 +770,31 @@ function refreshMapNearest(){
 }
 
 function buildMapList(filter){
-  var list = filter==='all' ? LOCATIONS.slice() : LOCATIONS.filter(function(l){return l.type===filter||l.type==='both';});
-  /* Sort by distance if GPS available, otherwise A-Z */
+  var list=filter==='all'?LOCATIONS.slice():LOCATIONS.filter(function(l){return l.type===filter||l.type==='both';});
   list.forEach(function(l){l._dist=userLat!==null?calcDist(userLat,userLng,l.lat,l.lng):null;});
   if(userLat!==null) list.sort(function(a,b){return a._dist-b._dist;});
   else list.sort(function(a,b){return a.name.localeCompare(b.name);});
-
   var dotCls=function(t){return t==='eid'?'dot-gold':t==='both'?'dot-both':'dot-green';};
-  document.getElementById('mapList').innerHTML = list.map(function(loc){
+  document.getElementById('mapList').innerHTML=list.map(function(loc){
     var dist=loc._dist!==null?'<span class="map-list-dist">'+fmtDist(loc._dist)+'</span>':'';
     var time=loc.jumuahTime?'Fri '+loc.jumuahTime:loc.eidTime?'Eid '+loc.eidTime:'';
-    return '<div class="map-list-row" onclick="navTo('+JSON.stringify(loc).replace(/"/g,"'")+')">'
+    return '<div class="map-list-row" onclick="navTo_id('+loc.id+')">'
       +'<div class="map-dot '+dotCls(loc.type)+'"></div>'
-      +'<div class="map-list-info">'
-        +'<div class="map-list-name">'+loc.name+'</div>'
-        +'<div class="map-list-meta">'+loc.area+(time?' · '+time:'')+'</div>'
-      +'</div>'
+      +'<div class="map-list-info"><div class="map-list-name">'+loc.name+'</div><div class="map-list-meta">'+loc.area+(time?' · '+time:'')+'</div></div>'
       +dist
-      +'<button class="map-list-nav" onclick="event.stopPropagation();navTo('+JSON.stringify(loc).replace(/"/g,"'")+')" >Navigate ›</button>'
+      +'<button class="map-list-nav" onclick="event.stopPropagation();navTo_id('+loc.id+')">Go ›</button>'
     +'</div>';
   }).join('');
 }
 
 function initMap(){
-  if(leafMap){
-    buildMarkers(mapFilter); buildMapList(mapFilter);
-    setTimeout(function(){leafMap.invalidateSize();},150);
-    return;
-  }
+  if(leafMap){buildMarkers(mapFilter);buildMapList(mapFilter);setTimeout(function(){leafMap.invalidateSize();},150);return;}
   leafMap=L.map('map',{center:[9.0579,7.4951],zoom:11});
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(leafMap);
   buildMarkers(mapFilter); buildMapList(mapFilter);
   if(userLat!==null) addUserPin();
   setTimeout(function(){leafMap.invalidateSize();},200);
 }
-
-/* Map height — set dynamically so it fills screen minus bars */
-function setMapHeight(){
-  var screen=document.getElementById('screen-map');
-  var filterBar=screen.querySelector('.map-filter-bar');
-  var nearestBar=document.getElementById('mapNearest');
-  var listTitle=screen.querySelector('.map-list-title');
-  var listEl=document.getElementById('mapList');
-  /* Map gets 45% of available height, list gets rest */
-  var total=window.innerHeight - 64 - 64; /* minus header and nav */
-  var taken=(filterBar?filterBar.offsetHeight:0)+(nearestBar&&nearestBar.style.display!=='none'?nearestBar.offsetHeight:0);
-  var mapH=Math.max(220, Math.round((total-taken)*0.5));
-  document.getElementById('map').style.height=mapH+'px';
-}
-window.addEventListener('resize', setMapHeight);
 
 document.querySelectorAll('.map-tab').forEach(function(t){
   t.addEventListener('click',function(){
@@ -712,24 +821,24 @@ function getList(){
   if(activeArea) list=list.filter(function(l){return l.area===activeArea;});
   if(searchQuery){var q=searchQuery.toLowerCase();list=list.filter(function(l){return l.name.toLowerCase().includes(q)||l.area.toLowerCase().includes(q)||(l.address||'').toLowerCase().includes(q);});}
   list.forEach(function(l){l._dist=userLat!==null?calcDist(userLat,userLng,l.lat,l.lng):null;});
-  if(activeSort==='nearest') list.sort(function(a,b){return (a._dist||9999)-(b._dist||9999);});
+  if(activeSort==='nearest') list.sort(function(a,b){return(a._dist||9999)-(b._dist||9999);});
   else if(activeSort==='az') list.sort(function(a,b){return a.name.localeCompare(b.name);});
   else if(activeSort==='za') list.sort(function(a,b){return b.name.localeCompare(a.name);});
-  else if(activeSort==='time') list.sort(function(a,b){return (a.jumuahTime||a.eidTime||'ZZ').localeCompare(b.jumuahTime||b.eidTime||'ZZ');});
+  else if(activeSort==='time') list.sort(function(a,b){return(a.jumuahTime||a.eidTime||'ZZ').localeCompare(b.jumuahTime||b.eidTime||'ZZ');});
   return list;
 }
 
-function badge(t){return t==='eid'?'<span class="card-badge badge-eid">Eid</span>':t==='jumuah'?'<span class="card-badge badge-jumuah">Jumuah</span>':'<span class="card-badge badge-both">Eid+Jumuah</span>';}
+function badge(t){return t==='eid'?'<span class="card-badge badge-eid">Eid</span>':t==='jumuah'?'<span class="card-badge badge-jumuah">Jumuah</span>':'<span class="card-badge badge-both">Eid + Jumuah</span>';}
 function accentCls(t){return t==='eid'?'accent-gold':t==='both'?'accent-both':'accent-green';}
 function timeDisp(l){
   if(l.type==='jumuah') return l.jumuahTime?'🕐 Fri '+l.jumuahTime:'';
-  if(l.type==='eid')    return l.eidTime?'🕐 Eid '+l.eidTime:'';
+  if(l.type==='eid') return l.eidTime?'🕐 Eid '+l.eidTime:'';
   var p=[];if(l.jumuahTime)p.push('Fri '+l.jumuahTime);if(l.eidTime)p.push('Eid '+l.eidTime);return p.length?'🕐 '+p.join(' · '):'';
 }
 
 function renderCards(){
   var list=getList();
-  var el=document.getElementById('cardsList'), empty=document.getElementById('emptyState');
+  var el=document.getElementById('cardsList'),empty=document.getElementById('emptyState');
   document.getElementById('locationCount').textContent=list.length+' location'+(list.length!==1?'s':'');
   if(!list.length){el.innerHTML='';empty.classList.add('show');return;}
   empty.classList.remove('show');
@@ -738,7 +847,7 @@ function renderCards(){
     var time=timeDisp(loc);
     var cb=loc.phone?'<a class="exp-btn btn-call" href="tel:'+loc.phone+'">📞 Call</a>':'<button class="exp-btn btn-disabled" disabled>📞 No number</button>';
     var wb=loc.whatsapp?'<a class="exp-btn btn-whatsapp" href="https://wa.me/'+loc.whatsapp+'" target="_blank">💬 WhatsApp</a>':'<button class="exp-btn btn-disabled" disabled>💬 Not listed</button>';
-    return '<div class="card" data-id="'+loc.id+'" style="animation:fadeUp .3s ease '+(i*.035)+'s both">'
+    return '<div class="card" data-id="'+loc.id+'" style="animation:fadeUp .3s ease '+(i*.03)+'s both">'
       +'<div class="card-collapsed">'
         +'<div class="card-accent '+accentCls(loc.type)+'"></div>'
         +'<div class="card-body">'
@@ -746,7 +855,7 @@ function renderCards(){
           +'<div class="card-area">'+loc.area+(loc.city!=='Abuja'?', '+loc.city:'')+'</div>'
           +'<div class="card-meta">'+(time?'<span class="card-time">'+time+'</span>':'')+dist+'</div>'
         +'</div>'
-        +'<div class="card-chevron">›</div>'
+        +'<div class="card-chevron"><div class="card-chevron-inner">›</div></div>'
       +'</div>'
       +'<div class="card-expanded">'
         +'<div class="exp-row"><div class="exp-label">Address</div><div class="exp-address">'+(loc.address||loc.area+', Abuja')+'</div></div>'
@@ -755,11 +864,11 @@ function renderCards(){
         +'<div class="exp-divider"></div>'
         +'<div class="exp-row"><div class="exp-label">Contact</div><div class="exp-contact-row">'+cb+wb+'</div></div>'
         +'<div class="exp-divider"></div>'
-        +'<div class="exp-stream"><div class="exp-stream-icon">📺</div><div class="exp-stream-text"><strong>Live Stream / Events</strong>Feature coming soon</div><span class="exp-stream-badge">Coming Soon</span></div>'
+        +'<div class="exp-stream"><div class="exp-stream-icon">📺</div><div class="exp-stream-text"><strong>Live Stream / Events</strong>Feature coming soon</div><span class="exp-stream-badge">Soon</span></div>'
         +'<button class="btn-navigate" onclick="navById('+loc.id+')">🗺 Get Directions</button>'
         +'<div class="exp-bottom-row">'
           +'<button class="btn-notify" onclick="notifyMe(\''+loc.name.replace(/\'/g,"\\'")+'\')">🔔 Notify Me</button>'
-          +'<button class="btn-share" onclick="shareLocation('+loc.id+')">↗ Share</button>'
+          +'<button class="btn-share" onclick="openShare('+loc.id+')">↗ Share</button>'
         +'</div>'
       +'</div>'
     +'</div>';
@@ -776,23 +885,173 @@ function renderCards(){
 /* ══ NAVIGATION ══ */
 function navTo(loc){window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(loc.name+', '+loc.area+', Abuja, Nigeria'),'_blank');}
 function navById(id){var loc=LOCATIONS.find(function(l){return l.id===id;});if(loc)navTo(loc);}
+function navTo_id(id){navById(id);}
 
-/* ══ SHARE / NOTIFY ══ */
-function notifyMe(n){showToast('🔔 Notifications coming soon for '+n.split(' ').slice(0,2).join(' '));}
-function shareLocation(id){
-  var loc=LOCATIONS.find(function(l){return l.id===id;});if(!loc)return;
-  var t='🕌 '+loc.name+'\n📍 '+loc.area+', Abuja\n\nFound on DeenLocator by 2now Technology\n+234 806 590 0110';
-  if(navigator.share)navigator.share({title:loc.name,text:t});
-  else navigator.clipboard.writeText(t).then(function(){showToast('📋 Copied!');});
+/* ══ RICH SHARE SHEET ══ */
+var shareLocId = null;
+
+function buildShareText(loc){
+  var lines = [];
+
+  /* Mosque name & type */
+  lines.push('🕌 *' + loc.name + '*');
+  var type = loc.type==='eid'?'Eid Prayer Ground':loc.type==='both'?'Eid + Jumuah Mosque':'Jumuah (Friday) Mosque';
+  lines.push('🏷 Type: ' + type);
+  lines.push('');
+
+  /* Full address */
+  lines.push('📍 *Address*');
+  lines.push(loc.address || loc.area + ', Abuja, FCT, Nigeria');
+  lines.push('');
+
+  /* Prayer times */
+  var hasTimes = loc.jumuahTime || loc.eidTime;
+  if(hasTimes){
+    lines.push('🕐 *Prayer Times*');
+    if(loc.jumuahTime) lines.push('   Jumuah (Friday): ' + loc.jumuahTime);
+    if(loc.eidTime)    lines.push('   Eid Prayer: ' + loc.eidTime);
+    lines.push('');
+  }
+
+  /* Imam — only if known */
+  if(loc.imam && loc.imam !== 'To be announced'){
+    lines.push('👤 *Imam:* ' + loc.imam);
+  }
+
+  /* Contact — only if available */
+  if(loc.phone){
+    lines.push('📞 *Mosque Contact:* ' + loc.phone);
+  }
+  if(loc.whatsapp){
+    lines.push('💬 *Mosque WhatsApp:* https://wa.me/' + loc.whatsapp);
+  }
+  if(loc.imam && loc.imam !== 'To be announced' || loc.phone || loc.whatsapp){
+    lines.push('');
+  }
+
+  /* Clickable Google Maps link */
+  var mapsLink = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(loc.name + ', ' + (loc.address || loc.area + ', Abuja'));
+  lines.push('🗺 *Get Directions (tap to open Maps)*');
+  lines.push(mapsLink);
+  lines.push('');
+
+  /* App hook */
+  lines.push('━━━━━━━━━━━━━━━━━━━━━');
+  lines.push('📱 *DeenLocator*');
+  lines.push('Find the nearest Eid ground or Friday');
+  lines.push('mosque in Abuja — instantly & free.');
+  lines.push('');
+  lines.push('✅ 28 verified locations');
+  lines.push('✅ GPS — nearest mosque to you');
+  lines.push('✅ Prayer times · Map · Navigation');
+  lines.push('');
+  lines.push('🔗 Try it: https://2nowtechnology.github.io/deenlocator');
+  lines.push('');
+  lines.push('─ Powered by *2now Technology* ─');
+  lines.push('📞 +234 806 590 0110');
+  lines.push('💬 https://wa.me/2348065900110');
+
+  return lines.join('\n');
 }
+
+function openShare(id){
+  var loc = LOCATIONS.find(function(l){return l.id===id;});
+  if(!loc) return;
+  shareLocId = id;
+
+  /* ── Populate visual card ── */
+  var type  = loc.type==='eid'?'Eid Prayer Ground':loc.type==='both'?'Eid + Jumuah Mosque':'Jumuah Mosque';
+  var bgBadge = loc.type==='eid'?'#fef3c7':loc.type==='both'?'#ede9fe':'#d1fae5';
+  var fcBadge = loc.type==='eid'?'#92400e':loc.type==='both'?'#4c1d95':'#065f46';
+
+  var scBadge = document.getElementById('scBadge');
+  scBadge.textContent = type;
+  scBadge.style.background = bgBadge;
+  scBadge.style.color = fcBadge;
+
+  document.getElementById('scName').textContent = loc.name;
+  document.getElementById('scArea').textContent = '📍 ' + loc.area + ', Abuja';
+  document.getElementById('scAddress').textContent = loc.address || loc.area + ', Abuja, FCT';
+
+  /* Time pills */
+  var timesEl = document.getElementById('scTimes');
+  timesEl.innerHTML = '';
+  if(loc.jumuahTime){
+    timesEl.innerHTML += '<div class="share-card-time-pill"><span>Jumuah</span>' + loc.jumuahTime + ' Fri</div>';
+  }
+  if(loc.eidTime){
+    timesEl.innerHTML += '<div class="share-card-time-pill"><span>Eid Prayer</span>' + loc.eidTime + '</div>';
+  }
+  if(loc.imam && loc.imam !== 'To be announced'){
+    timesEl.innerHTML += '<div class="share-card-time-pill"><span>Imam</span>' + loc.imam + '</div>';
+  }
+
+  /* Text preview */
+  document.getElementById('sharePreviewText').textContent = buildShareText(loc);
+
+  var text = buildShareText(loc);
+
+  document.getElementById('shareWhatsappBtn').onclick = function(){
+    var waUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
+    window.open(waUrl, '_blank');
+  };
+  document.getElementById('shareCopyBtn').onclick = function(){
+    navigator.clipboard.writeText(text.replace(/\*/g,'')).then(function(){
+      showToast('📋 Copied to clipboard!');
+      closeShareSheet();
+    }).catch(function(){
+      showToast('📋 Copy not supported — use WhatsApp button');
+    });
+  };
+
+  document.getElementById('shareOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
+}
+
+function closeShareSheet(){
+  document.getElementById('shareOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
+}
+
+function closeShare(e){
+  if(e.target === document.getElementById('shareOverlay')) closeShareSheet();
+}
+
 function shareApp(){
-  var t='🕌 DeenLocator — Find Eid & Jumuah locations in Abuja!\nPowered by 2now Technology · +234 806 590 0110';
-  if(navigator.share)navigator.share({title:'DeenLocator',text:t});
-  else navigator.clipboard.writeText(t).then(function(){showToast('📋 Copied!');});
+  var text = [
+    '📱 *DeenLocator*',
+    'Find the nearest Eid ground or Friday mosque in Abuja — instantly & free!',
+    '',
+    '✅ 28 verified locations in Abuja',
+    '✅ Real-time GPS — nearest mosque to you',
+    '✅ Prayer times with countdown',
+    '✅ Interactive map with all locations',
+    '✅ Full mosque details & navigation',
+    '✅ Installable as a phone app',
+    '',
+    '🔗 Open DeenLocator:',
+    'https://2nowtechnology.github.io/deenlocator',
+    '',
+    '━━━━━━━━━━━━━━━━━━━━━',
+    'Powered by *2now Technology*',
+    '📞 +234 806 590 0110',
+    '💬 https://wa.me/2348065900110'
+  ].join('\n');
+
+  if(navigator.share) navigator.share({title:'DeenLocator',text:text.replace(/\*/g,'')});
+  else navigator.clipboard.writeText(text.replace(/\*/g,'')).then(function(){showToast('📋 Copied!');});
 }
+
+/* ══ NOTIFY ══ */
+function notifyMe(n){showToast('🔔 Notifications coming soon for '+n.split(' ').slice(0,2).join(' '));}
 
 /* ══ TOAST ══ */
-function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2800);}
+function showToast(msg){
+  var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},3000);
+}
 
 /* ══ SCREEN NAV ══ */
 document.querySelectorAll('.nav-item').forEach(function(btn){
@@ -802,7 +1061,7 @@ document.querySelectorAll('.nav-item').forEach(function(btn){
     btn.classList.add('active');
     var t=btn.dataset.screen;
     document.getElementById('screen-'+t).classList.add('active');
-    if(t==='map'){setMapHeight();initMap();}
+    if(t==='map') initMap();
     if(t==='prayer') updatePrayerScreen();
   });
 });
@@ -827,6 +1086,15 @@ si.addEventListener('input',function(){
   activeFilter='all'; renderCards();
 });
 sc.addEventListener('click',function(){si.value='';searchQuery='';sc.style.display='none';renderCards();});
+
+/* ══ SERVICE WORKER (PWA) ══ */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js')
+      .then(function(){console.log('DeenLocator SW ready');})
+      .catch(function(e){console.log('SW',e);});
+  });
+}
 
 /* ══ INIT ══ */
 document.getElementById('settingsLocCount').textContent=LOCATIONS.length+' verified locations';
