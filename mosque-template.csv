@@ -1,0 +1,22 @@
+id,name,address,area,city,type,eidTime,jumuahTime,imam,phone,whatsapp,lat,lng,verified,featured
+INSTRUCTIONS BELOW - DELETE THIS ROW BEFORE SENDING,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+HOW TO FILL THIS FILE:,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- id: give each mosque a unique number (continue from last number in locations.js),-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- name: full name of mosque or eid ground,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- address: full street address,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- area: district or neighbourhood (e.g. Garki / Wuse / Kubwa),-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- city: Abuja (or Suleja etc if outside Abuja),-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- type: write exactly one of these three words:  eid  OR  jumuah  OR  both,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- eidTime: e.g. 8:00 AM  (leave blank if not an Eid location),-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- jumuahTime: e.g. 1:30 PM  (leave blank if not a Jumuah location),-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- imam: imam full name (write  To be announced  if unknown),-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- phone: mosque phone with country code e.g. +2348012345678  (leave blank if unknown),-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- whatsapp: whatsapp number digits only no + sign e.g. 2348012345678  (leave blank if unknown),-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- lat: latitude from Google Maps  (right-click mosque pin on Google Maps to get this),-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- lng: longitude from Google Maps  (second number after the comma),-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- verified: write  true  for confirmed locations   false  if not yet confirmed,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+- featured: write  false  for now  (true = shown at top  reserved for future premium feature),-,-,-,-,-,-,-,-,-,-,-,-,-,-
+DELETE ALL ROWS ABOVE THIS LINE BEFORE SENDING TO 2NOW TECHNOLOGY,-,-,-,-,-,-,-,-,-,-,-,-,-,-
+29,EXAMPLE - Replace this row,123 Example Street,Wuse,Abuja,jumuah,,1:30 PM,To be announced,,,9.0600,7.4800,true,false
+30,EXAMPLE 2 - Eid ground example,Open Field Near Market,Garki,Abuja,eid,8:00 AM,,To be announced,,,9.0333,7.4833,true,false
+31,EXAMPLE 3 - Has both Eid and Jumuah,Main Mosque Street,Maitama,Abuja,both,8:00 AM,1:30 PM,Sheikh Musa Abdullah,+2348011112222,2348011112222,9.0833,7.5000,true,false
