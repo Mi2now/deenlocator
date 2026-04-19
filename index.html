@@ -606,7 +606,6 @@ var LOCATIONS = [
   }
 
 ];
-
 </script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -621,7 +620,7 @@ var LOCATIONS = [
     .app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--bg)}
 
     /* HEADER */
-    .header{position:sticky;top:0;z-index:1000;background:var(--gd);height:var(--hh);display:flex;align-items:center;justify-content:space-between;padding:0 20px;-webkit-backdrop-filter:blur(0);}
+    .header{position:sticky;top:0;z-index:200;background:var(--gd);height:var(--hh);display:flex;align-items:center;justify-content:space-between;padding:0 20px}
     .header-brand{display:flex;align-items:center;gap:10px}
     .header-logo{width:38px;height:38px;background:var(--gl);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
     .app-name{font-size:19px;font-weight:700;color:var(--white);letter-spacing:-.3px;line-height:1}
@@ -818,7 +817,7 @@ var LOCATIONS = [
     .settings-footer-copy{font-size:11px;color:var(--tm)}
 
     /* BOTTOM NAV */
-    .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--nh);background:var(--white);border-top:1px solid var(--cd);display:flex;align-items:center;z-index:1000;padding:0 8px;box-shadow:0 -2px 12px rgba(0,0,0,.08)}
+    .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--nh);background:var(--white);border-top:1px solid var(--cd);display:flex;align-items:center;z-index:200;padding:0 8px}
     .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:100%;cursor:pointer;border:none;background:none;font-family:inherit;-webkit-tap-highlight-color:transparent;position:relative}
     .nav-item:active{opacity:.6}
     .nav-icon{font-size:22px;line-height:1;transition:transform .2s}
@@ -882,17 +881,6 @@ var LOCATIONS = [
   </style>
 </head>
 <body>
-<script>
-/* Kill any cached service worker BEFORE app loads */
-if(navigator && navigator.serviceWorker){
-  navigator.serviceWorker.getRegistrations().then(function(r){
-    r.forEach(function(sw){ sw.unregister(); });
-  });
-}
-if(window.caches){
-  caches.keys().then(function(k){ k.forEach(function(c){ caches.delete(c); }); });
-}
-</script>
 <div class="app">
 
   <header class="header">
@@ -1452,23 +1440,14 @@ function toggleEdit(){
 }
 
 function resetTimes(){
-  /* Wipe localStorage then rebuild from scratch */
-  try{ localStorage.removeItem('dl_prayers'); }catch(e){}
-  /* Force a brand new copy — no reference to old data */
-  PRAYERS = [
-    {name:'Fajr',    arabic:'الفجر',  icon:'🌙', h:5,  m:15},
-    {name:'Dhuhr',   arabic:'الظهر',  icon:'☀️', h:12, m:30},
-    {name:'Asr',     arabic:'العصر',  icon:'🌤️', h:15, m:45},
-    {name:'Maghrib', arabic:'المغرب', icon:'🌅', h:18, m:30},
-    {name:'Isha',    arabic:'العشاء', icon:'🌙', h:20, m:0 }
-  ];
+  PRAYERS = JSON.parse(JSON.stringify(DEFAULT_PRAYERS));
   savePrayers(PRAYERS);
   ptEditing = false;
   var btn = document.getElementById('ptEditBtn');
   if(btn){ btn.textContent='Edit'; btn.classList.remove('saving'); }
   renderPtCards();
   updateBanner();
-  showToast('🔄 Reset to default Abuja times ✅');
+  showToast('🔄 Reset to default Abuja prayer times');
 }
 
 function renderPtCards(){
@@ -1522,56 +1501,30 @@ function getBest(filter){
 
 function initGPS(){
   if(!navigator.geolocation) return;
-
-  /* Stage 1 — fast rough position (network/wifi) */
-  navigator.geolocation.getCurrentPosition(function(pos){
-    userLat = pos.coords.latitude;
-    userLng = pos.coords.longitude;
-    showNearest(); renderCards(); refreshMapNearest(); buildMapList(mapFilter);
-    if(leafMap) addUserPin();
-  }, function(){}, {enableHighAccuracy:false, timeout:5000, maximumAge:60000});
-
-  /* Stage 2 — accurate GPS position, updates when ready */
-  navigator.geolocation.getCurrentPosition(function(pos){
-    var newLat = pos.coords.latitude;
-    var newLng = pos.coords.longitude;
-    /* Only update if meaningfully different (>50m) */
-    if(userLat === null || calcDist(userLat,userLng,newLat,newLng) > 0.05){
-      userLat = newLat;
-      userLng = newLng;
-      showNearest(); renderCards(); refreshMapNearest(); buildMapList(mapFilter);
-      if(leafMap) addUserPin();
-    }
-  }, function(){}, {enableHighAccuracy:true, timeout:15000, maximumAge:0});
-}
-
-function refreshLocation(){
-  var btn = document.getElementById('refreshBtn');
-  if(btn){ btn.style.animation='spin .8s linear infinite'; btn.disabled=true; }
-  if(!navigator.geolocation){ showToast('📍 GPS not available'); return; }
-
-  /* Quick rough position first */
   navigator.geolocation.getCurrentPosition(function(pos){
     userLat=pos.coords.latitude; userLng=pos.coords.longitude;
     showNearest(); renderCards(); refreshMapNearest(); buildMapList(mapFilter);
     if(leafMap) addUserPin();
+  }, function(){
+    /* GPS denied or failed — silent */
+  }, {enableHighAccuracy:true, timeout:10000});
+}
 
-    /* Then get accurate position */
-    navigator.geolocation.getCurrentPosition(function(pos2){
-      userLat=pos2.coords.latitude; userLng=pos2.coords.longitude;
-      showNearest(); renderCards(); refreshMapNearest(); buildMapList(mapFilter);
-      if(leafMap) addUserPin();
-      if(btn){ btn.style.animation=''; btn.disabled=false; }
-      showToast('📍 Location updated — accuracy: '+ Math.round(pos2.coords.accuracy)+'m');
-    }, function(){
-      if(btn){ btn.style.animation=''; btn.disabled=false; }
-      showToast('📍 Location updated!');
-    }, {enableHighAccuracy:true, timeout:12000, maximumAge:0});
-
+function refreshLocation(){
+  /* Spin the button */
+  var btn = document.getElementById('refreshBtn');
+  if(btn){ btn.style.animation='spin .6s linear'; btn.disabled=true; }
+  if(!navigator.geolocation){ showToast('📍 GPS not available on this device'); return; }
+  navigator.geolocation.getCurrentPosition(function(pos){
+    userLat=pos.coords.latitude; userLng=pos.coords.longitude;
+    showNearest(); renderCards(); refreshMapNearest(); buildMapList(mapFilter);
+    if(leafMap) addUserPin();
+    if(btn){ btn.style.animation=''; btn.disabled=false; }
+    showToast('📍 Location updated!');
   }, function(){
     if(btn){ btn.style.animation=''; btn.disabled=false; }
     showToast('📍 Could not get location — check GPS');
-  }, {enableHighAccuracy:false, timeout:5000});
+  }, {enableHighAccuracy:true, timeout:8000});
 }
 
 /* Auto-refresh GPS every 90 seconds */
@@ -1613,7 +1566,7 @@ function popupHTML(loc){
     +'<div style="font-size:11px;color:#9a9a9a;margin-bottom:'+(time?'3':'8')+'px">'+loc.area+', Abuja</div>'
     +(time?'<div style="font-size:11px;font-weight:600;color:#0f5c42;margin-bottom:8px">'+time+'</div>':'')
     +dist
-    +'<button onclick="navTo({lat:'+loc.lat+',lng:'+loc.lng+',name:\''+loc.name.replace(/\'/g,\'\\\'\')+\'\',area:\''+loc.area+'\',id:'+loc.id+'})" style="width:100%;height:32px;background:#0a3d2e;color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:sans-serif">🗺 Get Directions</button>'
+    +'<button onclick="navById('+loc.id+')" style="width:100%;height:32px;background:#0a3d2e;color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:sans-serif">🗺 Get Directions</button>'
     +'</div>';
 }
 
@@ -1662,7 +1615,7 @@ function buildMapList(filter){
       +'<div class="map-dot '+dotCls(loc.type)+'"></div>'
       +'<div class="map-list-info"><div class="map-list-name">'+loc.name+'</div><div class="map-list-meta">'+loc.area+(time?' · '+time:'')+'</div></div>'
       +dist
-      +'<button class="map-list-nav" onclick="event.stopPropagation();navTo({lat:'+loc.lat+',lng:'+loc.lng+',name:\''+loc.name.replace(/\'/g,\'\\\'\')+\'\',area:\''+loc.area+'\',id:'+loc.id+'})">Go ›</button>'
+      +'<button class="map-list-nav" onclick="event.stopPropagation();navTo_id('+loc.id+')">Go ›</button>'
     +'</div>';
   }).join('');
 }
@@ -1764,16 +1717,13 @@ function renderCards(){
 
 /* ══ NAVIGATION ══ */
 function navTo(loc){
-  /* Use lat/lng for accurate direct navigation if available */
   var url;
   if(loc.lat && loc.lng){
-    /* Opens Google Maps directions directly to the coordinates */
-    url = 'https://www.google.com/maps/dir/?api=1&destination='+loc.lat+','+loc.lng
-        + '&destination_place_id=&travelmode=driving';
+    url='https://www.google.com/maps/dir/?api=1&destination='+loc.lat+','+loc.lng+'&travelmode=driving';
   } else {
-    url = 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(loc.name+', '+loc.area+', Abuja, Nigeria');
+    url='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent((loc.name||'')+', '+(loc.area||'')+', Abuja');
   }
-  window.open(url, '_blank');
+  window.open(url,'_blank');
 }
 function navById(id){var loc=LOCATIONS.find(function(l){return l.id===id;});if(loc)navTo(loc);}
 function navTo_id(id){navById(id);}
@@ -2869,24 +2819,16 @@ si.addEventListener('input',function(){
 });
 sc.addEventListener('click',function(){si.value='';searchQuery='';sc.style.display='none';renderCards();});
 
-/* ══ SERVICE WORKER — KILL OLD + REGISTER NEW ══ */
+/* ══ SERVICE WORKER (PWA) ══ */
 if('serviceWorker' in navigator){
-  /* Step 1: Unregister ALL old service workers immediately */
-  navigator.serviceWorker.getRegistrations().then(function(regs){
-    regs.forEach(function(reg){ reg.unregister(); });
-  });
-  /* Step 2: Clear ALL caches */
-  if('caches' in window){
-    caches.keys().then(function(keys){
-      keys.forEach(function(k){ caches.delete(k); });
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      for(var r of regs){ if(r.scope.indexOf('deenlocator')>-1){ r.unregister(); } }
     });
-  }
-  /* Step 3: Register fresh SW after a short delay */
-  setTimeout(function(){
-    navigator.serviceWorker.register('/deenlocator/sw.js?v=4')
+    navigator.serviceWorker.register('/deenlocator/sw.js')
       .then(function(reg){ reg.update(); })
       .catch(function(e){ console.log('SW',e); });
-  }, 2000);
+  });
 }
 
 /* ══ INIT ══ */
@@ -3511,10 +3453,10 @@ function updateBulkCounts(){
   if(a) a.textContent=aCount+' locations · '+pages(aCount)+' · A–Z';
 }
 
-/* ══ SAFE INIT — runs after DOM is fully ready ══ */
+/* ══ SAFE INIT ══ */
 window.addEventListener('DOMContentLoaded', function(){
-  var locCount = document.getElementById('settingsLocCount');
-  if(locCount) locCount.textContent = LOCATIONS.length + ' verified locations · Abuja FCT';
+  var el = document.getElementById('settingsLocCount');
+  if(el) el.textContent = LOCATIONS.length + ' verified locations · Abuja FCT';
   buildAreaDropdown();
   renderCards();
   setHijriDate();
@@ -3525,6 +3467,19 @@ window.addEventListener('DOMContentLoaded', function(){
   if(typeof scheduleAll     === 'function') scheduleAll();
   if(typeof startEidTimer   === 'function') startEidTimer();
 });
+</script>
+<script>
+/* ══ KILL OLD SERVICE WORKERS ══ */
+if(navigator.serviceWorker){
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){ r.unregister(); console.log('SW unregistered'); });
+  });
+}
+if(window.caches){
+  caches.keys().then(function(keys){
+    keys.forEach(function(k){ caches.delete(k); console.log('Cache cleared:', k); });
+  });
+}
 </script>
 </body>
 </html>
