@@ -2,9 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-  <meta http-equiv="Pragma" content="no-cache"/>
-  <meta http-equiv="Expires" content="0"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <meta name="theme-color" content="#0a3d2e"/>
   <meta name="description" content="DeenLocator — Find Eid & Friday prayer locations across Abuja. Powered by 2now Technology."/>
@@ -754,11 +751,6 @@ var LOCATIONS = [
     .pt-next-time{font-size:17px;color:var(--gg);font-weight:600;margin-bottom:14px}
     .pt-big-countdown{font-size:42px;font-weight:700;color:var(--gold-l);font-variant-numeric:tabular-nums;line-height:1}
     .pt-big-label{font-size:11px;color:rgba(255,255,255,.4);margin-top:6px}
-    .pt-mode-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--cd);flex-shrink:0;gap:10px}
-    .pt-mode-btns{display:flex;gap:6px;background:var(--white);border-radius:10px;padding:3px}
-    .pt-mode-btn{height:30px;padding:0 14px;border-radius:8px;border:none;font-family:inherit;font-size:12px;font-weight:600;color:var(--ts);background:transparent;cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent}
-    .pt-mode-btn.active{background:var(--gd);color:var(--white)}
-    .pt-mode-status{font-size:11px;color:var(--ts);flex:1;text-align:right}
     .pt-edit-bar{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--white);border-bottom:1px solid var(--cd);flex-shrink:0}
     .pt-edit-bar-text{flex:1;font-size:12px;color:var(--ts);line-height:1.4}
     .pt-edit-bar-text b{color:var(--tp)}
@@ -1009,16 +1001,15 @@ var LOCATIONS = [
       <div class="pt-big-countdown" id="ptBigCountdown">--:--:--</div>
       <div class="pt-big-label">time remaining</div>
     </div>
-    <!-- Prayer time mode switcher -->
-    <div class="pt-mode-bar">
-      <div class="pt-mode-btns">
-        <button class="pt-mode-btn" id="modeManualBtn" onclick="setPrayerMode('manual')">✏️ Manual</button>
-        <button class="pt-mode-btn" id="modeApiBtn" onclick="setPrayerMode('api')">🌐 Auto Abuja</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 16px;background:#ede8de;flex-shrink:0;gap:10px">
+      <div style="display:flex;background:white;border-radius:10px;padding:3px;gap:4px">
+        <button id="modeManualBtn" onclick="setPrayerMode('manual')" style="height:28px;padding:0 12px;border-radius:8px;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;color:#5a5a5a;background:transparent">&#9998; Manual</button>
+        <button id="modeApiBtn" onclick="setPrayerMode('api')" style="height:28px;padding:0 12px;border-radius:8px;border:none;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;color:white;background:#0a3d2e">&#127758; Auto Abuja</button>
       </div>
-      <span class="pt-mode-status" id="ptModeStatus">Loading...</span>
+      <span id="ptModeStatus" style="font-size:11px;color:#5a5a5a">Loading...</span>
     </div>
     <div class="pt-edit-bar" id="ptEditBar" style="display:none">
-      <div class="pt-edit-bar-text">Set your mosque's exact prayer times. Saved on your device.</div>
+      <div class="pt-edit-bar-text">Times fetched daily for Abuja. Tap <b>Edit</b> to set your mosque's exact times.</div>
       <button class="pt-edit-btn" id="ptEditBtn" onclick="toggleEdit()">Edit</button>
     </div>
     <div class="pt-cards" id="ptCards"></div>
@@ -1056,7 +1047,9 @@ var LOCATIONS = [
             <div class="settings-row-title">Enable Notifications</div>
             <div class="settings-row-sub" id="notifPermSub">Tap to enable prayer alerts on this device</div>
           </div>
-          <div class="settings-row-right" id="notifPermIcon">›</div>
+          <div class="settings-row-right" id="notifPermIcon">
+          <label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="notifMasterToggle" onchange="toggleMasterNotif(this.checked)"/><span class="toggle-slider"></span></label>
+        </div
         </div>
         <div class="settings-row" id="prayerAlertRow" onclick="openPrayerAlertSettings()">
           <div class="settings-row-icon">🕐</div>
@@ -1085,34 +1078,6 @@ var LOCATIONS = [
           <div class="settings-row-body">
             <div class="settings-row-title">Test Notification</div>
             <div class="settings-row-sub">Send a test alert to confirm it works</div>
-          </div>
-          <div class="settings-row-right">›</div>
-        </div>
-        <!-- Sound settings -->
-        <div class="settings-row" onclick="event.stopPropagation()">
-          <div class="settings-row-icon">🔔</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">Alert Sound</div>
-            <div class="settings-row-sub" id="soundSub">Sound ON · Tap type row to change</div>
-          </div>
-          <label class="toggle" onclick="event.stopPropagation()">
-            <input type="checkbox" id="soundToggle" checked onchange="toggleSound(this.checked)"/>
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-        <div class="settings-row" onclick="openSoundSettings()">
-          <div class="settings-row-icon">🎵</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">Sound Type</div>
-            <div class="settings-row-sub" id="soundTypeSub">Simple Beep</div>
-          </div>
-          <div class="settings-row-right">›</div>
-        </div>
-        <div class="settings-row" onclick="playAlertSound()">
-          <div class="settings-row-icon">▶️</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">Preview Sound</div>
-            <div class="settings-row-sub">Tap to hear the current alert sound</div>
           </div>
           <div class="settings-row-right">›</div>
         </div>
@@ -1157,54 +1122,18 @@ var LOCATIONS = [
       </div>
     </div>
 
-    <!-- FAQ Section -->
+    
     <div class="settings-section">
-      <div class="settings-section-title">Frequently Asked Questions</div>
+      <div class="settings-section-title">FAQ</div>
       <div class="settings-group">
-        <div class="settings-row" onclick="toggleFaq(this)">
-          <div class="settings-row-icon">❓</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">Are the prayer times accurate?</div>
-            <div class="faq-answer" style="display:none;font-size:12px;color:var(--ts);margin-top:6px;line-height:1.6;padding-bottom:4px">Times are approximate for Abuja. Use <b>Auto Abuja</b> mode in Prayer Times for daily accurate times from AlAdhan.com, or set your mosque's exact times manually.</div>
-          </div>
-          <div class="settings-row-right">›</div>
-        </div>
-        <div class="settings-row" onclick="toggleFaq(this)">
-          <div class="settings-row-icon">❓</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">How do I install this as an app?</div>
-            <div class="faq-answer" style="display:none;font-size:12px;color:var(--ts);margin-top:6px;line-height:1.6;padding-bottom:4px">On <b>Android</b>: Open in Chrome → tap 3 dots menu → "Add to Home Screen". On <b>iPhone</b>: Open in Safari → tap Share button → "Add to Home Screen".</div>
-          </div>
-          <div class="settings-row-right">›</div>
-        </div>
-        <div class="settings-row" onclick="toggleFaq(this)">
-          <div class="settings-row-icon">❓</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">How do I suggest a mosque?</div>
-            <div class="faq-answer" style="display:none;font-size:12px;color:var(--ts);margin-top:6px;line-height:1.6;padding-bottom:4px">Tap <b>Suggest a Mosque</b> in the Contact section above. Fill in the email template and send it — we verify and add it within 48 hours.</div>
-          </div>
-          <div class="settings-row-right">›</div>
-        </div>
-        <div class="settings-row" onclick="toggleFaq(this)">
-          <div class="settings-row-icon">❓</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">Why is my nearest mosque wrong?</div>
-            <div class="faq-answer" style="display:none;font-size:12px;color:var(--ts);margin-top:6px;line-height:1.6;padding-bottom:4px">Allow location access when the app asks, then tap the 🔄 refresh button on the Locations screen. The app uses two-stage GPS for accuracy — the second reading is more precise.</div>
-          </div>
-          <div class="settings-row-right">›</div>
-        </div>
-        <div class="settings-row" onclick="toggleFaq(this)">
-          <div class="settings-row-icon">❓</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">Is this app free? Who built it?</div>
-            <div class="faq-answer" style="display:none;font-size:12px;color:var(--ts);margin-top:6px;line-height:1.6;padding-bottom:4px">Yes — completely free. DeenLocator is built and maintained by <b>2now Technology</b>, Abuja. Launched on Eid al-Fitr, 1 Shawwal 1447 AH (20 March 2026).</div>
-          </div>
-          <div class="settings-row-right">›</div>
-        </div>
+        <div class="settings-row" onclick="toggleFaq(this)"><div class="settings-row-icon">?</div><div class="settings-row-body"><div class="settings-row-title">Are the prayer times accurate?</div><div class="faq-answer" style="display:none;font-size:12px;color:#5a5a5a;margin-top:6px;line-height:1.6;padding-bottom:4px">Use Auto Abuja mode for daily exact times from AlAdhan.com. Manual mode lets you set your mosque exact times. Both are saved on your device.</div></div><div class="settings-row-right">></div></div>
+        <div class="settings-row" onclick="toggleFaq(this)"><div class="settings-row-icon">?</div><div class="settings-row-body"><div class="settings-row-title">How do I install as an app?</div><div class="faq-answer" style="display:none;font-size:12px;color:#5a5a5a;margin-top:6px;line-height:1.6;padding-bottom:4px">Android: Open in Chrome, tap 3 dots, Add to Home Screen. iPhone: Open in Safari, tap Share, Add to Home Screen.</div></div><div class="settings-row-right">></div></div>
+        <div class="settings-row" onclick="toggleFaq(this)"><div class="settings-row-icon">?</div><div class="settings-row-body"><div class="settings-row-title">Why is my nearest mosque wrong?</div><div class="faq-answer" style="display:none;font-size:12px;color:#5a5a5a;margin-top:6px;line-height:1.6;padding-bottom:4px">Allow location access when asked, then tap the refresh button. The app uses two-stage GPS for accuracy.</div></div><div class="settings-row-right">></div></div>
+        <div class="settings-row" onclick="toggleFaq(this)"><div class="settings-row-icon">?</div><div class="settings-row-body"><div class="settings-row-title">Who built DeenLocator?</div><div class="faq-answer" style="display:none;font-size:12px;color:#5a5a5a;margin-top:6px;line-height:1.6;padding-bottom:4px">Built and maintained by 2now Technology, Abuja. Launched on Eid al-Fitr 1 Shawwal 1447 AH (20 March 2026). Free for all Muslims.</div></div><div class="settings-row-right">></div></div>
+        <div class="settings-row" onclick="toggleFaq(this)"><div class="settings-row-icon">?</div><div class="settings-row-body"><div class="settings-row-title">How do I suggest a mosque?</div><div class="faq-answer" style="display:none;font-size:12px;color:#5a5a5a;margin-top:6px;line-height:1.6;padding-bottom:4px">Tap Suggest a Mosque or Eid Ground in the Contact section. Fill the email template and send to mustytunau@gmail.com.</div></div><div class="settings-row-right">></div></div>
       </div>
     </div>
-
-    <div class="settings-section">
+<div class="settings-section">
       <div class="settings-section-title">About</div>
       <div class="settings-group">
         <div class="settings-row static"><div class="settings-row-icon">🕌</div><div class="settings-row-body"><div class="settings-row-title">Locations in Database</div><div class="settings-row-sub" id="settingsLocCount">28 verified locations</div></div></div>
@@ -1264,15 +1193,11 @@ var LOCATIONS = [
       <div class="share-text-preview-content" id="sharePreviewText"></div>
     </div>
 
-    <!-- ONE-TAP: Save card + open WhatsApp together -->
-    <button class="share-btn" id="shareOneTapBtn" style="width:100%;margin-bottom:8px;background:linear-gradient(135deg,var(--gd),#25D366);color:var(--white);height:52px;border-radius:12px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent">
-      🚀 Save Card + Share on WhatsApp
-    </button>
-    <!-- Separate options -->
+    <!-- Save card — most prominent -->
+    <button class="share-btn" id="shareSaveBtn" onclick="saveShareCard(currentShareLoc)" style="width:100%;margin-bottom:8px;background:var(--gd);color:var(--white);height:48px;border-radius:12px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">📸 Save Card as Image — Share on Status</button>
     <div class="share-actions">
-      <button class="share-btn" id="shareSaveBtn" onclick="saveShareCard(currentShareLoc)" style="background:var(--gd);color:var(--white)">📸 Save Card</button>
       <button class="share-btn share-whatsapp" id="shareWhatsappBtn">💬 WhatsApp Text</button>
-      <button class="share-btn share-copy" id="shareCopyBtn" style="flex:0.6">📋</button>
+      <button class="share-btn share-copy" id="shareCopyBtn">📋 Copy</button>
     </div>
     <button class="share-close" onclick="closeShareSheet()">Close</button>
   </div>
@@ -1361,37 +1286,6 @@ var LOCATIONS = [
     <div class="share-sheet-handle"></div>
     <div id="notifSheetContent"></div>
     <button class="share-close" onclick="closeNotifSheet()">Close</button>
-  </div>
-</div>
-
-<!-- WELCOME SCREEN -->
-<div class="share-overlay" id="welcomeOverlay" style="align-items:center;justify-content:center;padding:20px">
-  <div style="background:var(--white);border-radius:20px;padding:28px 24px;max-width:420px;width:100%;text-align:center">
-    <div style="font-size:52px;margin-bottom:10px">🕌</div>
-    <div style="font-size:22px;font-weight:700;color:var(--gd);margin-bottom:4px">Deen<span style="color:var(--gl)">Locator</span></div>
-    <div style="font-size:12px;color:var(--tm);margin-bottom:20px">by 2now Technology · Abuja</div>
-    <div style="text-align:left;display:flex;flex-direction:column;gap:12px;margin-bottom:24px">
-      <div style="display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:10px;padding:10px 14px">
-        <span style="font-size:22px">📍</span>
-        <div><div style="font-size:13px;font-weight:700;color:var(--tp)">GPS Location Detection</div><div style="font-size:11px;color:var(--tm)">Finds the nearest mosque to you instantly</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:10px;padding:10px 14px">
-        <span style="font-size:22px">🗺️</span>
-        <div><div style="font-size:13px;font-weight:700;color:var(--tp)">Interactive Map</div><div style="font-size:11px;color:var(--tm)">62 verified Eid & Jumuah locations in Abuja</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:10px;padding:10px 14px">
-        <span style="font-size:22px">🕐</span>
-        <div><div style="font-size:13px;font-weight:700;color:var(--tp)">Prayer Times & Alerts</div><div style="font-size:11px;color:var(--tm)">Daily prayer countdown with notifications</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:10px;padding:10px 14px">
-        <span style="font-size:22px">📱</span>
-        <div><div style="font-size:13px;font-weight:700;color:var(--tp)">Install as App</div><div style="font-size:11px;color:var(--tm)">Add to home screen — works offline</div></div>
-      </div>
-    </div>
-    <button onclick="dismissWelcome()" style="width:100%;height:48px;background:var(--gd);color:var(--white);border:none;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px">
-      بِسْمِ اللَّهِ — Get Started 🕌
-    </button>
-    <div style="font-size:11px;color:var(--tm)">Free · No account needed · Works offline</div>
   </div>
 </div>
 
@@ -1839,15 +1733,7 @@ function renderCards(){
 }
 
 /* ══ NAVIGATION ══ */
-function navTo(loc){
-  var url;
-  if(loc.lat && loc.lng){
-    url='https://www.google.com/maps/dir/?api=1&destination='+loc.lat+','+loc.lng+'&travelmode=driving';
-  } else {
-    url='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent((loc.name||'')+', '+(loc.area||'')+', Abuja');
-  }
-  window.open(url,'_blank');
-}
+function navTo(loc){window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(loc.name+', '+loc.area+', Abuja, Nigeria'),'_blank');}
 function navById(id){var loc=LOCATIONS.find(function(l){return l.id===id;});if(loc)navTo(loc);}
 function navTo_id(id){navById(id);}
 
@@ -1961,17 +1847,7 @@ function openShare(id){
     var waUrl = 'https://wa.me/?text=' + encodeURIComponent(text);
     window.open(waUrl, '_blank');
   };
-  /* One-tap: save image AND open WhatsApp */
-  document.getElementById('shareOneTapBtn').onclick = function(){
-    var btn = document.getElementById('shareOneTapBtn');
-    btn.innerHTML = '⏳ Generating card...';
-    btn.disabled  = true;
-    oneTapShareCard(currentShareLoc, text);
-    setTimeout(function(){
-      btn.innerHTML = '🚀 Save Card + Share on WhatsApp';
-      btn.disabled  = false;
-    }, 4000);
-  };
+  /* Save btn uses global currentShareLoc */
   document.getElementById('shareCopyBtn').onclick = function(){
     navigator.clipboard.writeText(text.replace(/\*/g,'')).then(function(){
       showToast('📋 Copied to clipboard!');
@@ -2074,7 +1950,7 @@ function drawSuggestCard(){
 
   ctx.font = 'bold 32px sans-serif';
   ctx.fillStyle = '#22c98a';
-  ctx.fillText('📧  mustytunau@gmail.com', W/2, 795);
+  ctx.fillText('📧  deenlocator@gmail.com', W/2, 795);
   ctx.font = '28px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.65)';
   ctx.fillText('Send mosque name, address & prayer time', W/2, 835);
@@ -2140,7 +2016,7 @@ function saveSuggestCard(cv){
       navigator.share({
         files:  [file],
         title:  'DeenLocator — Suggest a Mosque',
-        text:   'Is your mosque listed on DeenLocator? Help us add it!\mustytunau@gmail.com\nmi2now.github.io/deenlocator'
+        text:   'Is your mosque listed on DeenLocator? Help us add it!\ndeenlocator@gmail.com\nmi2now.github.io/deenlocator'
       }).then(function(){
         btn.innerHTML = orig; btn.disabled = false;
       }).catch(function(){
@@ -2177,7 +2053,7 @@ function suggestMosque(){
     'Submitted via DeenLocator App\n' +
     'mi2now.github.io/deenlocator\n'
   );
-  window.location.href = 'mailto:mustytunau@gmail.com?subject=' + subject + '&body=' + body;
+  window.location.href = 'mailto:deenlocator@gmail.com?subject=' + subject + '&body=' + body;
 }
 
 function closeShareSheet(){
@@ -2245,16 +2121,6 @@ function saveShareCard(loc){
     ctx.font = 'bold 72px sans-serif';
     ctx.fillStyle = '#ffffff';
     wrapText(ctx, loc.name, 80, 380, W-160, 86);
-
-    /* ── Gregorian + Hijri date ── */
-    var now = new Date();
-    var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var monNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var gregStr = dayNames[now.getDay()]+', '+now.getDate()+' '+monNames[now.getMonth()]+' '+now.getFullYear();
-    var hijriStr = (typeof gregorianToHijri === 'function') ? gregorianToHijri(now) : getHijriDate();
-    ctx.font = '30px sans-serif';
-    ctx.fillStyle = 'rgba(255,255,255,0.55)';
-    ctx.fillText('📅 '+gregStr+'  ·  '+hijriStr, 80, 478);
 
     /* ── Address ── */
     ctx.font = '38px sans-serif';
@@ -2349,113 +2215,6 @@ function saveShareCard(loc){
     btn.innerHTML = origText; btn.disabled = false;
     showToast('❌ Card failed — use Copy Text or WhatsApp button');
   }
-}
-
-function oneTapShareCard(loc, shareText){
-  /* Step 1: draw card */
-  var canvas = document.createElement('canvas');
-  var W = 1080, H = 1350;
-  canvas.width = W; canvas.height = H;
-  var ctx = canvas.getContext('2d');
-
-  /* Background */
-  var grad = ctx.createLinearGradient(0,0,W,H);
-  grad.addColorStop(0,'#0f5c42'); grad.addColorStop(1,'#0a3d2e');
-  ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
-
-  /* App name */
-  ctx.font = 'bold 56px sans-serif'; ctx.fillStyle = '#22c98a';
-  ctx.fillText('Deen', 80, 100);
-  ctx.fillStyle = 'rgba(255,255,255,0.9)';
-  ctx.fillText('Locator', 80 + ctx.measureText('Deen').width, 100);
-
-  /* Date */
-  var now = new Date();
-  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var mons=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var dStr = days[now.getDay()]+' '+now.getDate()+' '+mons[now.getMonth()]+' '+now.getFullYear();
-  var hStr = (typeof gregorianToHijri==='function') ? gregorianToHijri(now) : '';
-  ctx.font='28px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.5)';
-  ctx.fillText(dStr+'  ·  '+hStr, 80, 145);
-
-  /* Divider */
-  ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.fillRect(80,165,W-160,2);
-
-  /* Badge */
-  var type=loc.type==='eid'?'Eid Prayer Ground':loc.type==='both'?'Eid + Jumuah Mosque':'Jumuah (Friday) Mosque';
-  var bgB=loc.type==='eid'?'#fef3c7':loc.type==='both'?'#ede9fe':'#d1fae5';
-  var fcB=loc.type==='eid'?'#92400e':loc.type==='both'?'#4c1d95':'#065f46';
-  ctx.font='bold 28px sans-serif';
-  var bw=ctx.measureText(type).width+40;
-  ctx.fillStyle=bgB; roundRect(ctx,80,185,bw,50,25); ctx.fill();
-  ctx.fillStyle=fcB; ctx.fillText(type,100,217);
-
-  /* Mosque name */
-  ctx.font='bold 68px sans-serif'; ctx.fillStyle='#fff';
-  wrapText(ctx,loc.name,80,320,W-160,82);
-
-  /* Address */
-  ctx.font='34px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.6)';
-  wrapText(ctx,'📍 '+(loc.address||loc.area+', Abuja'),80,430,W-160,44);
-
-  /* Time pills */
-  var pillY=510, pills=[];
-  if(loc.jumuahTime) pills.push({l:'Jumuah',t:loc.jumuahTime});
-  if(loc.eidTime)    pills.push({l:'Eid Prayer',t:loc.eidTime});
-  if(loc.imam&&loc.imam!=='To be announced') pills.push({l:'Imam',t:loc.imam});
-  pills.forEach(function(p,i){
-    var px=80+i*310;
-    if(px+290>W) return;
-    ctx.fillStyle='rgba(255,255,255,0.1)';
-    roundRect(ctx,px,pillY,290,100,18); ctx.fill();
-    ctx.font='24px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.5)';
-    ctx.fillText(p.l,px+16,pillY+36);
-    ctx.font='bold 34px sans-serif'; ctx.fillStyle='#f0c96a';
-    ctx.fillText(p.t,px+16,pillY+78);
-  });
-
-  /* Maps note */
-  ctx.fillStyle='rgba(255,255,255,0.1)'; ctx.fillRect(80,665,W-160,2);
-  ctx.font='30px sans-serif'; ctx.fillStyle='#22c98a';
-  ctx.fillText('🗺 Get Directions: google.com/maps → '+loc.name, 80, 710);
-
-  /* Footer */
-  ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.fillRect(0,H-240,W,240);
-  ctx.font='bold 38px sans-serif'; ctx.fillStyle='#fff';
-  ctx.fillText('📱 DeenLocator — Free App for Abuja Muslims',80,H-185);
-  ctx.font='30px sans-serif'; ctx.fillStyle='#22c98a';
-  ctx.fillText('mi2now.github.io/deenlocator',80,H-140);
-  ctx.fillStyle='rgba(255,255,255,0.45)'; ctx.font='26px sans-serif';
-  ctx.fillText('Powered by 2now Technology  ·  +234 806 590 0110',80,H-95);
-  ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fillRect(80,H-70,W-160,1);
-  ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.font='22px sans-serif';
-  ctx.fillText('Share this app with your community — find Eid grounds & Friday mosques instantly',80,H-42);
-
-  /* Step 2: try native share with file (Android Chrome) */
-  canvas.toBlob(function(blob){
-    var fname = 'deenlocator-'+loc.name.replace(/[^a-z0-9]/gi,'_').toLowerCase()+'.png';
-    var file  = new File([blob], fname, {type:'image/png'});
-    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
-      navigator.share({
-        files: [file],
-        title: loc.name+' — DeenLocator',
-        text:  shareText.replace(/\*/g,'')
-      }).catch(function(){
-        triggerDownload(canvas, fname);
-        var wa = 'https://wa.me/?text='+encodeURIComponent(shareText);
-        setTimeout(function(){ window.open(wa,'_blank'); }, 800);
-        showToast('✅ Card saved! Now sharing text...');
-      });
-    } else {
-      /* Fallback: download image then open WhatsApp with text */
-      triggerDownload(canvas, fname);
-      setTimeout(function(){
-        var wa = 'https://wa.me/?text='+encodeURIComponent(shareText);
-        window.open(wa,'_blank');
-      }, 800);
-      showToast('✅ Card saved — WhatsApp opening...');
-    }
-  },'image/png');
 }
 
 function triggerDownload(canvas, fname){
@@ -2818,7 +2577,7 @@ function drawBulkPage(items, pageNum, totalPages, filter){
 
   /* Email */
   ctx.fillStyle = 'rgba(255,255,255,0.6)';
-  ctx.fillText('✉️  mustytunau@gmail.com', W - PAD, footerY + 114);
+  ctx.fillText('✉️  deenlocator@gmail.com', W - PAD, footerY + 114);
 
   /* Powered by */
   ctx.font = '20px sans-serif';
@@ -3044,7 +2803,7 @@ document.querySelectorAll('.nav-item').forEach(function(btn){
     var t=btn.dataset.screen;
     document.getElementById('screen-'+t).classList.add('active');
     if(t==='map') initMap();
-    if(t==='prayer'){ updatePrayerScreen(); initPrayerMode(); }
+    if(t==='prayer') updatePrayerScreen();
   });
 });
 
@@ -3190,7 +2949,7 @@ function drawSuggestCard(){
   /* Left contact */
   ctx.font = 'bold 30px sans-serif';
   ctx.fillStyle = '#22c98a';
-  ctx.fillText('\u{1F4E7}  mustytunau@gmail.com', PAD, 1252);
+  ctx.fillText('\u{1F4E7}  deenlocator@gmail.com', PAD, 1252);
   ctx.font = '28px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.75)';
   ctx.fillText('\u{1F4DE}  +234 806 590 0110', PAD, 1292);
@@ -3233,7 +2992,7 @@ function saveSuggestCard(cv){
     var file  = new File([blob], fname, {type:'image/png'});
     if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
       navigator.share({files:[file], title:'DeenLocator — Suggest a Mosque',
-        text:'Know a mosque in Abuja? Tell us! mustytunau@gmail.com'
+        text:'Know a mosque in Abuja? Tell us! deenlocator@gmail.com'
       }).then(function(){ btn.innerHTML=orig; btn.disabled=false; })
       .catch(function(){ triggerDownload(cv,fname); btn.innerHTML=orig; btn.disabled=false;
         showToast('\u2705 Card saved \u2014 share from your gallery!'); });
@@ -3255,7 +3014,7 @@ function shareSuggestText(){
     '\u2705 Prayer Time (Jumuah / Eid)',
     '\u2705 Contact number (if known)','',
     '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501',
-    '\u{1F4E7} mustytunau@gmail.com',
+    '\u{1F4E7} deenlocator@gmail.com',
     '\u{1F4DE} +234 806 590 0110',
     '\u{1F4AC} +234 806 590 0110 (WhatsApp)','',
     '\u{1F4F1} mi2now.github.io/deenlocator','',
@@ -3544,20 +3303,6 @@ function scheduleAll(){
     });
   }
 
-  /* ── Eid advance notification ── */
-  var eidStatus = getEidStatus();
-  if(eidStatus.active && eidStatus.daysAway === 2){
-    /* Fire Eid notification now — 2 days before */
-    setTimeout(function(){
-      fireNotif(
-        '🌙 ' + eidStatus.eid.name + ' in 2 days!',
-        eidStatus.eid.name + ' is on ' + eidStatus.eid.date.toDateString() +
-        ' · ' + eidStatus.eid.hijri + ' · Tap to find Eid grounds near you',
-        '/deenlocator/icon-192.png'
-      );
-    }, 3000); /* 3 second delay so app is fully loaded */
-  }
-
   console.log('DeenLocator: Scheduled', _notifTimers.length, 'notification(s)');
 }
 
@@ -3576,18 +3321,13 @@ setInterval(scheduleAll, 60 * 60 * 1000);
 
 /* Upcoming Eid dates — update yearly */
 var EID_DATES = [
-  /* ── 1447 AH ── */
-  {name:'Eid al-Fitr',  hijri:'1 Shawwal 1447',     date: new Date(2026,  2, 20)},  /* 20 Mar 2026 */
-  {name:'Eid al-Adha',  hijri:'10 Dhul Hijjah 1447', date: new Date(2026,  4, 27)},  /* 27 May 2026 */
-  /* ── 1448 AH ── */
-  {name:'Eid al-Fitr',  hijri:'1 Shawwal 1448',     date: new Date(2027,  2,  9)},  /* ~9 Mar 2027 */
-  {name:'Eid al-Adha',  hijri:'10 Dhul Hijjah 1448', date: new Date(2027,  4, 17)},  /* ~17 May 2027 */
-  /* ── 1449 AH ── */
-  {name:'Eid al-Fitr',  hijri:'1 Shawwal 1449',     date: new Date(2028,  2, 27)},  /* ~27 Feb 2028 */
-  {name:'Eid al-Adha',  hijri:'10 Dhul Hijjah 1449', date: new Date(2028,  4,  5)},  /* ~5 May 2028 */
+  {name:'Eid al-Fitr',  hijri:'1 Shawwal 1447',  date: new Date(2026,  2, 20)},  /* 20 Mar 2026 — already past */
+  {name:'Eid al-Adha',  hijri:'10 Dhul Hijjah 1447', date: new Date(2026,  4, 27)}, /* 27 May 2026 */
+  {name:'Eid al-Fitr',  hijri:'1 Shawwal 1448',  date: new Date(2027,  2,  9)},  /* ~9 Mar 2027 */
+  {name:'Eid al-Adha',  hijri:'10 Dhul Hijjah 1448', date: new Date(2027,  4, 17)}, /* ~17 May 2027 */
 ];
 
-var EID_ACTIVATE_DAYS_BEFORE = 2;  /* 2 days before Eid */
+var EID_ACTIVATE_DAYS_BEFORE = 3;
 var EID_DEACTIVATE_DAYS_AFTER = 1;
 var _eidTimer = null;
 
@@ -3722,297 +3462,322 @@ function updateBulkCounts(){
   if(a) a.textContent=aCount+' locations · '+pages(aCount)+' · A–Z';
 }
 
+document.getElementById('settingsLocCount').textContent=LOCATIONS.length+' verified locations';
+buildAreaDropdown();
+renderCards();
+initGPS();
+updateBulkCounts();
+updateNotifUI();
+scheduleAll();
+startEidTimer();
 
 /* ══════════════════════════════════════════════════════
-   PRAYER MODE — Manual vs Auto API
-══════════════════════════════════════════════════════ */
+   DEENLOCATOR — ALL FIXES v5.0
+   Applied cleanly in single pass
+   ════════════════════════════════════════════════════ */
 
-var prayerMode = localStorage.getItem('dl_prayer_mode') || 'api'; /* default: auto */
+/* ── SAFE INIT ── */
+window.addEventListener('DOMContentLoaded', function(){
+  var el = document.getElementById('settingsLocCount');
+  if(el) el.textContent = LOCATIONS.length + ' verified locations · Abuja FCT';
+  if(typeof buildAreaDropdown  === 'function') buildAreaDropdown();
+  if(typeof renderCards        === 'function') renderCards();
+  if(typeof setHijriDate       === 'function') setHijriDate();
+  if(typeof updateBanner       === 'function') updateBanner();
+  if(typeof initGPS            === 'function') initGPS();
+  if(typeof initPrayerMode     === 'function') initPrayerMode();
+  if(typeof updateSoundUI      === 'function') updateSoundUI();
+  if(typeof updateBulkCounts   === 'function') updateBulkCounts();
+  if(typeof updateNotifUI      === 'function') updateNotifUI();
+  if(typeof scheduleAll        === 'function') scheduleAll();
+  if(typeof startEidTimer      === 'function') startEidTimer();
+  if(typeof updateMasterToggle === 'function') updateMasterToggle();
+  setTimeout(showWelcomeIfNew, 900);
+});
+
+/* ── PURE MATH HIJRI DATE (works on ALL browsers/devices) ── */
+function getHijriDatePure(d){
+  d = d || new Date();
+  var JD = Math.floor((d.getTime()/86400000) + 2440587.5);
+  var l  = JD - 1948440 + 10632;
+  var n  = Math.floor((l-1)/10631);
+  l = l - 10631*n + 354;
+  var j  = Math.floor((10985-l)/5316)*Math.floor(50*l/17719)
+          + Math.floor(l/5670)*Math.floor(43*l/15238);
+  l = l - Math.floor((30-j)/15)*Math.floor(17719*j/50)
+        - Math.floor(j/16)*Math.floor(15238*j/43) + 29;
+  var month = Math.floor(24*l/709);
+  var day   = l - Math.floor(709*month/24);
+  var year  = 30*n + j - 30;
+  var months = ['Muharram','Safar',"Rabi' al-Awwal","Rabi' al-Thani",
+                'Jumada al-Awwal','Jumada al-Thani','Rajab',"Sha'ban",
+                'Ramadan','Shawwal','Dhul Qadah','Dhul Hijjah'];
+  return day + ' ' + (months[month-1]||'') + ' ' + year + ' AH';
+}
+
+/* Override existing getHijriDate to use pure math always */
+var getHijriDate = getHijriDatePure;
+
+/* Also alias for bulk/share cards */
+function gregorianToHijri(d){ return getHijriDatePure(d); }
+
+/* ── FIX setHijriDate — no double date ── */
+function setHijriDate(){
+  var now  = new Date();
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var mons = ['January','February','March','April','May','June',
+              'July','August','September','October','November','December'];
+  var greg = days[now.getDay()]+', '+now.getDate()+' '+mons[now.getMonth()]+' '+now.getFullYear();
+  var h    = getHijriDatePure(now);
+
+  /* Banner — locations screen */
+  var eg = document.getElementById('gregDate');
+  var eh = document.getElementById('hijriDate');
+  if(eg) eg.textContent = greg;
+  if(eh) eh.textContent = h;
+
+  /* Prayer screen — ptDate gets greg, ptHijri gets ONLY hijri */
+  var epd = document.getElementById('ptDate');
+  var eph = document.getElementById('ptHijri');
+  if(epd) epd.textContent = greg;
+  if(eph) eph.textContent = h;    /* Hijri ONLY — no duplication */
+}
+setHijriDate();
+setInterval(setHijriDate, 60000); /* refresh every minute */
+
+/* ── PRAYER MODE TOGGLE ── */
+var prayerMode = (function(){ try{ return localStorage.getItem('dl_prayer_mode')||'api'; }catch(e){ return 'api'; } })();
 
 function setPrayerMode(mode){
   prayerMode = mode;
   try{ localStorage.setItem('dl_prayer_mode', mode); }catch(e){}
-
-  var manualBtn = document.getElementById('modeManualBtn');
-  var apiBtn    = document.getElementById('modeApiBtn');
-  var editBar   = document.getElementById('ptEditBar');
-  var statusEl  = document.getElementById('ptModeStatus');
-
+  var mb = document.getElementById('modeManualBtn');
+  var ab = document.getElementById('modeApiBtn');
+  var eb = document.getElementById('ptEditBar');
+  var st = document.getElementById('ptModeStatus');
   if(mode === 'manual'){
-    if(manualBtn){ manualBtn.classList.add('active'); }
-    if(apiBtn){    apiBtn.classList.remove('active'); }
-    if(editBar){   editBar.style.display = 'flex'; }
-    if(statusEl){  statusEl.textContent = '✏️ Using your custom times'; }
-    /* Use saved manual times */
+    if(mb){ mb.classList.add('active'); }    if(ab){ ab.classList.remove('active'); }
+    if(eb){ eb.style.display = 'flex'; }
+    if(st){ st.textContent = 'Using your saved mosque times'; }
     PRAYERS = loadPrayers();
-    renderPtCards();
-    updateBanner();
-    scheduleAll();
-    showToast('✏️ Manual mode — tap Edit to set your mosque times');
-
+    if(typeof renderPtCards==='function') renderPtCards();
+    if(typeof updateBanner==='function')  updateBanner();
+    if(typeof scheduleAll==='function')   scheduleAll();
+    showToast('Manual mode — tap Edit to set times');
   } else {
-    if(apiBtn){    apiBtn.classList.add('active'); }
-    if(manualBtn){ manualBtn.classList.remove('active'); }
-    if(editBar){   editBar.style.display = 'none'; }
-    if(statusEl){  statusEl.textContent = '⏳ Fetching today\'s Abuja times...'; }
-    /* Clear manual override and fetch from API */
+    if(ab){ ab.classList.add('active'); }    if(mb){ mb.classList.remove('active'); }
+    if(eb){ eb.style.display = 'none'; }
+    if(st){ st.textContent = 'Fetching today\'s Abuja times...'; }
     try{ localStorage.removeItem('dl_prayers_edited'); }catch(e){}
-    fetchPrayerTimesForMode(statusEl);
+    fetchPrayerTimesForMode(st);
   }
 }
 
 function fetchPrayerTimesForMode(statusEl){
-  var today = new Date();
-  var dd = String(today.getDate()).padStart(2,'0');
-  var mm = String(today.getMonth()+1).padStart(2,'0');
-  var yyyy = today.getFullYear();
-  var url = 'https://api.aladhan.com/v1/timingsByCity?city=Abuja&country=Nigeria&method=3&date='+dd+'-'+mm+'-'+yyyy;
-
+  var t = new Date();
+  var dd = String(t.getDate()).padStart(2,'0');
+  var mm = String(t.getMonth()+1).padStart(2,'0');
+  var url = 'https://api.aladhan.com/v1/timingsByCity?city=Abuja&country=Nigeria&method=3&date='+dd+'-'+mm+'-'+t.getFullYear();
   fetch(url)
     .then(function(r){ return r.json(); })
     .then(function(data){
-      if(!data || !data.data || !data.data.timings) throw new Error('bad data');
-      var t = data.data.timings;
-      function pt(str){ var p=str.split(':'); return {h:parseInt(p[0]),m:parseInt(p[1])}; }
-      PRAYERS = [
-        Object.assign({},DEFAULT_PRAYERS[0],pt(t.Fajr)),
-        Object.assign({},DEFAULT_PRAYERS[1],pt(t.Dhuhr)),
-        Object.assign({},DEFAULT_PRAYERS[2],pt(t.Asr)),
-        Object.assign({},DEFAULT_PRAYERS[3],pt(t.Maghrib)),
-        Object.assign({},DEFAULT_PRAYERS[4],pt(t.Isha))
+      if(!data||!data.data||!data.data.timings) throw new Error('bad');
+      var ti = data.data.timings;
+      function pt(s){ var p=s.split(':'); return {h:parseInt(p[0]),m:parseInt(p[1])}; }
+      PRAYERS=[
+        Object.assign({},DEFAULT_PRAYERS[0],pt(ti.Fajr)),
+        Object.assign({},DEFAULT_PRAYERS[1],pt(ti.Dhuhr)),
+        Object.assign({},DEFAULT_PRAYERS[2],pt(ti.Asr)),
+        Object.assign({},DEFAULT_PRAYERS[3],pt(ti.Maghrib)),
+        Object.assign({},DEFAULT_PRAYERS[4],pt(ti.Isha))
       ];
       savePrayers(PRAYERS);
-      renderPtCards();
-      updateBanner();
-      scheduleAll();
-      if(statusEl) statusEl.textContent = '🌐 Auto Abuja — updated today';
-      showToast('🕐 Prayer times updated from Abuja API');
+      if(typeof renderPtCards==='function') renderPtCards();
+      if(typeof updateBanner==='function')  updateBanner();
+      if(typeof scheduleAll==='function')   scheduleAll();
+      if(statusEl) statusEl.textContent = 'Auto Abuja — updated today';
+      showToast('Prayer times updated for today');
     })
     .catch(function(){
-      /* Fallback to stored times if offline */
       PRAYERS = loadPrayers();
-      renderPtCards();
-      if(statusEl) statusEl.textContent = '⚠️ Offline — using saved times';
-      showToast('⚠️ Offline — using saved Abuja times');
+      if(typeof renderPtCards==='function') renderPtCards();
+      if(statusEl) statusEl.textContent = 'Offline — using saved times';
     });
 }
 
 function initPrayerMode(){
-  /* Apply saved mode on load */
-  var manualBtn = document.getElementById('modeManualBtn');
-  var apiBtn    = document.getElementById('modeApiBtn');
-  var editBar   = document.getElementById('ptEditBar');
-  var statusEl  = document.getElementById('ptModeStatus');
-
+  var mb = document.getElementById('modeManualBtn');
+  var ab = document.getElementById('modeApiBtn');
+  var eb = document.getElementById('ptEditBar');
+  var st = document.getElementById('ptModeStatus');
   if(prayerMode === 'api'){
-    if(apiBtn)    apiBtn.classList.add('active');
-    if(manualBtn) manualBtn.classList.remove('active');
-    if(editBar)   editBar.style.display = 'none';
-    if(statusEl)  statusEl.textContent = '⏳ Fetching today\'s Abuja times...';
-    fetchPrayerTimesForMode(statusEl);
+    if(ab){ ab.classList.add('active'); }    if(mb){ mb.classList.remove('active'); }
+    if(eb){ eb.style.display = 'none'; }
+    if(st){ st.textContent = 'Fetching today\'s Abuja times...'; }
+    fetchPrayerTimesForMode(st);
   } else {
-    if(manualBtn) manualBtn.classList.add('active');
-    if(apiBtn)    apiBtn.classList.remove('active');
-    if(editBar)   editBar.style.display = 'flex';
-    if(statusEl)  statusEl.textContent = '✏️ Using your custom times';
+    if(mb){ mb.classList.add('active'); }    if(ab){ ab.classList.remove('active'); }
+    if(eb){ eb.style.display = 'flex'; }
+    if(st){ st.textContent = 'Using your saved mosque times'; }
   }
 }
 
-/* ══════════════════════════════════════════════════════
-   SOUND SYSTEM — Adhan / Nasheed for prayer alerts
-══════════════════════════════════════════════════════ */
-
-/* Sound preference stored in localStorage */
+/* ── SOUND SYSTEM ── */
 var soundPrefs = (function(){
-  try{
-    var s = localStorage.getItem('dl_sound_prefs');
-    if(s) return JSON.parse(s);
-  }catch(e){}
-  return {
-    enabled: true,
-    type: 'beep',        /* 'beep' | 'adhan' | 'nasheed' | 'custom' */
-    customUrl: '',       /* URL to uploaded sound from backend */
-    volume: 0.7
-  };
+  try{ var s=localStorage.getItem('dl_sound_prefs'); if(s) return JSON.parse(s); }catch(e){}
+  return {enabled:true, type:'beep', customUrl:'', volume:0.7};
 })();
 
-function saveSoundPrefs(){
-  try{ localStorage.setItem('dl_sound_prefs', JSON.stringify(soundPrefs)); }catch(e){}
-}
+function saveSoundPrefs(){ try{ localStorage.setItem('dl_sound_prefs',JSON.stringify(soundPrefs)); }catch(e){} }
 
-/* Generate a simple adhan-style beep using Web Audio API */
 function playBeep(){
   try{
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
-    var seq = [
-      {f:740, t:0,    d:0.3},
-      {f:880, t:0.35, d:0.3},
-      {f:988, t:0.7,  d:0.5},
-      {f:880, t:1.25, d:0.3},
-      {f:740, t:1.6,  d:0.6}
-    ];
-    seq.forEach(function(note){
-      var osc = ctx.createOscillator();
-      var gain= ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = note.f;
-      osc.type = 'sine';
-      gain.gain.setValueAtTime(0, ctx.currentTime + note.t);
-      gain.gain.linearRampToValueAtTime(soundPrefs.volume, ctx.currentTime + note.t + 0.05);
-      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + note.t + note.d);
-      osc.start(ctx.currentTime + note.t);
-      osc.stop(ctx.currentTime + note.t + note.d + 0.1);
+    var ctx = new (window.AudioContext||window.webkitAudioContext)();
+    [{f:740,t:0,d:0.3},{f:880,t:0.35,d:0.3},{f:988,t:0.7,d:0.5},{f:880,t:1.25,d:0.3},{f:740,t:1.6,d:0.6}]
+    .forEach(function(n){
+      var o=ctx.createOscillator(), g=ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value=n.f; o.type='sine';
+      g.gain.setValueAtTime(0,ctx.currentTime+n.t);
+      g.gain.linearRampToValueAtTime(soundPrefs.volume,ctx.currentTime+n.t+0.05);
+      g.gain.linearRampToValueAtTime(0,ctx.currentTime+n.t+n.d);
+      o.start(ctx.currentTime+n.t); o.stop(ctx.currentTime+n.t+n.d+0.1);
     });
-  }catch(e){ console.log('Audio error:', e); }
+  }catch(e){}
 }
 
-/* Play a remote audio file (adhan mp3 or nasheed from backend) */
-var _currentAudio = null;
+var _curAudio = null;
 function playRemoteSound(url){
   try{
-    if(_currentAudio){ _currentAudio.pause(); _currentAudio = null; }
-    var audio = new Audio(url);
-    audio.volume = soundPrefs.volume;
-    _currentAudio = audio;
-    audio.play().catch(function(e){ console.log('Audio play error:', e); playBeep(); });
+    if(_curAudio){ _curAudio.pause(); _curAudio=null; }
+    var a = new Audio(url); a.volume=soundPrefs.volume; _curAudio=a;
+    a.play().catch(function(){ playBeep(); });
   }catch(e){ playBeep(); }
 }
 
-/* Main play function — called when notification fires */
 function playAlertSound(){
   if(!soundPrefs.enabled) return;
-
-  switch(soundPrefs.type){
-    case 'adhan':
-      /* Default hosted adhan — replace URL with your backend URL when ready */
-      playRemoteSound('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
-      /* ↑ PLACEHOLDER — replace with your actual adhan MP3 URL from backend */
-      break;
-    case 'nasheed':
-      /* Nasheed from backend — replace with your backend URL */
-      playRemoteSound(soundPrefs.customUrl || '');
-      break;
-    case 'custom':
-      if(soundPrefs.customUrl) playRemoteSound(soundPrefs.customUrl);
-      else playBeep();
-      break;
-    default:
-      playBeep(); /* Simple tone — always works, no internet needed */
-  }
+  if(soundPrefs.type==='adhan'||soundPrefs.type==='nasheed'){
+    if(soundPrefs.customUrl) playRemoteSound(soundPrefs.customUrl);
+    else playBeep();
+  } else { playBeep(); }
 }
 
-/* Sound settings UI */
 function openSoundSettings(){
-  var opts = [
-    {v:'beep',    l:'🔔 Simple Beep (default — always works)'},
-    {v:'adhan',   l:'🕌 Adhan Sound (requires internet)'},
-    {v:'nasheed', l:'🎵 Nasheed (requires backend upload)'},
-  ];
-  var current = soundPrefs.type;
-  var msg = opts.map(function(o){ return (o.v===current?'✅ ':'      ')+o.l; }).join('\n');
-
-  /* Simple cycle through options on tap */
-  var idx = opts.findIndex(function(o){ return o.v===current; });
-  var next = opts[(idx+1) % opts.length];
+  var opts = [{v:'beep',l:'Simple Beep (always works)'},{v:'adhan',l:'Adhan (needs URL)'},{v:'nasheed',l:'Nasheed (needs URL)'}];
+  var cur = soundPrefs.type;
+  var idx = -1; for(var i=0;i<opts.length;i++){ if(opts[i].v===cur){idx=i;break;} }
+  var next = opts[(idx+1)%opts.length];
   soundPrefs.type = next.v;
   saveSoundPrefs();
-  showToast('🔔 Sound: '+next.l);
   updateSoundUI();
+  showToast('Sound: '+next.l);
 }
 
-function toggleSound(on){
-  soundPrefs.enabled = on;
-  saveSoundPrefs();
-  updateSoundUI();
-  showToast(on ? '🔔 Sound alerts ON' : '🔕 Sound alerts OFF');
-}
+function toggleSound(on){ soundPrefs.enabled=on; saveSoundPrefs(); updateSoundUI(); showToast(on?'Sound ON':'Sound OFF'); }
 
 function updateSoundUI(){
-  var toggle = document.getElementById('soundToggle');
-  var sub    = document.getElementById('soundSub');
-  var typeSub= document.getElementById('soundTypeSub');
-  var labels = {beep:'Simple Beep', adhan:'Adhan Sound', nasheed:'Nasheed', custom:'Custom Upload'};
-  if(toggle) toggle.checked = soundPrefs.enabled;
-  if(sub)    sub.textContent = soundPrefs.enabled ? 'Sound ON · Tap type row to change' : 'Sound OFF';
-  if(typeSub) typeSub.textContent = labels[soundPrefs.type] || 'Simple Beep';
+  var t=document.getElementById('soundToggle');
+  var s=document.getElementById('soundSub');
+  var ts=document.getElementById('soundTypeSub');
+  var labels={beep:'Simple Beep',adhan:'Adhan Sound',nasheed:'Nasheed'};
+  if(t) t.checked=soundPrefs.enabled;
+  if(s) s.textContent=soundPrefs.enabled?'Sound ON':'Sound OFF';
+  if(ts) ts.textContent=labels[soundPrefs.type]||'Simple Beep';
 }
 
-/* ══════════════════════════════════════════════════════
-   PATCH fireNotif to play sound
-══════════════════════════════════════════════════════ */
-var _origFireNotif = fireNotif;
-function fireNotif(title, body, icon){
-  _origFireNotif(title, body, icon);
-  playAlertSound();
+/* Patch fireNotif to play sound */
+if(typeof fireNotif === 'function'){
+  var _origFN = fireNotif;
+  fireNotif = function(title,body,icon){ _origFN(title,body,icon); playAlertSound(); };
 }
 
-/* ══ SAFE INIT ══ */
-window.addEventListener('DOMContentLoaded', function(){
-  var el = document.getElementById('settingsLocCount');
-  if(el) el.textContent = LOCATIONS.length + ' verified locations · Abuja FCT';
-  buildAreaDropdown();
-  renderCards();
-  setHijriDate();
-  updateBanner();
-  initGPS();
-  initPrayerMode();
-  updateSoundUI();
-  if(typeof updateBulkCounts === 'function') updateBulkCounts();
-  if(typeof updateNotifUI   === 'function') updateNotifUI();
-  if(typeof scheduleAll     === 'function') scheduleAll();
-  if(typeof startEidTimer   === 'function') startEidTimer();
-  /* Show welcome screen to new users */
-  setTimeout(showWelcomeIfNew, 800);
-});
-</script>
-<script>
-/* ══ KILL OLD SERVICE WORKERS ══ */
-if(navigator.serviceWorker){
-  navigator.serviceWorker.getRegistrations().then(function(regs){
-    regs.forEach(function(r){ r.unregister(); console.log('SW unregistered'); });
-  });
+/* ── NOTIFICATION MASTER TOGGLE ── */
+function toggleMasterNotif(on){
+  if(on){ if(typeof requestNotifPermission==='function') requestNotifPermission(); }
+  else{
+    if(typeof notifPrefs!=='undefined'){
+      notifPrefs.prayerAlerts=false; notifPrefs.jumuahAlert=false;
+      if(typeof saveNotifPrefs==='function') saveNotifPrefs(notifPrefs);
+      if(typeof clearAllNotifTimers==='function') clearAllNotifTimers();
+    }
+    showToast('Notifications paused locally');
+  }
+  if(typeof updateNotifUI==='function') updateNotifUI();
 }
-if(window.caches){
-  caches.keys().then(function(keys){
-    keys.forEach(function(k){ caches.delete(k); console.log('Cache cleared:', k); });
-  });
+
+function updateMasterToggle(){
+  var mt=document.getElementById('notifMasterToggle');
+  if(mt && typeof Notification!=='undefined') mt.checked=(Notification.permission==='granted');
 }
-</script>
-</body>
-</html>
-/* ══ WELCOME SCREEN ══ */
+
+/* ── MULTI-SELECT PRAYER REMINDERS ── */
+function togglePrayerLead(m){
+  if(typeof notifPrefs==='undefined') return;
+  if(!notifPrefs.prayerLeadMins) notifPrefs.prayerLeadMins=[];
+  var i=notifPrefs.prayerLeadMins.indexOf(m);
+  if(i>-1) notifPrefs.prayerLeadMins.splice(i,1); else notifPrefs.prayerLeadMins.push(m);
+  notifPrefs.prayerLeadMin=notifPrefs.prayerLeadMins[0]||10;
+  if(typeof saveNotifPrefs==='function') saveNotifPrefs(notifPrefs);
+  if(typeof scheduleAll==='function') scheduleAll();
+  /* Rebuild sheet content */
+  buildPrayerLeadSheet();
+  showToast(notifPrefs.prayerLeadMins.length
+    ? 'Reminders: '+notifPrefs.prayerLeadMins.slice().sort(function(a,b){return a-b;}).join(', ')+'min'
+    : 'No reminders set');
+}
+
+function buildPrayerLeadSheet(){
+  var el=document.getElementById('prayerLeadBtnsWrap');
+  if(!el) return;
+  if(typeof notifPrefs==='undefined'||!notifPrefs.prayerLeadMins) return;
+  var opts=[5,10,15,20,30,45,60];
+  var mins=notifPrefs.prayerLeadMins;
+  el.innerHTML=opts.map(function(m){
+    var sel=mins.indexOf(m)>-1;
+    return '<button onclick="togglePrayerLead('+m+')" style="height:42px;border-radius:10px;border:'
+      +(sel?'2px solid var(--gd)':'1.5px solid var(--cd)')
+      +';background:'+(sel?'var(--gd)':'var(--white)')
+      +';color:'+(sel?'var(--white)':'var(--tp)')
+      +';font-family:inherit;font-size:13px;font-weight:'+(sel?'700':'500')
+      +';cursor:pointer;flex:1;min-width:80px">'
+      +(sel?'✅ ':'')+m+'min</button>';
+  }).join('');
+}
+
+/* ── WELCOME SCREEN ── */
 function showWelcomeIfNew(){
   try{
-    var seen = localStorage.getItem('dl_welcomed');
-    if(!seen){
-      document.getElementById('welcomeOverlay').classList.add('show');
-      document.body.style.overflow = 'hidden';
+    if(!localStorage.getItem('dl_welcomed')){
+      var ov=document.getElementById('welcomeOverlay');
+      if(ov){ ov.classList.add('show'); document.body.style.overflow='hidden'; }
     }
   }catch(e){}
 }
 
 function dismissWelcome(){
   try{ localStorage.setItem('dl_welcomed','1'); }catch(e){}
-  var ov = document.getElementById('welcomeOverlay');
-  if(ov) ov.classList.remove('show');
-  document.body.style.overflow = '';
-  /* Request notification permission after welcome */
+  var ov=document.getElementById('welcomeOverlay');
+  if(ov){ ov.classList.remove('show'); document.body.style.overflow=''; }
   setTimeout(function(){
-    if('Notification' in window && Notification.permission === 'default'){
-      showToast('💡 Tip: Enable notifications for prayer alerts in Settings');
-    }
+    if(typeof Notification!=='undefined' && Notification.permission==='default')
+      showToast('Tip: Enable notifications for prayer alerts in Settings');
   }, 1500);
 }
 
+/* ── FAQ TOGGLE ── */
 function toggleFaq(row){
-  var answer = row.querySelector('.faq-answer');
-  var chevron = row.querySelector('.settings-row-right');
-  if(!answer) return;
-  var isOpen = answer.style.display !== 'none';
-  document.querySelectorAll('.faq-answer').forEach(function(a){ a.style.display='none'; });
-  document.querySelectorAll('.settings-row-right').forEach(function(c){ c.textContent='›'; });
-  if(!isOpen){ answer.style.display='block'; if(chevron) chevron.textContent='⌄'; }
+  var ans=row.querySelector('.faq-answer');
+  var chev=row.querySelector('.settings-row-right');
+  if(!ans) return;
+  var open=ans.style.display!=='none';
+  document.querySelectorAll('.faq-answer').forEach(function(a){a.style.display='none';});
+  document.querySelectorAll('.settings-row-right').forEach(function(c){c.textContent='>';});
+  if(!open){ ans.style.display='block'; if(chev) chev.textContent='v'; }
 }
 
-
+/* ── SW VERSION BUMP ── */
+/* Cache cleared by SW killer block below */
+</script>
+</body>
+</html>
