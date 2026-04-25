@@ -1,16 +1,15 @@
 /* ============================================================
    DeenLocator — Master Locations Database
-   Sources: CFII PDFs (1445–1447 AH) + CEMA website (1447 AH)
+   Sources: CFII PDFs (1445-1447 AH) + CEMA website (1447 AH)
    Total: 62 verified locations across Abuja FCT
-   Last updated: March 2026 | 1447 AH
+   Last updated: April 2026 | 1447 AH
    Powered by 2now Technology
+   ============================================================
+
+   TO EDIT: Use admin.html → Export → upload this file to GitHub
    ============================================================ */
 
 var LOCATIONS = [
-
-  /* ══════════════════════════════════════
-     EID GROUNDS — Dedicated open grounds
-     ══════════════════════════════════════ */
 
   {
     id: 1,
@@ -21,6 +20,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0097, lng: 7.4553, verified: true, featured: true
   },
+
   {
     id: 2,
     name: "Gwarimpa Eid Prayer Ground",
@@ -30,6 +30,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1167, lng: 7.4167, verified: true, featured: false
   },
+
   {
     id: 3,
     name: "Citec Estate Eid Ground",
@@ -37,8 +38,9 @@ var LOCATIONS = [
     area: "Mbora", city: "Abuja",
     type: "eid", eidTime: "8:30 AM",
     imam: "To be announced", phone: "08036241247", whatsapp: null,
-    lat: 9.0950, lng: 7.5200, verified: true, featured: true
+    lat: 9.095, lng: 7.52, verified: true, featured: true
   },
+
   {
     id: 4,
     name: "Kubwa Muslim Community Eid Ground",
@@ -46,8 +48,9 @@ var LOCATIONS = [
     area: "Kubwa", city: "Abuja",
     type: "eid", eidTime: "8:30 AM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1500, lng: 7.3167, verified: true, featured: false
+    lat: 9.15, lng: 7.3167, verified: true, featured: false
   },
+
   {
     id: 5,
     name: "JIBWIS Prayer Ground Gbazango",
@@ -57,6 +60,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1453, lng: 7.3231, verified: true, featured: false
   },
+
   {
     id: 6,
     name: "Old Berger Yard Eid Ground",
@@ -64,8 +68,9 @@ var LOCATIONS = [
     area: "Lugbe", city: "Abuja",
     type: "eid", eidTime: "8:15 AM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0167, lng: 7.4000, verified: true, featured: false
+    lat: 9.0167, lng: 7.4, verified: true, featured: false
   },
+
   {
     id: 7,
     name: "Mambilla Barracks Eid Ground",
@@ -75,6 +80,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0417, lng: 7.5167, verified: true, featured: false
   },
+
   {
     id: 8,
     name: "Abacha Barracks Eid Ground",
@@ -82,8 +88,9 @@ var LOCATIONS = [
     area: "Asokoro", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0600, lng: 7.4950, verified: true, featured: false
+    lat: 9.06, lng: 7.495, verified: true, featured: false
   },
+
   {
     id: 9,
     name: "Pegi Muslim Community Eid Ground",
@@ -91,8 +98,9 @@ var LOCATIONS = [
     area: "Kuje", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.8800, lng: 7.2300, verified: true, featured: false
+    lat: 8.88, lng: 7.23, verified: true, featured: false
   },
+
   {
     id: 10,
     name: "Kuduru Muslim Community (KMC)",
@@ -100,17 +108,19 @@ var LOCATIONS = [
     area: "Bwari", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.2100, lng: 7.3833, verified: true, featured: false
+    lat: 9.21, lng: 7.3833, verified: true, featured: false
   },
+
   {
     id: 11,
     name: "Esteem Boys College Eid Ground",
-    address: "Esteem Boys' College, Lokogoma, Abuja",
+    address: "Esteem Boys",
     area: "Lokogoma", city: "Abuja",
     type: "eid", eidTime: "8:30 AM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.9500, lng: 7.3800, verified: true, featured: false
+    lat: 8.95, lng: 7.38, verified: true, featured: false
   },
+
   {
     id: 12,
     name: "Dutse Baumpa Eid Ground",
@@ -118,8 +128,9 @@ var LOCATIONS = [
     area: "Dutse", city: "Abuja",
     type: "eid", eidTime: "9:00 AM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1833, lng: 7.3500, verified: true, featured: false
+    lat: 9.1833, lng: 7.35, verified: true, featured: false
   },
+
   {
     id: 13,
     name: "Gbazango West Muslim Community",
@@ -127,17 +138,19 @@ var LOCATIONS = [
     area: "Kubwa", city: "Abuja",
     type: "eid", eidTime: "9:00 AM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1480, lng: 7.3210, verified: true, featured: false
+    lat: 9.148, lng: 7.321, verified: true, featured: false
   },
+
   {
     id: 14,
     name: "Brick City Eid Ground",
     address: "Brick City Estate, Abuja",
-    area: "Abuja", city: "Abuja",
+    area: "Bwari", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0733, lng: 7.4650, verified: true, featured: false
+    lat: 9.0733, lng: 7.465, verified: true, featured: false
   },
+
   {
     id: 15,
     name: "Bmuko Muslim Community",
@@ -145,8 +158,9 @@ var LOCATIONS = [
     area: "Dutse", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1900, lng: 7.3450, verified: true, featured: false
+    lat: 9.19, lng: 7.345, verified: true, featured: false
   },
+
   {
     id: 16,
     name: "NDA Prayer Ground",
@@ -154,8 +168,9 @@ var LOCATIONS = [
     area: "Asokoro", city: "Abuja",
     type: "eid", eidTime: "8:30 AM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0450, lng: 7.5200, verified: true, featured: false
+    lat: 9.045, lng: 7.52, verified: true, featured: false
   },
+
   {
     id: 17,
     name: "National Assembly Central Mosque",
@@ -163,8 +178,9 @@ var LOCATIONS = [
     area: "Central Area", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0600, lng: 7.4980, verified: true, featured: false
+    lat: 9.06, lng: 7.498, verified: true, featured: false
   },
+
   {
     id: 18,
     name: "Kubwa FO1 Eid Ground",
@@ -175,19 +191,16 @@ var LOCATIONS = [
     lat: 9.1633, lng: 7.3383, verified: true, featured: false
   },
 
-  /* ══════════════════════════════════════
-     MOSQUES — Both Eid + Jumuah
-     ══════════════════════════════════════ */
-
   {
     id: 19,
     name: "Al-Noor Masjid (ICICE Centre)",
     address: "Al-Noor Masjid, ICICE Centre, Wuse 2, Abuja",
-    area: "Wuse 2", city: "Abuja",
+    area: "Wuse", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0556, lng: 7.4892, verified: true, featured: true
   },
+
   {
     id: 20,
     name: "APO Legislative Quarters Mosque",
@@ -197,6 +210,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0128, lng: 7.5433, verified: true, featured: false
   },
+
   {
     id: 21,
     name: "JIBWIS Headquarters Mosque",
@@ -204,8 +218,9 @@ var LOCATIONS = [
     area: "Utako", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0667, lng: 7.4500, verified: true, featured: false
+    lat: 9.0667, lng: 7.45, verified: true, featured: false
   },
+
   {
     id: 22,
     name: "Nurul Yaqeen Mosque",
@@ -215,15 +230,17 @@ var LOCATIONS = [
     imam: "To be announced", phone: "08039584612", whatsapp: null,
     lat: 9.0833, lng: 7.4333, verified: true, featured: false
   },
+
   {
     id: 23,
     name: "Uthman Bin Affan Masjid (Banex Plaza)",
     address: "FOMWAN International School, Adjacent Banex Plaza, Wuse 2, Abuja",
-    area: "Wuse 2", city: "Abuja",
+    area: "Wuse", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0600, lng: 7.4850, verified: true, featured: false
+    lat: 9.06, lng: 7.485, verified: true, featured: false
   },
+
   {
     id: 24,
     name: "Ibrahim Maimunat Foundation (IMF) Masjid",
@@ -233,6 +250,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1633, lng: 7.3333, verified: true, featured: false
   },
+
   {
     id: 25,
     name: "Al-Habibiyyah Mosque",
@@ -242,6 +260,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0383, lng: 7.5117, verified: true, featured: true
   },
+
   {
     id: 26,
     name: "Muslim Community Central Mosque Kubwa",
@@ -249,8 +268,9 @@ var LOCATIONS = [
     area: "Kubwa", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1667, lng: 7.3250, verified: true, featured: false
+    lat: 9.1667, lng: 7.325, verified: true, featured: false
   },
+
   {
     id: 27,
     name: "FOMWAN Headquarters Jumuah Masjid",
@@ -258,8 +278,9 @@ var LOCATIONS = [
     area: "Utako", city: "Abuja",
     type: "both", eidTime: "8:45 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0700, lng: 7.4480, verified: true, featured: false
+    lat: 9.07, lng: 7.448, verified: true, featured: false
   },
+
   {
     id: 28,
     name: "Al-Huda Masjid",
@@ -269,6 +290,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1383, lng: 7.3067, verified: true, featured: false
   },
+
   {
     id: 29,
     name: "Al-Ikhlas Masjid",
@@ -278,6 +300,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1583, lng: 7.3167, verified: true, featured: false
   },
+
   {
     id: 30,
     name: "JIBWIS Islamic Centre Guzape",
@@ -285,62 +308,69 @@ var LOCATIONS = [
     area: "Guzape", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0350, lng: 7.5083, verified: true, featured: false
+    lat: 9.035, lng: 7.5083, verified: true, featured: false
   },
+
   {
     id: 31,
-    name: "Masjid Shaikh Ja'afar Zuba",
+    name: "Masjid Shaikh Ja",
     address: "Along Kaduna-Lokoja Expressway, Zuba, Abuja",
     area: "Zuba", city: "Abuja",
     type: "both", eidTime: "9:30 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1250, lng: 7.2083, verified: true, featured: false
+    lat: 9.125, lng: 7.2083, verified: true, featured: false
   },
+
   {
     id: 32,
-    name: "Area 8 Jumu'ah Masjid",
+    name: "Area 8 Jumu",
     address: "Area 8 Masjid, Section 1, Sheda Close, Garki, Abuja",
     area: "Garki", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0450, lng: 7.4783, verified: true, featured: false
+    lat: 9.045, lng: 7.4783, verified: true, featured: false
   },
+
   {
     id: 33,
     name: "Sun City Estate Mosque (SEMRA)",
-    address: "Sun City Estate, Jumu'ah Mosque SEMRA, Lugbe, Abuja",
+    address: "Sun City Estate, Jumu",
     area: "Lugbe", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:15 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0100, lng: 7.4133, verified: true, featured: false
+    lat: 9.01, lng: 7.4133, verified: true, featured: false
   },
+
   {
     id: 34,
     name: "Dambatta Masjid",
     address: "No 23 Kaltungo Street, Garki II, Abuja",
-    area: "Garki II", city: "Abuja",
+    area: "Garki", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0517, lng: 7.4967, verified: true, featured: false
   },
+
   {
     id: 35,
     name: "Jedo Estate Islamic Centre",
-    address: "Jumu'ah Masjid, Jedo Estate, Along Airport Road, Lugbe, Abuja",
+    address: "Jumu",
     area: "Lugbe", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0050, lng: 7.4083, verified: true, featured: false
+    lat: 9.005, lng: 7.4083, verified: true, featured: false
   },
+
   {
     id: 36,
-    name: "Cyclic Energy Jumu'ah Masjid",
+    name: "Cyclic Energy Jumu",
     address: "Cyclic Energy Limited, Airport Road, Abuja",
     area: "Airport Road", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0183, lng: 7.4500, verified: true, featured: false
+    lat: 9.0183, lng: 7.45, verified: true, featured: false
   },
+
   {
     id: 37,
     name: "Masjid Abubakar Siddique",
@@ -348,17 +378,19 @@ var LOCATIONS = [
     area: "Wuse", city: "Abuja",
     type: "both", eidTime: "8:45 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0600, lng: 7.4750, verified: true, featured: false
+    lat: 9.06, lng: 7.475, verified: true, featured: false
   },
+
   {
     id: 38,
-    name: "Chika Jumu'ah Mosque",
+    name: "Chika Jumu",
     address: "Along Airport Road, Opposite ECOWAS, Chika, Abuja",
     area: "Chika", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0017, lng: 7.4250, verified: true, featured: false
+    lat: 9.0017, lng: 7.425, verified: true, featured: false
   },
+
   {
     id: 39,
     name: "OTM Islamic Centre",
@@ -366,17 +398,19 @@ var LOCATIONS = [
     area: "Lokogoma", city: "Abuja",
     type: "both", eidTime: "8:15 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.9617, lng: 7.3950, verified: true, featured: false
+    lat: 8.9617, lng: 7.395, verified: true, featured: false
   },
+
   {
     id: 40,
     name: "Ansar-ud-Deen Mosque Wuse 2",
     address: "No 80 Aguiyi Ironsi Street, Wuse 2, Abuja",
-    area: "Wuse 2", city: "Abuja",
+    area: "Wuse", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0583, lng: 7.4917, verified: true, featured: false
   },
+
   {
     id: 41,
     name: "Maitama Central Mosque",
@@ -384,8 +418,9 @@ var LOCATIONS = [
     area: "Maitama", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0800, lng: 7.4933, verified: true, featured: false
+    lat: 9.08, lng: 7.4933, verified: true, featured: false
   },
+
   {
     id: 42,
     name: "Shehu Shagari Central Mosque",
@@ -395,6 +430,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0517, lng: 7.4767, verified: true, featured: false
   },
+
   {
     id: 43,
     name: "NASFAT Islamic Centre Utako",
@@ -402,8 +438,9 @@ var LOCATIONS = [
     area: "Utako", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0700, lng: 7.4550, verified: true, featured: false
+    lat: 9.07, lng: 7.455, verified: true, featured: false
   },
+
   {
     id: 44,
     name: "Ansar-ud-Deen Central Mosque Kubwa",
@@ -413,6 +450,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1583, lng: 7.3117, verified: true, featured: false
   },
+
   {
     id: 45,
     name: "Wuye Central Masjid",
@@ -422,6 +460,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0833, lng: 7.4667, verified: true, featured: false
   },
+
   {
     id: 46,
     name: "Anoor Islamic Centre Masjid",
@@ -431,6 +470,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0917, lng: 7.5183, verified: true, featured: false
   },
+
   {
     id: 47,
     name: "Federal Housing Authority Mosque Asokoro",
@@ -440,15 +480,17 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0383, lng: 7.5233, verified: true, featured: false
   },
+
   {
     id: 48,
-    name: "Sanusi Dantata Jumu'ah Mosque",
+    name: "Sanusi Dantata Jumu",
     address: "Sanusi Dantata Memorial Mosque, Central Area, Abuja",
     area: "Central Area", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0600, lng: 7.4833, verified: true, featured: false
+    lat: 9.06, lng: 7.4833, verified: true, featured: false
   },
+
   {
     id: 49,
     name: "AYA Central Mosque Asokoro",
@@ -456,8 +498,9 @@ var LOCATIONS = [
     area: "Asokoro", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0450, lng: 7.5167, verified: true, featured: false
+    lat: 9.045, lng: 7.5167, verified: true, featured: false
   },
+
   {
     id: 50,
     name: "Anas Ibn Malik Islamic Centre (AMSSCO)",
@@ -467,6 +510,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0133, lng: 7.4317, verified: true, featured: false
   },
+
   {
     id: 51,
     name: "Airport Masjid",
@@ -476,6 +520,7 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0067, lng: 7.4633, verified: true, featured: false
   },
+
   {
     id: 52,
     name: "Sunnyvale Homes Masjid",
@@ -483,8 +528,9 @@ var LOCATIONS = [
     area: "Dakwo", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0033, lng: 7.5100, verified: true, featured: false
+    lat: 9.0033, lng: 7.51, verified: true, featured: false
   },
+
   {
     id: 53,
     name: "JIBWIS Dawaki",
@@ -492,8 +538,9 @@ var LOCATIONS = [
     area: "Dawaki", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0800, lng: 7.5050, verified: true, featured: false
+    lat: 9.08, lng: 7.505, verified: true, featured: false
   },
+
   {
     id: 54,
     name: "Dape Village Masjid",
@@ -503,15 +550,17 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1033, lng: 7.4117, verified: true, featured: false
   },
+
   {
     id: 55,
     name: "Hayatul Islam Karu",
-    address: "Karu Hayatul Islam Jumu'ah Mosque, FHA Phase 2, Karu Site, Abuja",
+    address: "Karu Hayatul Islam Jumu",
     area: "Karu", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 8.9983, lng: 7.5883, verified: true, featured: false
   },
+
   {
     id: 56,
     name: "Anwaru-L-Huda (AHLON)",
@@ -519,8 +568,9 @@ var LOCATIONS = [
     area: "Garki", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0533, lng: 7.4800, verified: true, featured: false
+    lat: 9.0533, lng: 7.48, verified: true, featured: false
   },
+
   {
     id: 57,
     name: "Nile University Central Masjid",
@@ -531,10 +581,6 @@ var LOCATIONS = [
     lat: 9.0617, lng: 7.4367, verified: true, featured: false
   },
 
-  /* ══════════════════════════════════════
-     JUMUAH ONLY MOSQUES
-     ══════════════════════════════════════ */
-
   {
     id: 58,
     name: "Abdullateef Adegbite Masjid (MSS)",
@@ -542,17 +588,19 @@ var LOCATIONS = [
     area: "Gwarimpa", city: "Abuja",
     type: "jumuah", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1200, lng: 7.4150, verified: true, featured: false
+    lat: 9.12, lng: 7.415, verified: true, featured: false
   },
+
   {
     id: 59,
     name: "7th Avenue Islamic Center",
-    address: "7th Avenue Islamic Center Juma'at Mosque, Gwarimpa, Abuja",
+    address: "7th Avenue Islamic Center Juma",
     area: "Gwarimpa", city: "Abuja",
     type: "jumuah", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1217, lng: 7.4183, verified: true, featured: false
   },
+
   {
     id: 60,
     name: "Ansar-Deen Mosque Gwarimpa",
@@ -562,15 +610,17 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1183, lng: 7.4133, verified: true, featured: false
   },
+
   {
     id: 61,
-    name: "Suncity Estate Jumu'ah Masjid",
-    address: "Suncity Estate Juma'at Masjid, Galadimawa, Abuja",
+    name: "Suncity Estate Jumu",
+    address: "Suncity Estate Juma",
     area: "Galadimawa", city: "Abuja",
     type: "jumuah", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0117, lng: 7.4300, verified: true, featured: false
+    lat: 9.0117, lng: 7.43, verified: true, featured: false
   },
+
   {
     id: 62,
     name: "Esteem Learning Centre Masjid",

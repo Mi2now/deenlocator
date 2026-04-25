@@ -4,11 +4,13 @@
  * Enables offline support and faster loading
  */
 
-var CACHE = 'deenlocator-v4';
+var CACHE = 'deenlocator-v5';
 
 var FILES = [
   '/deenlocator/',
-  '/deenlocator/index.html'
+  '/deenlocator/index.html',
+  '/deenlocator/locations.js',
+  '/deenlocator/config.js'
 ];
 
 /* Install — cache core files */
