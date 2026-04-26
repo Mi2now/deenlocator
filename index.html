@@ -1180,8 +1180,6 @@ function renderMosqueEvents(loc){
   active.forEach(function(ev,evIdx){
     var cls='event-card '+(catCls[ev.category]||'');
     var isProj=(ev.category==='project'||ev.category==='feeding'||ev.category==='donation');
-
-    /* Social links */
     var sL=[];
     if(ev.facebook) sL.push('FB: '+ev.facebook);
     if(ev.instagram) sL.push('IG: '+ev.instagram);
@@ -1190,35 +1188,32 @@ function renderMosqueEvents(loc){
 
     html+='<div class="'+cls+'" onclick="this.classList.toggle(\'expanded\')" style="position:relative;min-width:240px;max-width:260px">';
     html+='<span class="event-chevron">&#9660;</span>';
-    /* Thumbnail top-right in collapsed view */
+
+    /* ── COLLAPSED: thumbnail (72px) + category + title + organiser + time ── */
     if(ev.bannerUrl){
       var _tu=typeof fixImgurUrl==='function'?fixImgurUrl(ev.bannerUrl):ev.bannerUrl;
-      html+='<img src="'+_tu+'" style="float:right;width:60px;height:60px;border-radius:8px;object-fit:cover;margin:0 0 6px 8px;border:1.5px solid rgba(255,255,255,0.12)" onerror="this.style.display=\'none\'">';
+      /* FIX: use contain so image isn't distorted */
+      html+='<img src="'+_tu+'" style="float:right;width:72px;height:72px;border-radius:8px;'
+        +'object-fit:contain;background:#f0ede6;margin:0 0 4px 8px;'
+        +'border:1.5px solid rgba(0,0,0,0.08)" onerror="this.style.display=\'none\'">';
     }
-
-    /* ── COLLAPSED: only category + title + organiser + time ── */
     if(ev.category&&ev.category!=='general'){
       html+='<div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tm);margin-bottom:3px">'+ev.category+'</div>';
     }
-    html+='<div class="event-title">'+(ev.title||'')+'</div>';
+    html+='<div class="event-title" style="padding-right:'+(ev.bannerUrl?'84px':'0')+'">'+(ev.title||'')+'</div>';
     if(ev.organiser) html+='<div class="event-org">'+(ev.organiser||'')+'</div>';
     if(ev.time) html+='<div class="event-time">\u23F0 '+ev.time+'</div>';
-    /* Tap to expand hint */
-    html+='<div style="font-size:10px;color:var(--tm);margin-top:4px">Tap for details \u203A</div>';
+    html+='<div style="font-size:10px;color:var(--tm);margin-top:4px;clear:both">Tap for details \u203A</div>';
 
-    /* ── EXPANDED: everything else ── */
-    html+='<div class="event-extra">';
-    /* Thumbnail in expanded */
-    if(ev.bannerUrl){
-      html+='<img src="'+fixImgurUrl(ev.bannerUrl)+'" style="width:100%;border-radius:8px;margin-bottom:8px;max-height:140px;object-fit:cover" onerror="this.style.display=\'none\'">';
-    }
+    /* ── EXPANDED: NO big banner — just the info pill + everything else ── */
+    html+='<div class="event-extra" style="clear:both">';
     /* Call button */
     if(ev.phone){
       html+='<div class="event-actions"><button class="event-btn call" onclick="event.stopPropagation();window.open(\'tel:'+(ev.phone||'')+'\')">\uD83D\uDCDE Call</button></div>';
     }
-    /* Social links */
+    /* Social */
     if(sL.length) html+='<div style="font-size:11px;color:var(--gm);margin-top:4px">\uD83D\uDCF1 '+sL.join(' \u00B7 ')+'</div>';
-    /* For project/donation/feeding: account in gold box */
+    /* Account for project */
     if(isProj&&ev.accountNumber){
       html+='<div style="background:rgba(240,201,106,0.12);border-radius:8px;padding:8px 10px;margin:6px 0">'
         +'<div style="font-size:10px;color:var(--tm);margin-bottom:2px">DONATIONS</div>'
@@ -1229,7 +1224,7 @@ function renderMosqueEvents(loc){
         +'onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">\uD83D\uDCCB Copy Account Number</button>'
         +'</div>';
     }
-    /* For non-project: show account immediately */
+    /* Non-project account */
     if(!isProj&&ev.accountNumber){
       html+='<div style="margin-top:4px">'
         +'<button class="event-btn copy-acc" onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">\uD83D\uDCCB Copy Account</button>'
@@ -1241,8 +1236,12 @@ function renderMosqueEvents(loc){
       var _d=new Date(ev.endDate),_dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],_dm=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       html+='<div style="margin-top:4px;font-size:11px">\uD83D\uDCC5 '+_dn[_d.getDay()]+' '+_d.getDate()+' '+_dm[_d.getMonth()]+' '+_d.getFullYear()+'</div>';
     }
-    /* Extra info */
-    if(ev.extraInfo) html+='<div style="font-size:11px;color:var(--ts);margin-top:4px">\u2139\uFE0F '+ev.extraInfo+'</div>';
+    /* Extra info as a pill */
+    if(ev.extraInfo){
+      html+='<div style="background:var(--cd);border-radius:20px;padding:5px 12px;'
+        +'margin-top:6px;display:inline-block;font-size:11px;color:var(--ts);max-width:100%">'
+        +'\u2139\uFE0F '+ev.extraInfo+'</div>';
+    }
     /* Sponsors */
     if(ev.sponsors){
       var spList=ev.sponsors.split('\n').filter(function(s){return s.trim();});
@@ -1254,11 +1253,10 @@ function renderMosqueEvents(loc){
     /* Share button */
     html+='<button class="event-btn" style="margin-top:8px;width:100%;justify-content:center;border-color:rgba(34,201,138,.4);color:var(--gm);background:rgba(34,201,138,.08)" '
       +'onclick="event.stopPropagation();openEventShare('+loc.id+','+evIdx+')">\u2197 Share Event Card</button>';
-    html+='</div>'; /* end event-extra */
-    html+='</div>'; /* end event-card */
+    html+='</div></div>';
   });
 
-  html+='</div>'; /* end scroll */
+  html+='</div>';
   if(active.length>1){
     html+='<div class="events-dots">';
     active.forEach(function(_,i){ html+='<div class="events-dot'+(i===0?' active':'')+'"></div>'; });
@@ -1413,61 +1411,56 @@ function openEventShare(locId, evIdx){
   /* ══ BANNER IMAGES (1, 2, or 3) ══
      Standard size recommendation: 1080x607px (16:9) or 1080x1080px (1:1)
      On canvas: scaled to fit proportionally */
-  var banners=[ev.bannerUrl,ev.bannerUrl2,ev.bannerUrl3].filter(Boolean);
+  /* ══ IMAGES — max 2 side by side ══ */
+  /* DIMENSIONS: 1 image = 1080x810px (4:3) | 2 images = 540x540px each (square) */
+  var banners=[ev.bannerUrl,ev.bannerUrl2].filter(Boolean);
   if(banners.length){
-    var imgAreaW=W-100, imgGap=10;
-    var imgH; /* height of the image row */
+    var imgAreaW=W-100, imgGap=12;
     if(banners.length===1){
-      /* Single image: 4:3 = 980x735, capped at 280 */
-      imgH=280;
-      ctx.fillStyle='rgba(255,255,255,0.04)'; roundRect(ctx,50,curY,imgAreaW,imgH,12); ctx.fill();
-      /* No placeholder text - just the styled box */
+      var imgH=300;
+      ctx.fillStyle='rgba(255,255,255,0.05)'; roundRect(ctx,50,curY,imgAreaW,imgH,14); ctx.fill();
       var b1=new Image(); b1.crossOrigin='anonymous';
       (function(bImg,bx,by,bw,bh){
-        bImg.onload=function(){try{ctx.save();roundRect(ctx,bx,by,bw,bh,12);ctx.clip();ctx.drawImage(bImg,bx,by,bw,bh);ctx.restore();}catch(e){}};
+        bImg.onload=function(){try{ctx.save();roundRect(ctx,bx,by,bw,bh,14);ctx.clip();ctx.fillStyle='#ffffff';ctx.fillRect(bx,by,bw,bh);var iw=bImg.naturalWidth,ih=bImg.naturalHeight,scale=Math.min(bw/iw,bh/ih),dw=iw*scale,dh=ih*scale;ctx.drawImage(bImg,bx+(bw-dw)/2,by+(bh-dh)/2,dw,dh);ctx.restore();}catch(e){}};
         try{bImg.src=fixImgurUrl(banners[0]);}catch(e){}
       })(b1,50,curY,imgAreaW,imgH);
-      curY+=imgH+16;
-    } else if(banners.length===2){
-      /* Two images side by side, each 16:9 */
-      imgH=240;
-      var hw=(imgAreaW-imgGap)/2;
+      curY+=imgH+30;
+    } else {
+      var imgH2=260, hw=(imgAreaW-imgGap)/2;
       [0,1].forEach(function(k){
         var bx=50+k*(hw+imgGap), by=curY;
-        ctx.fillStyle='rgba(255,255,255,0.04)'; roundRect(ctx,bx,by,hw,imgH,10); ctx.fill();
-        /* No placeholder text */
+        ctx.fillStyle='rgba(255,255,255,0.05)'; roundRect(ctx,bx,by,hw,imgH2,12); ctx.fill();
         var bi=new Image(); bi.crossOrigin='anonymous';
         (function(img,x,y,w,h){
-          img.onload=function(){try{ctx.save();roundRect(ctx,x,y,w,h,10);ctx.clip();ctx.drawImage(img,x,y,w,h);ctx.restore();}catch(e){}};
+          img.onload=function(){try{ctx.save();roundRect(ctx,x,y,w,h,12);ctx.clip();ctx.fillStyle='#ffffff';ctx.fillRect(x,y,w,h);var iw=img.naturalWidth,ih=img.naturalHeight,scale=Math.min(w/iw,h/ih),dw=iw*scale,dh=ih*scale;ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);ctx.restore();}catch(e){}};
           try{img.src=fixImgurUrl(banners[k]);}catch(e){}
-        })(bi,bx,by,hw,imgH);
+        })(bi,bx,by,hw,imgH2);
       });
-      curY+=imgH+16;
-    } else {
-      /* Three images: first wide (top), two below side by side */
-      var topH=200, botH=160, hw3=(imgAreaW-imgGap)/2;
-      ctx.fillStyle='rgba(255,255,255,0.04)'; roundRect(ctx,50,curY,imgAreaW,topH,10); ctx.fill();
-      /* No placeholder */
-      var b3a=new Image(); b3a.crossOrigin='anonymous';
-      (function(img,x,y,w,h){img.onload=function(){try{ctx.save();roundRect(ctx,x,y,w,h,10);ctx.clip();ctx.drawImage(img,x,y,w,h);ctx.restore();}catch(e){}};try{img.src=banners[0];}catch(e){};})(b3a,50,curY,imgAreaW,topH);
-      curY+=topH+imgGap;
-      [1,2].forEach(function(k){
-        var bx=50+(k-1)*(hw3+imgGap), by=curY;
-        ctx.fillStyle='rgba(255,255,255,0.04)'; roundRect(ctx,bx,by,hw3,botH,10); ctx.fill();
-        /* No placeholder */
-        var bi3=new Image(); bi3.crossOrigin='anonymous';
-        (function(img,x,y,w,h){img.onload=function(){try{ctx.save();roundRect(ctx,x,y,w,h,10);ctx.clip();ctx.drawImage(img,x,y,w,h);ctx.restore();}catch(e){}};try{img.src=fixImgurUrl(banners[k]);}catch(e){};})(bi3,bx,by,hw3,botH);
-      });
-      curY+=botH+16;
+      curY+=imgH2+30;
     }
   }
 
-  /* Info text */
+  /* ══ INFO PILL ══ */
   if(ev.extraInfo&&ev.extraInfo.trim()){
-    ctx.font='26px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.65)';
-    var iLines=ev.extraInfo.split('\n');
-    iLines.slice(0,3).forEach(function(il){if(il.trim()){ctx.fillText(il.trim(),50,curY);curY+=36;}});
-    curY+=8;
+    curY+=28;
+    var infoLines=ev.extraInfo.split('\n').filter(function(l){return l.trim();});
+    var pPad=28, lineH2=44;
+    var pillH2=pPad*2+(infoLines.length*lineH2);
+    /* Outer glow */
+    ctx.fillStyle='rgba(255,255,255,0.06)'; roundRect(ctx,44,curY-4,W-88,pillH2+8,20); ctx.fill();
+    /* Main pill - solid semi-transparent */
+    ctx.fillStyle='rgba(255,255,255,0.13)'; roundRect(ctx,50,curY,W-100,pillH2,16); ctx.fill();
+    /* Left accent bar (like mosque block) */
+    ctx.fillStyle=pal.accent; ctx.fillRect(50,curY,5,pillH2);
+    /* Text */
+    ctx.font='bold 30px sans-serif'; ctx.fillStyle='#ffffff';
+    var ty2=curY+pPad+30;
+    infoLines.forEach(function(il){
+      var clean=il.trim();
+      if(clean.charAt(0)==='*'||clean.charAt(0)==='.'||clean.charAt(0)==='-') clean='\u2022 '+clean.replace(/^[*.\-]\s*/,'');
+      ctx.fillText(clean,50+24,ty2); ty2+=lineH2;
+    });
+    curY+=pillH2+28;
   }
 
   /* ══ BOTTOM TWO-COLUMN LAYOUT ══ */
@@ -1895,7 +1888,7 @@ function renderCards(){
         +(loc.khutbaUrl?'<a class="exp-media-btn" href="'+loc.khutbaUrl+'" target="_blank"><span>📋</span><span>Khutbah</span></a>':'<div class="exp-media-btn dim"><span>📋</span><span>Khutbah</span></div>')
         +(loc.youtube?'<a class="exp-media-btn youtube" href="'+loc.youtube+'" target="_blank"><span>▶</span><span>Live Stream</span></a>':'<div class="exp-media-btn dim"><span>▶</span><span>Live Stream</span></div>')
         +'</div>'
-        +(loc.eventNote?'<div class="exp-event" style="white-space:pre-line;line-height:1.8;font-size:13px">'+loc.eventNote.split('\n').map(function(l){l=l.trim();if(!l) return '';if(l.charAt(0)==='*'||l.charAt(0)==='.'||l.charAt(0)==='-') l='\u2022 '+l.replace(/^[*\.\-]\s*/,'');return l;}).filter(Boolean).join('\n')+'</div>':'')
+        +(loc.eventNote?'<div class="exp-event" style="white-space:pre-line;line-height:1.8;font-size:13px">'+loc.eventNote.split('\n').map(function(ln){ln=ln.trim();if(!ln)return'';if(ln.charAt(0)==='*'||ln.charAt(0)==='.'||ln.charAt(0)==='-'||ln.charAt(0)==='•')ln='• '+ln.replace(/^[*\.\-•]\s*/,'');return ln;}).filter(Boolean).join('\n')+'</div>':'')
         +renderMosqueEvents(loc)
         +'<button class="btn-navigate" onclick="navById('+loc.id+')">🗺 Get Directions</button>'
         +'<div class="exp-bottom-row">'
