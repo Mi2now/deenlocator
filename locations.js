@@ -1,6 +1,6 @@
 /* DeenLocator Locations
    Updated: 26/04/2026
-   Total: 62 locations
+   Total: 63 locations
 */
 
 var LOCATIONS = [
@@ -172,8 +172,8 @@ var LOCATIONS = [
     address: "Al-Noor Masjid, ICICE Centre, Wuse 2, Abuja",
     area: "Wuse", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.074771, lng: 7.485623, verified: true, featured: true, youtube: "https://www.youtube.com/watch?v=bgBi_eWQDbs", khutbaUrl: "https://drive.google.com/file/d/1ea98UR2_GUxG3kiKziX3lHVnCGG39lEh/view?usp=drive_link", mapsUrl: "https://maps.app.goo.gl/p6cJRnN64Miw7N5R8", eventNote: "* Tarawih Start at 8:00 PM Prompt\n\n*Kindly follow the instructions of our volunteers at the parking lot to ensure smooth coordination and proper use of the parking space.", events: [{"title":"Women in Islam","category":"general","organiser":"Shiekh Ahmad Muhammad and Sheikh Ibrahim Aliyu ","time":"!0:00 AM - 1:00 PM","endDate":"2026-04-30","phone":"+2348065900110","accountNumber":"","accountName":"","bankName":"","bannerUrl":"https://drive.google.com/file/d/154fJs05Cw38plkCYhv1PA2Own15sut7J/view?usp=drive_link","sponsors":"Eastpath Global Services and 2now Technology"},{"title":"Library","category":"project","organiser":"","time":"","endDate":"","phone":"","accountNumber":"1234567890","accountName":"ASDFG  ZXCVB","bankName":"QWERT","bannerUrl":"https://drive.google.com/file/d/154fJs05Cw38plkCYhv1PA2Own15sut7J/view?usp=drive_link","sponsors":""}]
+    imam: "Malan Mustapha Ibrahim Tunau", phone: "+2348065900110", whatsapp: "+2348065900110",
+    lat: 9.074736, lng: 7.485555, verified: true, featured: true, youtube: "https://www.youtube.com/watch?v=bgBi_eWQDbs", khutbaUrl: "https://drive.google.com/file/d/1ea98UR2_GUxG3kiKziX3lHVnCGG39lEh/view?usp=drive_link", mapsUrl: "https://maps.app.goo.gl/oGQmkoNGGLRerckCA", eventNote: "Kindly follow the instructions of our volunteers at the parking lot to ensure smooth coordination and proper use of the parking space.\n\nTarawih Start at 8:00 PM Prompt", events: [{"title":"Women in Islam","category":"general","organiser":"Shiekh Ahmad Muhammad and SHiekh Ibrahim Aliyu","time":"10:00 AM - 1:00 PM","endDate":"2026-04-30","phone":"+2348065900110","accountNumber":"","accountName":"","bankName":"","extraInfo":"Women Space is Available ","bannerUrl":"https://drive.google.com/file/d/154fJs05Cw38plkCYhv1PA2Own15sut7J/view?usp=drive_link","sponsors":"Eastpath Global Investment \n\n2now Technology","socialPlatform":"","socialHandle":"@Eastpath"},{"title":"Library","category":"project","organiser":"An Noor Mosque","time":"","endDate":"","phone":"+2348065900110","accountNumber":"1234567890","accountName":"ASDFG  ZXCVBN","bankName":"QWERTY","extraInfo":"JazakAllah Khairan","bannerUrl":"https://drive.google.com/file/d/154fJs05Cw38plkCYhv1PA2Own15sut7J/view?usp=drive_link"}]
   },
   {
     id: 20,
@@ -561,5 +561,14 @@ var LOCATIONS = [
     type: "jumuah", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 8.9533, lng: 7.3817, verified: true, featured: false
+  },
+  {
+    id: 63,
+    name: "Mosque",
+    address: "Abuja",
+    area: "Kabusa", city: "Abuja",
+    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
+    imam: "Mustapha Ibrahim Tunau", phone: "+23480900110", whatsapp: "+2348065900110",
+    lat: 9.074727, lng: 7.485623, verified: true, featured: true, youtube: "https://www.youtube.com/watch?v=bgBi_eWQDbs", khutbaUrl: "https://drive.google.com/file/d/1ea98UR2_GUxG3kiKziX3lHVnCGG39lEh/view?usp=drive_link", mapsUrl: "https://maps.app.goo.gl/eop1AcfNbFzMzqXUA", eventNote: "*Tarawih Start @ 8:00PM Prompt\n\n*Kindly follow the instructions of our volunteers at the parking lot to ensure smooth coordination and proper use of the parking space.", events: [{"title":"Women In Islam ","category":"general","organiser":"Shiekh Ahmad Muhammad and Sheikh Ibrahim Aliyu","time":"10:00 AM","endDate":"2026-04-30","phone":"+2348065900110","accountNumber":"","accountName":"","bankName":"","bannerUrl":"https://drive.google.com/file/d/154fJs05Cw38plkCYhv1PA2Own15sut7J/view?usp=drive_link","sponsors":"Eastpath Global Investment and 2now Technology"},{"title":"Library","category":"project","organiser":"","time":"","endDate":"","phone":"+2348065900110","accountNumber":"1234567890","accountName":"ASDFGHJ ZXCVB","bankName":"QWERTY","bannerUrl":"https://drive.google.com/file/d/154fJs05Cw38plkCYhv1PA2Own15sut7J/view?usp=drive_link","sponsors":""}]
   }
 ];

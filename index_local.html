@@ -1869,7 +1869,14 @@ function setDrumAP(i,val){['am','pm'].forEach(function(v){var b=document.getElem
 function renderMosqueEvents(loc){
   if(!loc.events || !loc.events.length) return '';
   var today = new Date(); today.setHours(0,0,0,0);
-  var active = loc.events.filter(function(ev){
+  /* Sort events by endDate ascending (soonest first) */
+  var evCopy = loc.events.slice().sort(function(a,b){
+    if(!a.endDate && !b.endDate) return 0;
+    if(!a.endDate) return 1;
+    if(!b.endDate) return -1;
+    return new Date(a.endDate) - new Date(b.endDate);
+  });
+  var active = evCopy.filter(function(ev){
     if(!ev.endDate) return true;
     var ed = new Date(ev.endDate); ed.setHours(23,59,59,0);
     return ed >= today;
@@ -1893,12 +1900,12 @@ function renderMosqueEvents(loc){
     if(ev.phone) html += '<button class="event-btn call" onclick="event.stopPropagation();window.open(\'tel:'+(ev.phone||'')+'\')">\uD83D\uDCDE Call</button>';
     if(ev.accountNumber) html += '<button class="event-btn copy-acc" onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">\uD83D\uDCCB Copy Account</button>';
     html += '</div>';
-    if(ev.accountNumber) html += '<div style="font-size:10px;color:var(--ts);margin-top:3px">'+(ev.accountName||'')+(ev.bankName?' \u00B7 '+ev.bankName:'')+'</div>';
+    if(ev.accountNumber) html += '<div style="font-size:10px;color:var(--ts);margin-top:3px">'+(ev.accountName||'')+(ev.bankName?' \u00B7 '+ev.bankName:'')+'</div>'; if(ev.socialPlatform&&ev.socialHandle) html += '<div style="font-size:11px;color:var(--gm);margin-top:4px">\uD83D\uDCF1 '+ev.socialPlatform+': '+ev.socialHandle+'</div>';
     /* Expandable extra section */
     html += '<div class="event-extra">';
     if(ev.bannerUrl) html += '<img src="'+ev.bannerUrl+'" style="width:100%;border-radius:8px;margin-bottom:8px;max-height:140px;object-fit:cover" onerror="this.style.display=\'none\'">';
     if(ev.endDate){var _d=new Date(ev.endDate),_dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],_dm=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; html += '<div>\uD83D\uDCC5 Date: '+_dn[_d.getDay()]+' '+_d.getDate()+' '+_dm[_d.getMonth()]+' '+_d.getFullYear()+'</div>';}
-    if(ev.sponsors) html += '<div>\uD83E\uDD1D Sponsors: '+ev.sponsors+'</div>';
+    if(ev.extraInfo) html += '<div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:5px 8px;font-size:11px;color:rgba(255,255,255,0.65);margin-top:4px">\u2139\uFE0F '+ev.extraInfo+'</div>'; if(ev.sponsors){ var spList=ev.sponsors.split('\n').filter(function(s){return s.trim();}); html += '<div>\uD83E\uDD1D <strong>Supported by:</strong></div>'; spList.forEach(function(s){ html += '<div style="padding-left:14px">\u2726 '+s.trim()+'</div>'; }); } if(ev.socialPlatform&&ev.socialHandle) html += '<div>\uD83D\uDCF1 '+ev.socialPlatform+': '+ev.socialHandle+'</div>';
     html += '<button class="event-btn" style="margin-top:8px;width:100%;justify-content:center;border-color:rgba(34,201,138,.4);color:var(--gm);background:rgba(34,201,138,.08)" onclick="event.stopPropagation();openEventShare('+loc.id+','+evIdx+')">\u2197 Share Event Card</button>';
     html += '</div>';
     html += '</div>';
@@ -1961,91 +1968,188 @@ function openEventShare(locId, evIdx){
   var ev = loc.events[evIdx];
   trackEvent('event_share','engagement',ev.title||'');
 
-  var W=1080, H=1350;
+  var W=1080, H=1440;
   var cv = document.createElement('canvas');
   cv.width=W; cv.height=H;
   var ctx = cv.getContext('2d');
 
-  /* Background */
-  var catColors = {lecture:'#6366f1',feeding:'#22c98a',donation:'#f0c96a',project:'#f59e0b',eid:'#d4a843',general:'#0f5c42',others:'#64748b'};
-  var catColor = catColors[ev.category||'general']||'#0f5c42';
-  var grad = ctx.createLinearGradient(0,0,W,H);
-  grad.addColorStop(0,'#0f5c42'); grad.addColorStop(1,'#051c15');
-  ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+  /* Category colours */
+  var catPalette = {
+    lecture:  {bg:'#312e81', accent:'#818cf8', light:'rgba(129,140,248,0.15)'},
+    feeding:  {bg:'#064e3b', accent:'#34d399', light:'rgba(52,211,153,0.15)'},
+    donation: {bg:'#451a03', accent:'#fbbf24', light:'rgba(251,191,36,0.15)'},
+    project:  {bg:'#1c1917', accent:'#f97316', light:'rgba(249,115,22,0.15)'},
+    eid:      {bg:'#1a1000', accent:'#d4a843', light:'rgba(212,168,67,0.15)'},
+    general:  {bg:'#0f5c42', accent:'#22c98a', light:'rgba(34,201,138,0.15)'},
+    others:   {bg:'#1e1b4b', accent:'#a78bfa', light:'rgba(167,139,250,0.15)'}
+  };
+  var pal = catPalette[ev.category||'general'] || catPalette.general;
 
-  /* Dot pattern */
-  ctx.fillStyle='rgba(255,255,255,0.025)';
-  for(var r=0;r<10;r++) for(var c=0;c<8;c++){ctx.beginPath();ctx.arc(70+c*135,70+r*148,15,0,Math.PI*2);ctx.fill();}
+  /* === BACKGROUND === */
+  var grad = ctx.createLinearGradient(0, 0, W, H);
+  grad.addColorStop(0, pal.bg);
+  grad.addColorStop(0.6, '#040c0a');
+  grad.addColorStop(1, '#020706');
+  ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
 
-  /* Category badge */
+  /* Subtle grid pattern */
+  ctx.strokeStyle = 'rgba(255,255,255,0.025)'; ctx.lineWidth = 1;
+  for(var gx=0; gx<W; gx+=90){ ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+  for(var gy=0; gy<H; gy+=90){ ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+
+  /* Glowing orb top-right */
+  var orb = ctx.createRadialGradient(W-100, 100, 0, W-100, 100, 350);
+  orb.addColorStop(0, pal.light); orb.addColorStop(1, 'transparent');
+  ctx.fillStyle=orb; ctx.fillRect(0,0,W,H);
+
+  /* === TOP HEADER BAND === */
+  var hH=180;
+  ctx.fillStyle='rgba(255,255,255,0.05)'; ctx.fillRect(0,0,W,hH);
+  ctx.fillStyle=pal.accent;
+  ctx.fillRect(0,hH-4,W,4);
+
+  /* Logo top-left with onload */
+  var _li = new Image();
+  var logoLoaded = false;
+  _li.onload = function(){
+    ctx.drawImage(_li, 50, 30, 80, 80);
+    logoLoaded = true;
+    /* Redraw text over logo area after load */
+    ctx.font = 'bold 46px sans-serif'; ctx.fillStyle = pal.accent;
+    ctx.fillText('Deen', 148, 84);
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.fillText('Locator', 148+ctx.measureText('Deen').width+4, 84);
+    ctx.font = '24px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fillText('by 2now Technology · Abuja FCT', 148, 118);
+  };
+  _li.onerror = function(){
+    ctx.font = 'bold 46px sans-serif'; ctx.fillStyle = pal.accent;
+    ctx.fillText('Deen', 50, 84);
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.fillText('Locator', 50+ctx.measureText('Deen').width+4, 84);
+    ctx.font = '24px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fillText('by 2now Technology · Abuja FCT', 50, 118);
+  };
+  _li.src = LOGO;
+
+  /* Category pill top-right */
   var catLabel = (ev.category||'General').charAt(0).toUpperCase()+(ev.category||'General').slice(1);
-  ctx.font='bold 28px sans-serif'; ctx.fillStyle=catColor;
-  var bw=ctx.measureText(catLabel).width+40;
-  ctx.fillStyle='rgba(255,255,255,0.12)'; roundRect(ctx,72,60,bw,48,24); ctx.fill();
-  ctx.fillStyle=catColor; ctx.fillText(catLabel,92,94);
+  ctx.font = 'bold 26px sans-serif';
+  var bw = ctx.measureText(catLabel).width + 48;
+  ctx.fillStyle = pal.accent; roundRect(ctx, W-bw-50, 48, bw, 48, 24); ctx.fill();
+  ctx.fillStyle = '#000'; ctx.fillText(catLabel, W-bw-50+24, 82);
 
-  /* DeenLocator logo top-left */
-  try{var _li=new Image();_li.src=LOGO;if(_li.complete&&_li.naturalWidth>0)ctx.drawImage(_li,72,120,56,56);}catch(e){}
-  ctx.font='bold 38px sans-serif'; ctx.fillStyle='#22c98a'; ctx.fillText('Deen',138,160);
-  ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.fillText('Locator',138+ctx.measureText('Deen').width+3,160);
-
-  ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.fillRect(72,192,W-144,2);
-
-  /* Event title */
-  var curY=236; ctx.font='bold 80px sans-serif'; ctx.fillStyle='#ffffff';
-  var eWords=(ev.title||'').split(' '),eLine='',eLines=[];
-  eWords.forEach(function(w){var t=eLine?eLine+' '+w:w;if(ctx.measureText(t).width>W-144){eLines.push(eLine);eLine=w;}else eLine=t;});
+  /* === TITLE BLOCK === */
+  var curY = hH + 60;
+  ctx.font = 'bold 88px sans-serif'; ctx.fillStyle = '#ffffff';
+  var eWords=(ev.title||'Event').split(' '), eLine='', eLines=[];
+  eWords.forEach(function(w){ var t=eLine?eLine+' '+w:w; if(ctx.measureText(t).width>W-100){eLines.push(eLine);eLine=w;}else eLine=t; });
   if(eLine) eLines.push(eLine);
-  eLines.slice(0,3).forEach(function(nl){ctx.fillText(nl,72,curY);curY+=96;});
-  curY+=12;
+  eLines.slice(0,3).forEach(function(nl){ ctx.fillText(nl,50,curY); curY+=100; });
+  curY += 12;
 
   /* Organiser */
-  if(ev.organiser){ctx.font='34px sans-serif';ctx.fillStyle='rgba(255,255,255,0.7)';ctx.fillText('by '+ev.organiser,72,curY);curY+=50;}
+  if(ev.organiser){ ctx.font='italic 36px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.65)'; ctx.fillText('by '+ev.organiser,50,curY); curY+=54; }
 
-  /* Time */
-  if(ev.time){ctx.font='bold 36px sans-serif';ctx.fillStyle=catColor;ctx.fillText('\u23F0 '+ev.time,72,curY);curY+=50;}
+  /* === INFO PILLS ROW === */
+  curY += 10;
+  var pillY = curY, pillH = 68, pillGap = 16, pillX = 50;
+  function drawPill(icon, text, color){
+    ctx.font = 'bold 28px sans-serif';
+    var tw = ctx.measureText(icon+' '+text).width + 40;
+    ctx.fillStyle = 'rgba(255,255,255,0.1)'; roundRect(ctx,pillX,pillY,tw,pillH,pillH/2); ctx.fill();
+    ctx.strokeStyle = color; ctx.lineWidth=1.5; roundRect(ctx,pillX,pillY,tw,pillH,pillH/2); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.fillText(icon+' '+text, pillX+20, pillY+44);
+    pillX += tw + pillGap;
+  }
+  if(ev.time){ drawPill('\u23F0', ev.time, pal.accent); }
+  if(ev.endDate){
+    var _d=new Date(ev.endDate),_dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],_dm=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    drawPill('\uD83D\uDCC5', _dn[_d.getDay()]+' '+_d.getDate()+' '+_dm[_d.getMonth()]+' '+_d.getFullYear(), 'rgba(255,255,255,0.3)');
+  }
+  curY = pillY + pillH + 40;
 
-  /* Date */
-  if(ev.endDate){var d=new Date(ev.endDate);var dN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],dM=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];ctx.font='32px sans-serif';ctx.fillStyle='rgba(255,255,255,0.6)';ctx.fillText('\uD83D\uDCC5 '+dN[d.getDay()]+' '+d.getDate()+' '+dM[d.getMonth()]+' '+d.getFullYear(),72,curY);curY+=48;}
+  /* === VENUE BLOCK === */
+  ctx.fillStyle = pal.light; roundRect(ctx,50,curY,W-100,110,16); ctx.fill();
+  ctx.strokeStyle = pal.accent; ctx.lineWidth=1; roundRect(ctx,50,curY,W-100,110,16); ctx.stroke();
+  ctx.font = 'bold 30px sans-serif'; ctx.fillStyle = pal.accent;
+  ctx.fillText('\uD83C\uDFDB\uFE0F  '+loc.name, 80, curY+42);
+  ctx.font = '26px sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.fillText('\uD83D\uDCCD  '+(loc.address||loc.area+', Abuja'), 80, curY+82);
+  curY += 130;
 
-  /* Mosque name + address */
-  curY+=8; ctx.fillStyle='rgba(255,255,255,0.15)'; ctx.fillRect(72,curY,W-144,1); curY+=20;
-  ctx.font='bold 30px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.fillText('\uD83C\uDFDB\uFE0F '+loc.name,72,curY); curY+=42;
-  ctx.font='26px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.fillText('\uD83D\uDCCD '+(loc.address||loc.area+', Abuja'),72,curY); curY+=42;
-
-  /* Contact */
-  if(ev.phone){curY+=8;ctx.font='bold 30px sans-serif';ctx.fillStyle='#22c98a';ctx.fillText('\uD83D\uDCDE Enquiry: '+ev.phone,72,curY);curY+=44;}
-
-  /* Account */
-  if(ev.accountNumber){
-    ctx.font='bold 28px sans-serif';ctx.fillStyle='#f0c96a';ctx.fillText('\uD83C\uDFE6 Donations: '+ev.accountName,72,curY);curY+=36;
-    ctx.font='32px sans-serif';ctx.fillStyle='#f0c96a';ctx.fillText(ev.accountNumber+(ev.bankName?' · '+ev.bankName:''),72,curY);curY+=44;
+  /* === CONTACT + ACCOUNT === */
+  if(ev.phone || ev.accountNumber){
+    curY += 10;
+    if(ev.phone){
+      ctx.font = 'bold 32px sans-serif'; ctx.fillStyle = '#22c98a';
+      ctx.fillText('\uD83D\uDCDE  Enquiry: '+ev.phone, 50, curY); curY+=48;
+    }
+    if(ev.accountNumber){
+      ctx.font = 'bold 28px sans-serif'; ctx.fillStyle = '#f0c96a';
+      ctx.fillText('\uD83C\uDFE6  '+ev.accountName+(ev.bankName?' · '+ev.bankName:''), 50, curY); curY+=36;
+      ctx.font = '34px sans-serif';
+      ctx.fillText(ev.accountNumber, 50, curY); curY+=50;
+    }
   }
 
-  /* Sponsors */
-  if(ev.sponsors){curY+=8;ctx.font='26px sans-serif';ctx.fillStyle='rgba(255,255,255,0.5)';ctx.fillText('Supported by: '+ev.sponsors,72,curY);curY+=38;}
+  /* === SPONSORS === */
+  if(ev.sponsors && ev.sponsors.trim()){
+    curY += 8;
+    ctx.fillStyle='rgba(255,255,255,0.08)'; roundRect(ctx,50,curY,W-100,10,5); ctx.fill();
+    curY += 24;
+    ctx.font='bold 24px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)';
+    ctx.fillText('SUPPORTED BY', 50, curY); curY+=34;
+    ctx.font='26px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.7)';
+    var spons = ev.sponsors.split('\n').filter(function(s){return s.trim();});
+    spons.forEach(function(s){ ctx.fillText('\u2726 '+s.trim(), 50, curY); curY+=36; });
+  }
 
-  /* Footer */
-  var fH=180; ctx.fillStyle='rgba(0,0,0,0.3)'; roundRect(ctx,0,H-fH,W,fH,{tl:0,tr:0,br:0,bl:0}); ctx.fill();
-  ctx.fillStyle='rgba(255,255,255,0.1)'; ctx.fillRect(72,H-fH,W-144,1);
-  ctx.font='bold 30px sans-serif'; ctx.fillStyle='#ffffff'; ctx.fillText('\uD83D\uDCF1 Find more on DeenLocator',72,H-fH+46);
-  ctx.font='26px sans-serif'; ctx.fillStyle='#22c98a'; ctx.fillText('mi2now.github.io/deenlocator',72,H-fH+82);
-  ctx.font='22px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.fillText('Free app for Eid & Jumuah locations in Abuja',72,H-fH+114);
-  ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fillRect(72,H-fH+134,W-144,1);
-  ctx.font='20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.fillText('Powered by 2now Technology  \u00B7  '+( typeof APP_CONFIG!=='undefined'?APP_CONFIG.contactPhone:'+234 806 590 0110'),72,H-fH+158);
+  /* === FOOTER === */
+  var fY = H-150;
+  ctx.fillStyle='rgba(0,0,0,0.4)'; roundRect(ctx,0,fY,W,150,{tl:0,tr:0,bl:0,br:0}); ctx.fill();
+  ctx.fillStyle=pal.accent; ctx.fillRect(0,fY,W,3);
+  ctx.font='bold 32px sans-serif'; ctx.fillStyle='#fff';
+  ctx.fillText('\uD83D\uDCF1 Download DeenLocator — Free App', 50, fY+50);
+  ctx.font='26px sans-serif'; ctx.fillStyle=pal.accent;
+  ctx.fillText('mi2now.github.io/deenlocator', 50, fY+88);
+  ctx.font='22px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)';
+  ctx.fillText('Find Eid & Jumuah prayer locations in Abuja — instantly', 50, fY+122);
 
-  /* Share */
-  cv.toBlob(function(blob){
-    var fname='deenlocator-event-'+(ev.title||'event').replace(/[^a-z0-9]/gi,'_').toLowerCase()+'.png';
-    var file=new File([blob],fname,{type:'image/png'});
-    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-      navigator.share({files:[file],title:ev.title||'Event',text:'DeenLocator — '+loc.name});
-    } else {
-      triggerDownload(cv,fname);
-      showToast('\u2705 Event card saved — share from your gallery!');
-    }
-  },'image/png');
+  /* Draw then share */
+  function doShare(){
+    cv.toBlob(function(blob){
+      var fname='deenlocator-event-'+(ev.title||'event').replace(/[^a-z0-9]/gi,'_').toLowerCase()+'.png';
+      var file=new File([blob],fname,{type:'image/png'});
+      if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+        navigator.share({files:[file],title:ev.title||'Event',text:'DeenLocator — '+loc.name+'\n'+(typeof APP_CONFIG!=='undefined'?APP_CONFIG.appUrl:'mi2now.github.io/deenlocator')});
+      } else {
+        triggerDownload(cv,fname);
+        showToast('\u2705 Event card saved — share from your gallery!');
+      }
+    },'image/png');
+  }
+
+  /* Wait for logo or timeout after 500ms */
+  if(_li.complete && _li.naturalWidth>0){
+    doShare();
+  } else {
+    _li.onload = function(){
+      try{ ctx.drawImage(_li,50,30,80,80); }catch(e){}
+      /* Redraw DeenLocator text */
+      ctx.fillStyle='rgba(255,255,255,0.05)'; ctx.fillRect(0,0,W,hH);
+      ctx.fillStyle=pal.accent; ctx.fillRect(0,hH-4,W,4);
+      ctx.fillStyle=pal.light; /* re-orb */
+      ctx.font='bold 46px sans-serif'; ctx.fillStyle=pal.accent;
+      ctx.fillText('Deen',148,84);
+      ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.fillText('Locator',148+ctx.measureText('Deen').width+4,84);
+      doShare();
+    };
+    _li.onerror = function(){ doShare(); };
+    setTimeout(doShare, 600);
+  }
 }
+
 
 /* ══ GPS ══ */
 var userLat=null,userLng=null;
@@ -2353,7 +2457,7 @@ function renderCards(){
         +(loc.khutbaUrl?'<a class="exp-media-btn" href="'+loc.khutbaUrl+'" target="_blank"><span>📋</span><span>Khutbah</span></a>':'<div class="exp-media-btn dim"><span>📋</span><span>Khutbah</span></div>')
         +(loc.youtube?'<a class="exp-media-btn youtube" href="'+loc.youtube+'" target="_blank"><span>▶</span><span>Live Stream</span></a>':'<div class="exp-media-btn dim"><span>▶</span><span>Live Stream</span></div>')
         +'</div>'
-        +(loc.eventNote?'<div class="exp-event">📌 '+loc.eventNote+'</div>':'')
+        +(loc.eventNote?'<div class="exp-event" style="white-space:pre-line">📌 '+loc.eventNote+'</div>':'')
         +renderMosqueEvents(loc)
         +'<button class="btn-navigate" onclick="navById('+loc.id+')">🗺 Get Directions</button>'
         +'<div class="exp-bottom-row">'
@@ -4359,7 +4463,6 @@ window.addEventListener('appinstalled',function(){dismissInstall();});
   <button class="install-banner-close" onclick="dismissInstall()" title="Close">×</button>
 </div>
 
-</body>
 function toggleFaq(row){
   var answer = row.querySelector('.faq-answer');
   var chevron = row.querySelector('.settings-row-right');

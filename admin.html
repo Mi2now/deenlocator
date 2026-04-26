@@ -594,36 +594,57 @@ function renderEventsEditor(){
   var el = document.getElementById('eventsEditor');
   if(!el) return;
   el.innerHTML = '';
+  var cats = ['General','Lecture','Feeding','Project','Eid','Others'];
   _currentEvents.forEach(function(ev, i){
     var d = document.createElement('div');
-    d.style.cssText = 'background:var(--bg);border-radius:10px;padding:14px;border:1px solid var(--cd);margin-bottom:4px';
-    var cats = ['General','Lecture','Feeding','Project','Eid','Others'];
-    var catOpts = cats.map(function(c){ return '<option value="'+c.toLowerCase()+'"'+(ev.category===c.toLowerCase()?' selected':'')+'>'+c+'</option>'; }).join('');
-    d.innerHTML = '<div style="display:grid;gap:8px">'
-      /* Row 1: Category + Title */
+    d.style.cssText = 'background:var(--bg);border-radius:10px;padding:14px;border:1px solid var(--cd);margin-bottom:6px';
+    var catOpts = cats.map(function(c){
+      return '<option value="'+c.toLowerCase()+'"'+(ev.category===c.toLowerCase()?' selected':'')+'>'+c+'</option>';
+    }).join('');
+    var socPlatforms = ['','Facebook','Instagram','WhatsApp','Twitter/X'];
+    var socOpts = socPlatforms.map(function(p){
+      return '<option value="'+p+'"'+(ev.socialPlatform===p?' selected':'')+'>'+( p||'+ Social Media')+'</option>';
+    }).join('');
+    var inp = function(ph, val, field, extra){
+      extra = extra||'';
+      return '<input placeholder="'+ph+'" value="'+(val||'')+'" oninput="_currentEvents['+i+'].'+field+'=this.value" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px;box-sizing:border-box'+extra+'"/>';
+    };
+    var ta = function(ph, val, field, rows){
+      rows = rows||2;
+      return '<textarea placeholder="'+ph+'" rows="'+rows+'" oninput="_currentEvents['+i+'].'+field+'=this.value" style="border-radius:8px;border:1.5px solid var(--cd);padding:6px 10px;font-family:inherit;font-size:13px;width:100%;box-sizing:border-box;resize:vertical">'+(val||'')+'</textarea>';
+    };
+    d.innerHTML =
+      '<div style="display:grid;gap:8px">'
+      /* Category + Title */
+      +'<div style="display:flex;gap:8px"><select oninput="_currentEvents['+i+'].category=this.value" style="width:140px;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px">'+catOpts+'</select>'
+      +inp('Event / Project name *', ev.title, 'title', ';flex:1')+'</div>'
+      /* Organiser */
+      +inp('Organiser / Speaker name', ev.organiser, 'organiser', ';width:100%')
+      /* Time + End Date */
       +'<div style="display:flex;gap:8px">'
-      +'<select oninput="_currentEvents['+i+'].category=this.value" style="width:130px;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px">'+catOpts+'</select>'
-      +'<input placeholder="Event / Project name *" value="'+(ev.title||'')+'" oninput="_currentEvents['+i+'].title=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
+      +inp('Time e.g. 2:00PM-4:00PM or Weekly', ev.time, 'time', ';flex:2')
+      +'<input type="date" title="Event auto-disappears after this date" value="'+(ev.endDate||'')+'" oninput="_currentEvents['+i+'].endDate=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px"/>'
       +'</div>'
-      /* Row 2: Organiser */
-      +'<input placeholder="Organiser / Speaker name" value="'+(ev.organiser||'')+'" oninput="_currentEvents['+i+'].organiser=this.value" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px;width:100%;box-sizing:border-box"/>'
-      /* Row 3: Time (text) + End Date */
-      +'<div style="display:flex;gap:8px">'
-      +'<input placeholder="Time e.g. Sun 2:00PM-4:00PM or Weekly" value="'+(ev.time||'')+'" oninput="_currentEvents['+i+'].time=this.value" style="flex:2;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
-      +'<input type="date" title="Auto-disappears after this date. Leave blank = permanent." value="'+(ev.endDate||'')+'" oninput="_currentEvents['+i+'].endDate=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px"/>'
-      +'</div>'
-      /* Row 4: Contact phone */
-      +'<input placeholder="Contact phone number" value="'+(ev.phone||'')+'" oninput="_currentEvents['+i+'].phone=this.value" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px;width:100%;box-sizing:border-box"/>'
-      /* Row 5: Account details */
+      /* Contact */
+      +inp('Contact phone number', ev.phone, 'phone', ';width:100%')
+      /* Account */
       +'<div style="display:flex;gap:6px">'
-      +'<input placeholder="Account number" value="'+(ev.accountNumber||'')+'" oninput="_currentEvents['+i+'].accountNumber=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:12px"/>'
-      +'<input placeholder="Account name" value="'+(ev.accountName||'')+'" oninput="_currentEvents['+i+'].accountName=this.value" style="flex:1.5;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:12px"/>'
-      +'<input placeholder="Bank" value="'+(ev.bankName||'')+'" oninput="_currentEvents['+i+'].bankName=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:12px"/>'
+      +inp('Account number', ev.accountNumber, 'accountNumber', ';flex:1')
+      +inp('Account name', ev.accountName, 'accountName', ';flex:1.5')
+      +inp('Bank', ev.bankName, 'bankName', ';flex:1')
       +'</div>'
-      /* Row 6: Banner image URL + Sponsors */
-      +'<input placeholder="Banner/poster image URL (Google Drive, Imgur, etc.) — optional" value="'+(ev.bannerUrl||'')+'" oninput="_currentEvents['+i+'].bannerUrl=this.value" style="height:38px;border-radius:8px;border:1.5px dashed var(--cd);padding:0 10px;font-family:inherit;font-size:12px;width:100%;box-sizing:border-box"/>'
-      +'<input placeholder="Sponsors (comma-separated, optional) e.g. Jaiz Bank, CFII Abuja" value="'+(ev.sponsors||'')+'" oninput="_currentEvents['+i+'].sponsors=this.value" style="height:38px;border-radius:8px;border:1.5px dashed var(--cd);padding:0 10px;font-family:inherit;font-size:12px;width:100%;box-sizing:border-box"/>'
-      /* Remove button */
+      /* Extra info */
+      +inp('Extra info (dress code, what to bring, etc.)', ev.extraInfo, 'extraInfo', ';width:100%')
+      /* Banner URL */
+      +inp('Banner/poster image URL (Google Drive, Imgur) — optional', ev.bannerUrl, 'bannerUrl', ';width:100%;border-style:dashed')
+      /* Sponsors - textarea vertical */
+      +ta('Sponsors (one per line)\ne.g. Jaiz Bank\nCFII Abuja', ev.sponsors, 'sponsors', 2)
+      /* Social media */
+      +'<div style="display:flex;gap:8px">'
+      +'<select oninput="_currentEvents['+i+'].socialPlatform=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px dashed var(--cd);padding:0 8px;font-family:inherit;font-size:13px">'+socOpts+'</select>'
+      +inp('Handle / number / link', ev.socialHandle, 'socialHandle', ';flex:2;border-style:dashed')
+      +'</div>'
+      /* Remove */
       +'<button type="button" onclick="deleteEvent('+i+')" style="height:30px;padding:0 12px;border-radius:7px;border:1px solid #fcc;background:#fee;color:#c00;font-family:inherit;font-size:12px;cursor:pointer;align-self:flex-start">✕ Remove</button>'
       +'</div>';
     el.appendChild(d);
@@ -674,6 +695,13 @@ function handleUpload(input){
 }
 
 /* ═══ RESET TO DEFAULT ═══ */
+
+function resetLocationsOnly(){
+  if(!confirm('Reset mosque data to the original 62 locations? Your custom edits and added mosques will be lost.')) return;
+  localStorage.removeItem('dl_admin_data');
+  location.reload();
+}
+
 function resetToDefault(){
   if(!confirm('Reset ALL mosque data to the original 62 locations? This will DELETE all your edits. This cannot be undone.')) return;
   if(!confirm('Are you sure? All custom mosques, events, and edits will be lost permanently.')) return;
