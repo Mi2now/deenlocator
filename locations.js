@@ -1,16 +1,9 @@
-/* ============================================================
-   DeenLocator — Master Locations Database
-   Sources: CFII PDFs (1445-1447 AH) + CEMA website (1447 AH)
-   Total: 62 verified locations across Abuja FCT
-   Last updated: April 2026 | 1447 AH
-   Powered by 2now Technology
-   ============================================================
-
-   TO EDIT: Use admin.html → Export → upload this file to GitHub
-   ============================================================ */
+/* DeenLocator Locations
+   Updated: 26/04/2026
+   Total: 62 locations
+*/
 
 var LOCATIONS = [
-
   {
     id: 1,
     name: "National Eid Ground",
@@ -20,7 +13,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0097, lng: 7.4553, verified: true, featured: true
   },
-
   {
     id: 2,
     name: "Gwarimpa Eid Prayer Ground",
@@ -30,7 +22,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1167, lng: 7.4167, verified: true, featured: false
   },
-
   {
     id: 3,
     name: "Citec Estate Eid Ground",
@@ -40,7 +31,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: "08036241247", whatsapp: null,
     lat: 9.095, lng: 7.52, verified: true, featured: true
   },
-
   {
     id: 4,
     name: "Kubwa Muslim Community Eid Ground",
@@ -50,7 +40,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.15, lng: 7.3167, verified: true, featured: false
   },
-
   {
     id: 5,
     name: "JIBWIS Prayer Ground Gbazango",
@@ -60,7 +49,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1453, lng: 7.3231, verified: true, featured: false
   },
-
   {
     id: 6,
     name: "Old Berger Yard Eid Ground",
@@ -70,7 +58,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0167, lng: 7.4, verified: true, featured: false
   },
-
   {
     id: 7,
     name: "Mambilla Barracks Eid Ground",
@@ -80,7 +67,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0417, lng: 7.5167, verified: true, featured: false
   },
-
   {
     id: 8,
     name: "Abacha Barracks Eid Ground",
@@ -90,7 +76,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.06, lng: 7.495, verified: true, featured: false
   },
-
   {
     id: 9,
     name: "Pegi Muslim Community Eid Ground",
@@ -100,7 +85,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 8.88, lng: 7.23, verified: true, featured: false
   },
-
   {
     id: 10,
     name: "Kuduru Muslim Community (KMC)",
@@ -110,7 +94,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.21, lng: 7.3833, verified: true, featured: false
   },
-
   {
     id: 11,
     name: "Esteem Boys College Eid Ground",
@@ -120,7 +103,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 8.95, lng: 7.38, verified: true, featured: false
   },
-
   {
     id: 12,
     name: "Dutse Baumpa Eid Ground",
@@ -130,7 +112,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1833, lng: 7.35, verified: true, featured: false
   },
-
   {
     id: 13,
     name: "Gbazango West Muslim Community",
@@ -140,7 +121,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.148, lng: 7.321, verified: true, featured: false
   },
-
   {
     id: 14,
     name: "Brick City Eid Ground",
@@ -150,7 +130,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0733, lng: 7.465, verified: true, featured: false
   },
-
   {
     id: 15,
     name: "Bmuko Muslim Community",
@@ -160,7 +139,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.19, lng: 7.345, verified: true, featured: false
   },
-
   {
     id: 16,
     name: "NDA Prayer Ground",
@@ -170,7 +148,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.045, lng: 7.52, verified: true, featured: false
   },
-
   {
     id: 17,
     name: "National Assembly Central Mosque",
@@ -180,7 +157,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.06, lng: 7.498, verified: true, featured: false
   },
-
   {
     id: 18,
     name: "Kubwa FO1 Eid Ground",
@@ -190,17 +166,15 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1633, lng: 7.3383, verified: true, featured: false
   },
-
   {
     id: 19,
     name: "Al-Noor Masjid (ICICE Centre)",
     address: "Al-Noor Masjid, ICICE Centre, Wuse 2, Abuja",
     area: "Wuse", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0556, lng: 7.4892, verified: true, featured: true
+    imam: "Malan Mustapha Ibrahim Tunau", phone: "+2348065900110", whatsapp: "+2348065900110",
+    lat: 9.074719, lng: 7.4857, verified: true, featured: true, youtube: "https://www.youtube.com/watch?v=bgBi_eWQDbs", khutbaUrl: "https://drive.google.com/file/d/1ea98UR2_GUxG3kiKziX3lHVnCGG39lEh/view?usp=sharing", mapsUrl: "https://maps.app.goo.gl/HSawKW16Xj7r37ss9", eventNote: ". Tarawih starts @ 8:00PM\n. kindly Park at the designated parking space.", events: [{"title":"Women in Islman","category":"general","organiser":"Malan Ahmad Muhammad Yusuf and Malan Ibrahim Aliyu","time":"10:00 AM - 1:00 PM","endDate":"2026-04-30","phone":"+2348065900110","accountNumber":"","accountName":"","bankName":"","extraInfo":"Both and Female can come","bannerUrl":"https://drive.google.com/file/d/154fJs05Cw38plkCYhv1PA2Own15sut7J/view?usp=drive_link","sponsors":". Eastpath Global Services\n\n. 2now Technology","facebook":"@Eastpath","instagram":"@Eastpath","whatsappSocial":"+2348065900110","twitterX":"@Eastpath"},{"title":"Islamic Library","category":"project","organiser":"An Noor ","time":"","endDate":"","phone":"+2348065900110","accountNumber":"1234567890","accountName":"2now Technology","bankName":"2now Bank","extraInfo":"JazakAllah Khairan","bannerUrl":"https://drive.google.com/file/d/154fJs05Cw38plkCYhv1PA2Own15sut7J/view?usp=drive_link","sponsors":". Eastpath Global Services\n\n. 2now Technology","facebook":"@Eastpath","instagram":"@Eastpath"}]
   },
-
   {
     id: 20,
     name: "APO Legislative Quarters Mosque",
@@ -210,7 +184,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0128, lng: 7.5433, verified: true, featured: false
   },
-
   {
     id: 21,
     name: "JIBWIS Headquarters Mosque",
@@ -220,7 +193,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0667, lng: 7.45, verified: true, featured: false
   },
-
   {
     id: 22,
     name: "Nurul Yaqeen Mosque",
@@ -230,7 +202,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: "08039584612", whatsapp: null,
     lat: 9.0833, lng: 7.4333, verified: true, featured: false
   },
-
   {
     id: 23,
     name: "Uthman Bin Affan Masjid (Banex Plaza)",
@@ -240,7 +211,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.06, lng: 7.485, verified: true, featured: false
   },
-
   {
     id: 24,
     name: "Ibrahim Maimunat Foundation (IMF) Masjid",
@@ -250,7 +220,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1633, lng: 7.3333, verified: true, featured: false
   },
-
   {
     id: 25,
     name: "Al-Habibiyyah Mosque",
@@ -260,7 +229,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0383, lng: 7.5117, verified: true, featured: true
   },
-
   {
     id: 26,
     name: "Muslim Community Central Mosque Kubwa",
@@ -270,7 +238,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1667, lng: 7.325, verified: true, featured: false
   },
-
   {
     id: 27,
     name: "FOMWAN Headquarters Jumuah Masjid",
@@ -280,7 +247,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.07, lng: 7.448, verified: true, featured: false
   },
-
   {
     id: 28,
     name: "Al-Huda Masjid",
@@ -290,7 +256,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1383, lng: 7.3067, verified: true, featured: false
   },
-
   {
     id: 29,
     name: "Al-Ikhlas Masjid",
@@ -300,7 +265,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1583, lng: 7.3167, verified: true, featured: false
   },
-
   {
     id: 30,
     name: "JIBWIS Islamic Centre Guzape",
@@ -310,7 +274,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.035, lng: 7.5083, verified: true, featured: false
   },
-
   {
     id: 31,
     name: "Masjid Shaikh Ja",
@@ -320,7 +283,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.125, lng: 7.2083, verified: true, featured: false
   },
-
   {
     id: 32,
     name: "Area 8 Jumu",
@@ -330,7 +292,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.045, lng: 7.4783, verified: true, featured: false
   },
-
   {
     id: 33,
     name: "Sun City Estate Mosque (SEMRA)",
@@ -340,7 +301,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.01, lng: 7.4133, verified: true, featured: false
   },
-
   {
     id: 34,
     name: "Dambatta Masjid",
@@ -350,7 +310,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0517, lng: 7.4967, verified: true, featured: false
   },
-
   {
     id: 35,
     name: "Jedo Estate Islamic Centre",
@@ -360,7 +319,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.005, lng: 7.4083, verified: true, featured: false
   },
-
   {
     id: 36,
     name: "Cyclic Energy Jumu",
@@ -370,7 +328,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0183, lng: 7.45, verified: true, featured: false
   },
-
   {
     id: 37,
     name: "Masjid Abubakar Siddique",
@@ -380,7 +337,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.06, lng: 7.475, verified: true, featured: false
   },
-
   {
     id: 38,
     name: "Chika Jumu",
@@ -390,7 +346,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0017, lng: 7.425, verified: true, featured: false
   },
-
   {
     id: 39,
     name: "OTM Islamic Centre",
@@ -400,7 +355,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 8.9617, lng: 7.395, verified: true, featured: false
   },
-
   {
     id: 40,
     name: "Ansar-ud-Deen Mosque Wuse 2",
@@ -410,7 +364,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0583, lng: 7.4917, verified: true, featured: false
   },
-
   {
     id: 41,
     name: "Maitama Central Mosque",
@@ -420,7 +373,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.08, lng: 7.4933, verified: true, featured: false
   },
-
   {
     id: 42,
     name: "Shehu Shagari Central Mosque",
@@ -430,7 +382,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0517, lng: 7.4767, verified: true, featured: false
   },
-
   {
     id: 43,
     name: "NASFAT Islamic Centre Utako",
@@ -440,7 +391,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.07, lng: 7.455, verified: true, featured: false
   },
-
   {
     id: 44,
     name: "Ansar-ud-Deen Central Mosque Kubwa",
@@ -450,7 +400,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1583, lng: 7.3117, verified: true, featured: false
   },
-
   {
     id: 45,
     name: "Wuye Central Masjid",
@@ -460,7 +409,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0833, lng: 7.4667, verified: true, featured: false
   },
-
   {
     id: 46,
     name: "Anoor Islamic Centre Masjid",
@@ -470,7 +418,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0917, lng: 7.5183, verified: true, featured: false
   },
-
   {
     id: 47,
     name: "Federal Housing Authority Mosque Asokoro",
@@ -480,7 +427,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0383, lng: 7.5233, verified: true, featured: false
   },
-
   {
     id: 48,
     name: "Sanusi Dantata Jumu",
@@ -490,7 +436,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.06, lng: 7.4833, verified: true, featured: false
   },
-
   {
     id: 49,
     name: "AYA Central Mosque Asokoro",
@@ -500,7 +445,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.045, lng: 7.5167, verified: true, featured: false
   },
-
   {
     id: 50,
     name: "Anas Ibn Malik Islamic Centre (AMSSCO)",
@@ -510,7 +454,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0133, lng: 7.4317, verified: true, featured: false
   },
-
   {
     id: 51,
     name: "Airport Masjid",
@@ -520,7 +463,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0067, lng: 7.4633, verified: true, featured: false
   },
-
   {
     id: 52,
     name: "Sunnyvale Homes Masjid",
@@ -530,7 +472,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0033, lng: 7.51, verified: true, featured: false
   },
-
   {
     id: 53,
     name: "JIBWIS Dawaki",
@@ -540,7 +481,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.08, lng: 7.505, verified: true, featured: false
   },
-
   {
     id: 54,
     name: "Dape Village Masjid",
@@ -550,7 +490,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1033, lng: 7.4117, verified: true, featured: false
   },
-
   {
     id: 55,
     name: "Hayatul Islam Karu",
@@ -560,7 +499,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 8.9983, lng: 7.5883, verified: true, featured: false
   },
-
   {
     id: 56,
     name: "Anwaru-L-Huda (AHLON)",
@@ -570,7 +508,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0533, lng: 7.48, verified: true, featured: false
   },
-
   {
     id: 57,
     name: "Nile University Central Masjid",
@@ -580,7 +517,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0617, lng: 7.4367, verified: true, featured: false
   },
-
   {
     id: 58,
     name: "Abdullateef Adegbite Masjid (MSS)",
@@ -590,7 +526,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.12, lng: 7.415, verified: true, featured: false
   },
-
   {
     id: 59,
     name: "7th Avenue Islamic Center",
@@ -600,7 +535,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1217, lng: 7.4183, verified: true, featured: false
   },
-
   {
     id: 60,
     name: "Ansar-Deen Mosque Gwarimpa",
@@ -610,7 +544,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.1183, lng: 7.4133, verified: true, featured: false
   },
-
   {
     id: 61,
     name: "Suncity Estate Jumu",
@@ -620,7 +553,6 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 9.0117, lng: 7.43, verified: true, featured: false
   },
-
   {
     id: 62,
     name: "Esteem Learning Centre Masjid",
@@ -630,5 +562,4 @@ var LOCATIONS = [
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 8.9533, lng: 7.3817, verified: true, featured: false
   }
-
 ];
