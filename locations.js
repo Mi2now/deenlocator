@@ -1,6 +1,6 @@
 /* DeenLocator Locations
    Updated: 26/04/2026
-   Total: 62 locations
+   Total: 63 locations
 */
 
 var LOCATIONS = [
@@ -172,8 +172,8 @@ var LOCATIONS = [
     address: "Al-Noor Masjid, ICICE Centre, Wuse 2, Abuja",
     area: "Wuse", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
-    imam: "Malan Mustapha Ibrahim Tunau", phone: "+2348065900110", whatsapp: "+2348065900110",
-    lat: 9.074719, lng: 7.4857, verified: true, featured: true, youtube: "https://www.youtube.com/watch?v=bgBi_eWQDbs", khutbaUrl: "https://drive.google.com/file/d/1ea98UR2_GUxG3kiKziX3lHVnCGG39lEh/view?usp=sharing", mapsUrl: "https://maps.app.goo.gl/HSawKW16Xj7r37ss9", eventNote: ". Tarawih starts @ 8:00PM\n. kindly Park at the designated parking space.", events: [{"title":"Women in Islman","category":"general","organiser":"Malan Ahmad Muhammad Yusuf and Malan Ibrahim Aliyu","time":"10:00 AM - 1:00 PM","endDate":"2026-04-30","phone":"+2348065900110","accountNumber":"","accountName":"","bankName":"","extraInfo":"Both and Female can come","bannerUrl":"https://drive.google.com/file/d/154fJs05Cw38plkCYhv1PA2Own15sut7J/view?usp=drive_link","sponsors":". Eastpath Global Services\n\n. 2now Technology","facebook":"@Eastpath","instagram":"@Eastpath","whatsappSocial":"+2348065900110","twitterX":"@Eastpath"},{"title":"Islamic Library","category":"project","organiser":"An Noor ","time":"","endDate":"","phone":"+2348065900110","accountNumber":"1234567890","accountName":"2now Technology","bankName":"2now Bank","extraInfo":"JazakAllah Khairan","bannerUrl":"https://drive.google.com/file/d/154fJs05Cw38plkCYhv1PA2Own15sut7J/view?usp=drive_link","sponsors":". Eastpath Global Services\n\n. 2now Technology","facebook":"@Eastpath","instagram":"@Eastpath"}]
+    imam: "Sheikh Mustapha Ibrahim Tunau", phone: "+2348065900110", whatsapp: "+2348065900110",
+    lat: 9.074736, lng: 7.485555, verified: true, featured: true, youtube: "https://www.youtube.com/watch?v=bgBi_eWQDbs", khutbaUrl: "https://drive.google.com/file/d/1ea98UR2_GUxG3kiKziX3lHVnCGG39lEh/view?usp=drive_link", mapsUrl: "https://maps.app.goo.gl/oGQmkoNGGLRerckCA", eventNote: "Kindly follow the instructions of our volunteers at the parking lot to ensure smooth coordination and proper use of the parking space.\nTarawih Start at 8:00 PM Prompt.", events: [{"title":"Women in Islam","category":"lecture","organiser":"Shiekh Ahmad Muhammad and SHiekh Ibrahim Aliyu","time":"10:00 AM - 1:00 PM","endDate":"2026-04-30","phone":"+2348065900110","accountNumber":"","accountName":"","bankName":"","extraInfo":"Women Space is Available ","bannerUrl":"https://i.imgur.com/sHdEgdO.png","sponsors":"Eastpath Global Investment \n\n2now Technology","socialPlatform":"","socialHandle":"@Eastpath","bannerUrl2":"https://i.imgur.com/6ov0ZRA.png","bannerUrl3":"https://i.imgur.com/sHdEgdO.png","facebook":"@eastpath","instagram":"@2now","whatsappSocial":"+2348065900110","twitterX":"@2now"},{"title":"Digital Islamic Library","category":"project","organiser":"An Noor Mosque and Eastpath","time":"","endDate":"","phone":"+2348065900110","accountNumber":"1234567890","accountName":"ASDFG  ZXCVBN","bankName":"QWERTY","extraInfo":"Project is $10,000, JazakAllah Khairan","bannerUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl2":"https://i.imgur.com/6ov0ZRA.png","sponsors":"Annor \n2now technology"},{"title":"Weekly Friday Feeding ","category":"feeding","organiser":"Anoor Muslim Committee","time":"4:00 PM - 6:00 PM","endDate":"","phone":"+2348065900110","accountNumber":"0987654321","accountName":"FDSA   TREWQ","bankName":"ABC BANK","extraInfo":"Weekly Friday Feeding - $100 per Person (Rice, Beans, Chicken and Bottle Water)","bannerUrl":"https://i.imgur.com/sHdEgdO.png","sponsors":"Anoor MUslim Comittee"}]
   },
   {
     id: 20,
@@ -561,5 +561,14 @@ var LOCATIONS = [
     type: "jumuah", jumuahTime: "1:30 PM",
     imam: "To be announced", phone: null, whatsapp: null,
     lat: 8.9533, lng: 7.3817, verified: true, featured: false
+  },
+  {
+    id: 63,
+    name: "Mosque",
+    address: "Abuja",
+    area: "Kabusa", city: "Abuja",
+    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
+    imam: "Mustapha Ibrahim Tunau", phone: "+23480900110", whatsapp: "+2348065900110",
+    lat: 9.074727, lng: 7.485623, verified: true, featured: true, youtube: "https://www.youtube.com/watch?v=bgBi_eWQDbs", khutbaUrl: "https://drive.google.com/file/d/1ea98UR2_GUxG3kiKziX3lHVnCGG39lEh/view?usp=drive_link", mapsUrl: "https://maps.app.goo.gl/eop1AcfNbFzMzqXUA", eventNote: "*Tarawih Start @ 8:00PM Prompt\n\n*Kindly follow the instructions of our volunteers at the parking lot to ensure smooth coordination and proper use of the parking space.", events: [{"title":"Women In Islam ","category":"general","organiser":"Shiekh Ahmad Muhammad and Sheikh Ibrahim Aliyu","time":"10:00 AM","endDate":"2026-04-30","phone":"+2348065900110","accountNumber":"","accountName":"","bankName":"","bannerUrl":"https://drive.google.com/file/d/154fJs05Cw38plkCYhv1PA2Own15sut7J/view?usp=drive_link","sponsors":"Eastpath Global Investment and 2now Technology"},{"title":"Library","category":"project","organiser":"","time":"","endDate":"","phone":"+2348065900110","accountNumber":"1234567890","accountName":"ASDFGHJ ZXCVB","bankName":"QWERTY","bannerUrl":"https://drive.google.com/file/d/154fJs05Cw38plkCYhv1PA2Own15sut7J/view?usp=drive_link","sponsors":""}]
   }
 ];

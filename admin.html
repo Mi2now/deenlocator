@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded",function(){
 function doLogout(){document.getElementById("login").style.display="flex";document.getElementById("app").style.display="none";document.getElementById("pwdInput").value="";}
 
 function init(){
-  /* Load saved data from localStorage if available */
+
   try{
     var saved=localStorage.getItem('dl_admin_data');
     if(saved){
@@ -384,6 +384,7 @@ function saveLoc(){
   if(!area){toast("Area is required");return;}
   var mapsLink=(document.getElementById("fmapsurl")?document.getElementById("fmapsurl").value.trim():"")||"";if(!lat||!lng){  if(!mapsLink){toast("Add coordinates (paste lat,lng) or a Google Maps link");return;}  lat=0;lng=0;}
   var yt=document.getElementById("fyoutube").value.trim();
+  function _fixImgur(u){if(!u)return u;var m=u.trim().match(/^https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)(?:\.\w+)?$/);return(m&&!u.includes('i.imgur.com'))?'https://i.imgur.com/'+m[1]+'.png':u.trim();}
   var khut=document.getElementById("fkhutba").value.trim();
   var evtNote=document.getElementById("feventNote")?document.getElementById("feventNote").value.trim():"";
   var idv=document.getElementById("fid").value;
@@ -425,7 +426,7 @@ function buildJS(){
     if(l.khutbaUrl)extraFields+=", khutbaUrl: "+JSON.stringify(l.khutbaUrl);
     if(l.mapsUrl)extraFields+=", mapsUrl: "+JSON.stringify(l.mapsUrl);
     if(l.eventNote)extraFields+=", eventNote: "+JSON.stringify(l.eventNote);
-    if(l.events&&l.events.length)extraFields+=", events: "+JSON.stringify(l.events);
+    if(l.events&&l.events.length){var evFixed=JSON.parse(JSON.stringify(l.events));evFixed.forEach(function(ev){if(ev.bannerUrl)ev.bannerUrl=ev.bannerUrl.replace(/^https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)(?:\.\w+)?$/,'https://i.imgur.com/$1.png');if(ev.bannerUrl2)ev.bannerUrl2=ev.bannerUrl2.replace(/^https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)(?:\.\w+)?$/,'https://i.imgur.com/$1.png');if(ev.bannerUrl3)ev.bannerUrl3=ev.bannerUrl3.replace(/^https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)(?:\.\w+)?$/,'https://i.imgur.com/$1.png');});extraFields+=", events: "+JSON.stringify(evFixed);}
     out+="    lat: "+l.lat+", lng: "+l.lng+", verified: "+(l.verified?"true":"false")+", featured: "+(l.featured?"true":"false")+extraFields+"\n";
     out+="  }"+(i<DATA.length-1?",":"")+"\n";
   }
@@ -472,7 +473,7 @@ function parseCoords(){
 }
 
 
-/* FAQ Editor */
+
 var FAQ_DATA = [];
 try{
   var _fs=localStorage.getItem('dl_admin_faq');
@@ -587,9 +588,19 @@ function exportConfig(){
 }
 
 
-/* Events editor per mosque */
+
 var _currentEvents = [];
 
+function _fixImgurLocal(u){
+  if(!u) return u; u=u.trim();
+  /* Strip BBCode: [img]URL[/img] */
+  u=u.replace(/^\[img\]/i,'').replace(/\[\/img\]$/i,'').trim();
+  var mdM=u.match(/^\[.*?\]\((.+?)\)$/); if(mdM) u=mdM[1].trim();
+
+  if(u.match(/^https?:\/\/i\.imgur\.com\/[a-zA-Z0-9]+\.[a-z]+$/)) return u;
+  var m=u.match(/^https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)(?:\.[a-z]+)?$/);
+  return m ? 'https://i.imgur.com/'+m[1]+'.png' : u;
+}
 function renderEventsEditor(){
   var el = document.getElementById('eventsEditor');
   if(!el) return;
@@ -614,33 +625,36 @@ function renderEventsEditor(){
     }
     d.innerHTML =
       '<div style="display:grid;gap:8px">'
-      /* Row 1: Category + Title */
+
       +'<div style="display:flex;gap:8px">'
       +'<select oninput="_currentEvents['+i+'].category=this.value" style="width:140px;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px">'+catOpts+'</select>'
       +inp('Event / Project name *', ev.title, 'title', ';flex:1')+'</div>'
-      /* Row 2: Organiser */
+
       +inp('Organiser / Speaker name', ev.organiser, 'organiser', ';width:100%')
-      /* Row 3: Time + End Date */
+
       +'<div style="display:flex;gap:8px">'
       +inp('Time e.g. 2:00PM-4:00PM or Weekly', ev.time, 'time', ';flex:2')
       +'<input type="date" value="'+(ev.endDate||'')+'" oninput="_currentEvents['+i+'].endDate=this.value" '
       +'title="Auto-disappears after this date" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px"/>'
       +'</div>'
-      /* Row 4: Contact phone */
+
       +inp('Contact phone number', ev.phone, 'phone', ';width:100%')
-      /* Row 5: Account details */
+
       +'<div style="display:flex;gap:6px">'
       +inp('Account number', ev.accountNumber, 'accountNumber', ';flex:1')
       +inp('Account name', ev.accountName, 'accountName', ';flex:1.5')
       +inp('Bank', ev.bankName, 'bankName', ';flex:1')
       +'</div>'
-      /* Row 6: Extra info */
+
       +inp('Extra info for card (dress code, what to bring, etc.)', ev.extraInfo, 'extraInfo', ';width:100%')
-      /* Row 7: Banner image URL */
-      +inp('Banner/poster image URL (Google Drive, Imgur, etc.)', ev.bannerUrl, 'bannerUrl', ';width:100%;border-style:dashed')
-      /* Row 8: Sponsors - vertical textarea */
+
+      +inp('Banner/poster image 1 URL (recommended: 1080x607px or square 1:1)', ev.bannerUrl, 'bannerUrl', ';width:100%;border-style:dashed')
+      +'<div style="font-size:11px;background:rgba(34,201,138,0.08);border-radius:6px;padding:5px 8px;color:var(--ts);margin:4px 0;line-height:1.5">HOW TO GET IMAGE URL: Upload to imgur.com, click the 3-dot menu, click Get Share Links, copy the BBCode URL (starts with https://i.imgur.com/), paste here. Recommended: 1080x810px or 1080x1080px.</div>'
+      +inp('Banner image 2 URL (optional)', ev.bannerUrl2, 'bannerUrl2', ';width:100%;border-style:dashed')
+      +inp('Banner image 3 URL (optional — max 3 images)', ev.bannerUrl3, 'bannerUrl3', ';width:100%;border-style:dashed')
+
       +ta('Sponsors (one per line)\ne.g. Jaiz Bank\nCFII Abuja', ev.sponsors, 'sponsors', 2)
-      /* Row 9: Social media - 4 separate fields in 2x2 grid */
+
       +'<div style="font-size:11px;font-weight:700;color:var(--ts);margin-top:2px">SOCIAL MEDIA (optional)</div>'
       +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'
       +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">Facebook</div>'+inp('Page name or URL', ev.facebook, 'facebook', ';font-size:12px;height:34px;border-style:dashed')+'</div>'
@@ -648,7 +662,7 @@ function renderEventsEditor(){
       +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">WhatsApp</div>'+inp('Number e.g. 08012345678', ev.whatsappSocial, 'whatsappSocial', ';font-size:12px;height:34px;border-style:dashed')+'</div>'
       +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">Twitter / X</div>'+inp('@handle', ev.twitterX, 'twitterX', ';font-size:12px;height:34px;border-style:dashed')+'</div>'
       +'</div>'
-      /* Remove button */
+
       +'<button type="button" onclick="deleteEvent('+i+')" style="height:30px;padding:0 12px;border-radius:7px;border:1px solid #fcc;background:#fee;color:#c00;font-family:inherit;font-size:12px;cursor:pointer">✕ Remove</button>'
       +'</div>';
     el.appendChild(d);
@@ -666,23 +680,26 @@ function deleteEvent(i){
 }
 
 
-/* ═══ FILE UPLOAD HANDLER ═══ */
+
 function handleUpload(input){
   var file = input.files[0];
   if(!file){ return; }
   var reader = new FileReader();
   reader.onload = function(e){
     var content = e.target.result;
-    /* Detect if it's locations.js (has var LOCATIONS) or config.js (has APP_CONFIG) */
+
     if(content.indexOf('var LOCATIONS')>-1 || content.indexOf('LOCATIONS =')>-1){
       if(!confirm('Upload new locations data? This will replace your current mosque list with the data in this file. Your current work will be lost unless you exported first.')) return;
       try{
-        /* Extract the array from the JS file */
+
         var m = content.match(/var LOCATIONS\s*=\s*(\[[\s\S]*?\]);/);
         if(!m) m = content.match(/LOCATIONS\s*=\s*(\[[\s\S]*?\]);/);
         if(!m){ toast('Could not parse locations data from file.'); return; }
-        var parsed = JSON.parse(m[1]);
-        if(!parsed || !parsed.length){ toast('No location data found in file.'); return; }
+        var parsed;
+        try{
+          var jsonStr = m[1].replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g,'$1"$2":').replace(/,\s*([}\]])/g,'$1');
+          parsed = JSON.parse(jsonStr);
+        }catch(e){ toast('Could not read file. Use the Export button then upload that file.'); return; }
         DATA = parsed;
         localStorage.setItem('dl_admin_data', JSON.stringify(DATA));
         init();
@@ -698,7 +715,7 @@ function handleUpload(input){
   reader.readAsText(file);
 }
 
-/* ═══ RESET TO DEFAULT ═══ */
+
 
 function resetLocationsOnly(){
   if(!confirm('Reset mosque data to the original 62 locations? Your custom edits and added mosques will be lost.')) return;
