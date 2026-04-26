@@ -119,7 +119,11 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
       <select id="fsort" onchange="render()"><option value="id">Sort: ID</option><option value="name">Name A-Z</option><option value="area">Area</option></select>
       <button class="tbtn btn-add" onclick="openAdd()">+ Add</button>
       <button class="tbtn btn-exp" onclick="toggleExp()">Export</button>
-      <button class="tbtn" onclick="openConfigPanel()" style="background:#6366f1;color:#fff">⚙️ App Settings</button>
+      <label class="tbtn" style="cursor:pointer;background:#0f5c42;color:#fff" title="Upload locations.js or config.js">
+        &#8593; Upload
+        <input type="file" accept=".js,.json" style="display:none" onchange="handleUpload(this)"/>
+      </label>
+            <button class="tbtn" onclick="openConfigPanel()" style="background:#6366f1;color:#fff">⚙️ App Settings</button>
     </div>
     <div class="twrap"><div class="tscroll">
       <table><thead><tr><th>#</th><th>Name</th><th>Area</th><th>Type</th><th>Jumuah Time</th><th>Eid Time</th><th>Imam</th><th>Coordinates</th><th>Status</th><th>Actions</th></tr></thead>
@@ -157,13 +161,18 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
       <div class="frow"><div class="fg"><label>Imam Name</label><input id="fimam" placeholder="Sheikh / Ustaz (optional)"/></div><div class="fg"><label>Phone</label><input id="fphone" placeholder="+2348012345678"/></div></div>
       <div class="frow"><div class="fg"><label>WhatsApp Number</label><input id="fwa" placeholder="2348012345678"/></div><div class="fg"><label>Featured</label><select id="ffeat"><option value="false">No</option><option value="true">Yes</option></select></div></div>
       <div class="frow full"><div class="fg">
-        <label>Coordinates <small style="font-weight:400;color:#9a9a9a">(paste "lat, lng" from Google Maps)</small></label>
+        <label>Coordinates <small style="font-weight:400;color:#9a9a9a">(optional — paste "lat, lng" e.g. 9.0749, 7.4849)</small></label>
         <div style="display:flex;gap:8px;align-items:center">
           <input id="fcoords" placeholder="9.0563, 7.4985" oninput="parseCoords()" style="flex:1"/>
           <input type="hidden" id="flat"/><input type="hidden" id="flng"/>
           <span id="coordsOk" style="color:#0f5c42;font-size:18px;display:none">&#10003;</span>
         </div>
-        <div style="font-size:11px;color:#9a9a9a;margin-top:4px">Open Google Maps → find mosque → right-click the pin → Copy coordinates → paste here</div>
+        <div style="font-size:11px;color:#9a9a9a;margin-top:2px">Right-click any spot on Google Maps → first number is lat, second is lng</div>
+      </div></div>
+      <div class="frow full"><div class="fg">
+        <label>Google Maps Link <small style="font-weight:400;color:#9a9a9a">(optional — paste any Google Maps URL or maps.app.goo.gl link)</small></label>
+        <input id="fmapsurl" placeholder="https://maps.app.goo.gl/... or https://maps.google.com/..." oninput="tryExtractCoords(this.value)"/>
+        <div style="font-size:11px;color:#9a9a9a;margin-top:2px">If the link contains coordinates they will be extracted automatically</div>
       </div></div>
       <div class="frow full"><div class="fg">
         <label>YouTube Video / Live Stream Link <small style="font-weight:400;color:#9a9a9a">(optional)</small></label>
@@ -174,12 +183,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
         <input id="fkhutba" placeholder="https://drive.google.com/..."/>
       </div></div>
       <div class="frow full"><div class="fg">
-        <label>Short Description / About This Mosque <small style="font-weight:400;color:#9a9a9a">(permanent info shown on card — optional)</small></label>
-        <textarea id="fmosqueInfo" rows="2" placeholder="e.g. One of the oldest mosques in Garki. Accommodates 500 worshippers. Accessible from main road." style="width:100%;border-radius:10px;border:1.5px solid var(--cd);padding:8px 12px;font-family:inherit;font-size:13px;resize:vertical"></textarea>
-      </div></div>
-      <div class="frow full"><div class="fg">
         <label>Short Notice / Event for this Mosque <small style="font-weight:400;color:#9a9a9a">(shows on card as a notice — optional)</small></label>
-        <input id="feventNote" placeholder="e.g. Eid Mubarak — Prayer 8AM sharp, bring your mat"/>
+        <textarea id="feventNote" rows="3" placeholder="e.g.&#10;• Tarawih starts @ 8:00PM&#10;• Jumuah Mubarak - Pray at home if unwell&#10;• Next Eid prayer confirmed 8:00AM" style="width:100%;border-radius:10px;border:1.5px solid var(--cd);padding:8px 12px;font-family:inherit;font-size:13px;resize:vertical;line-height:1.6"></textarea>
       </div></div>
 
       <!-- Full Events Editor -->
@@ -189,7 +194,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
         <button type="button" onclick="addEventItem()" style="height:36px;padding:0 16px;border-radius:8px;border:1.5px dashed var(--gg);background:transparent;color:var(--gm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">+ Add Event</button>
       </div></div>
 
-      <div class="frow full"><div class="fg"><label>Paste Google Maps Link (auto-extracts coordinates)</label><input id="fmaps" placeholder="Paste full Google Maps URL here"/></div></div>
+      
     </div>
     <div class="mfoot"><button class="bcancel" onclick="closeEdit()">Cancel</button><button class="bsave" onclick="saveLoc()">Save</button></div>
   </div>
@@ -232,17 +237,24 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("pwdInput").addEventListener("keydown",function(e){if(e.key==="Enter")doLogin();});
   document.getElementById("editOv").addEventListener("click",function(e){if(e.target===this)closeEdit();});
   document.getElementById("delOv").addEventListener("click",function(e){if(e.target===this)closeDel();});
-  document.getElementById("fmaps").addEventListener("input",function(){
-    var u=this.value,m=u.match(/@(-?[0-9.]+),(-?[0-9.]+)/);
-    if(!m)m=u.match(/[?&]q=(-?[0-9.]+),(-?[0-9.]+)/);
-    if(!m)m=u.match(/ll=(-?[0-9.]+),(-?[0-9.]+)/);
-    if(m){var lt=parseFloat(m[1]).toFixed(6),ln=parseFloat(m[2]).toFixed(6);document.getElementById("flat").value=lt;document.getElementById("flng").value=ln;document.getElementById("fcoords").value=lt+", "+ln;var cok=document.getElementById("coordsOk");if(cok)cok.style.display="inline";toast("Coordinates extracted!");}
+  document.getElementById("fmapsurl").addEventListener("input",function(){
+    tryExtractCoords(this.value);
   });
 });
 
 function doLogout(){document.getElementById("login").style.display="flex";document.getElementById("app").style.display="none";document.getElementById("pwdInput").value="";}
 
-function init(){updateStats();buildAreaFilter();buildDatalist();render();}
+function init(){
+  /* Load saved data from localStorage if available */
+  try{
+    var saved=localStorage.getItem('dl_admin_data');
+    if(saved){
+      var parsed=JSON.parse(saved);
+      if(parsed && parsed.length) DATA=parsed;
+    }
+  }catch(e){}
+  updateStats();buildAreaFilter();buildDatalist();render();
+}
 
 function updateStats(){
   var j=0,e=0,b=0;
@@ -319,7 +331,7 @@ function updType(){var t=document.getElementById("ftype2").value;document.getEle
 function nextId(){var mx=0;for(var i=0;i<DATA.length;i++)if(DATA[i].id>mx)mx=DATA[i].id;return mx+1;}
 
 function clearForm(){
-  var ids=["fid","fname","faddress","fimam","fphone","fwa","flat","flng","fmaps","fcoords","fyoutube","fkhutba","feventNote","fmosqueInfo"];
+  var ids=["fid","fname","faddress","fimam","fphone","fwa","flat","flng","fcoords","fyoutube","fkhutba","feventNote","fmapsurl"];
   for(var i=0;i<ids.length;i++)document.getElementById(ids[i]).value="";
   document.getElementById("farea2").value=""; var cok=document.getElementById("coordsOk"); if(cok) cok.style.display="none";
   _currentEvents=[]; renderEventsEditor();
@@ -351,14 +363,13 @@ function openEdit(id){
   document.getElementById("fphone").value=l.phone||"";
   document.getElementById("fwa").value=l.whatsapp||"";
   document.getElementById("flat").value=l.lat||"";
-  if(l.lat && l.lng){ document.getElementById("fcoords").value=l.lat+", "+l.lng; var cok=document.getElementById("coordsOk"); if(cok) cok.style.display="inline"; }
+  if(l.lat && l.lng){ document.getElementById("fcoords").value=l.lat+", "+l.lng; var cok=document.getElementById("coordsOk"); if(cok) cok.style.display="inline"; } if(document.getElementById("fmapsurl")) document.getElementById("fmapsurl").value=l.mapsUrl||l.mapsLink||"";
   document.getElementById("flng").value=l.lng||"";
   document.getElementById("fyoutube").value=l.youtube||"";
   document.getElementById("fkhutba").value=l.khutbaUrl||"";
   if(document.getElementById("feventNote")) document.getElementById("feventNote").value=l.eventNote||"";
   _currentEvents=JSON.parse(JSON.stringify(l.events||[])); renderEventsEditor();
-  if(document.getElementById("fmosqueInfo")) document.getElementById("fmosqueInfo").value=l.mosqueInfo||"";
-  document.getElementById("fverified").value=l.verified?"true":"false";
+    document.getElementById("fverified").value=l.verified?"true":"false";
   document.getElementById("ffeat").value=l.featured?"true":"false";
   updType();
   document.getElementById("editOv").classList.add("show");
@@ -371,14 +382,14 @@ function saveLoc(){
   var lng=parseFloat(document.getElementById("flng").value);
   if(!name){toast("Name is required");return;}
   if(!area){toast("Area is required");return;}
-  var mapsLink=document.getElementById("fmaps").value.trim();if(!lat||!lng){  if(!mapsLink){toast("Add coordinates (paste lat,lng) or a Google Maps link");return;}  lat=0;lng=0;}
+  var mapsLink=(document.getElementById("fmapsurl")?document.getElementById("fmapsurl").value.trim():"")||"";if(!lat||!lng){  if(!mapsLink){toast("Add coordinates (paste lat,lng) or a Google Maps link");return;}  lat=0;lng=0;}
   var yt=document.getElementById("fyoutube").value.trim();
   var khut=document.getElementById("fkhutba").value.trim();
   var evtNote=document.getElementById("feventNote")?document.getElementById("feventNote").value.trim():"";
-  var mosqueInfoVal=document.getElementById("fmosqueInfo")?document.getElementById("fmosqueInfo").value.trim():"";
   var idv=document.getElementById("fid").value;
-  var loc={id:idv?parseInt(idv):nextId(),name:name,address:document.getElementById("faddress").value.trim()||area+", Abuja",area:area,city:document.getElementById("fcity").value.trim()||"Abuja",type:document.getElementById("ftype2").value,eidTime:document.getElementById("feid").value.trim()||"",jumuahTime:document.getElementById("fjumuah").value.trim()||"",imam:document.getElementById("fimam").value.trim()||"To be announced",youtube:yt||null,khutbaUrl:khut||null,mapsUrl:mapsLink||null,eventNote:evtNote||null,mosqueInfo:mosqueInfoVal||null,events:_currentEvents.length?_currentEvents:undefined,phone:document.getElementById("fphone").value.trim()||"",whatsapp:document.getElementById("fwa").value.trim()||"",lat:lat,lng:lng,verified:document.getElementById("fverified").value==="true",featured:document.getElementById("ffeat").value==="true"};
+  var loc={id:idv?parseInt(idv):nextId(),name:name,address:document.getElementById("faddress").value.trim()||area+", Abuja",area:area,city:document.getElementById("fcity").value.trim()||"Abuja",type:document.getElementById("ftype2").value,eidTime:document.getElementById("feid").value.trim()||"",jumuahTime:document.getElementById("fjumuah").value.trim()||"",imam:document.getElementById("fimam").value.trim()||"To be announced",youtube:yt||null,khutbaUrl:khut||null,mapsUrl:mapsLink||null,eventNote:evtNote||null,events:_currentEvents.length?_currentEvents:undefined,phone:document.getElementById("fphone").value.trim()||"",whatsapp:document.getElementById("fwa").value.trim()||"",lat:lat,lng:lng,verified:document.getElementById("fverified").value==="true",featured:document.getElementById("ffeat").value==="true"};
   if(idv){for(var i=0;i<DATA.length;i++)if(DATA[i].id===parseInt(idv)){DATA[i]=loc;break;}}else{DATA.push(loc);}
+  try{localStorage.setItem('dl_admin_data',JSON.stringify(DATA));}catch(e){}
   closeEdit();updateStats();buildAreaFilter();render();
   toast(idv?"Updated! Click Export to save.":"Added! Click Export to save.");
 }
@@ -388,7 +399,7 @@ function closeEdit(){document.getElementById("editOv").classList.remove("show");
 var _delId=null;
 function openDel(id){var l=null;for(var i=0;i<DATA.length;i++)if(DATA[i].id===id){l=DATA[i];break;}if(!l)return;_delId=id;document.getElementById("delSub").textContent="Delete \""+l.name+"\"? Cannot be undone.";document.getElementById("delOv").classList.add("show");}
 function closeDel(){document.getElementById("delOv").classList.remove("show");_delId=null;}
-function confirmDel(){if(!_delId)return;DATA=DATA.filter(function(l){return l.id!==_delId;});closeDel();updateStats();buildAreaFilter();render();toast("Deleted. Click Export to save.");}
+function confirmDel(){if(!_delId)return;DATA=DATA.filter(function(l){return l.id!==_delId;});try{localStorage.setItem('dl_admin_data',JSON.stringify(DATA));}catch(e){}closeDel();updateStats();buildAreaFilter();render();toast("Deleted. Click Export to save.");}
 
 function buildJS(){
   var out="";
@@ -413,7 +424,6 @@ function buildJS(){
     if(l.youtube)extraFields+=", youtube: "+JSON.stringify(l.youtube);
     if(l.khutbaUrl)extraFields+=", khutbaUrl: "+JSON.stringify(l.khutbaUrl);
     if(l.mapsUrl)extraFields+=", mapsUrl: "+JSON.stringify(l.mapsUrl);
-    if(l.mosqueInfo)extraFields+=", mosqueInfo: "+JSON.stringify(l.mosqueInfo);
     if(l.eventNote)extraFields+=", eventNote: "+JSON.stringify(l.eventNote);
     if(l.events&&l.events.length)extraFields+=", events: "+JSON.stringify(l.events);
     out+="    lat: "+l.lat+", lng: "+l.lng+", verified: "+(l.verified?"true":"false")+", featured: "+(l.featured?"true":"false")+extraFields+"\n";
@@ -427,6 +437,24 @@ function toggleExp(){var p=document.getElementById("expanel");if(p.classList.con
 function copyExp(){var t=buildJS();if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){toast("Copied! Paste into locations.js and upload to GitHub.");}).catch(function(){toast("Copy failed — use Download instead.");});}else{toast("Use Download button.");}}
 function dlExp(){var a=document.createElement("a");a.download="locations.js";a.href="data:text/javascript;charset=utf-8,"+encodeURIComponent(buildJS());document.body.appendChild(a);a.click();document.body.removeChild(a);toast("Downloaded! Upload to github.com/mi2now/deenlocator");}
 
+
+
+function tryExtractCoords(u){
+  if(!u) return;
+  var m=u.match(/@(-?[0-9.]+),(-?[0-9.]+)/);
+  if(!m) m=u.match(/[?&]q=(-?[0-9.]+),(-?[0-9.]+)/);
+  if(!m) m=u.match(/ll=(-?[0-9.]+),(-?[0-9.]+)/);
+  if(m){
+    var lt=parseFloat(m[1]).toFixed(6),ln=parseFloat(m[2]).toFixed(6);
+    document.getElementById("flat").value=lt;
+    document.getElementById("flng").value=ln;
+    document.getElementById("fcoords").value=lt+", "+ln;
+    var cok=document.getElementById("coordsOk");if(cok)cok.style.display="inline";
+    toast("\u2705 Coordinates extracted: "+lt+", "+ln);
+  } else if(u.indexOf("maps.app.goo.gl")>-1||u.indexOf("goo.gl")>-1){
+    toast("\u26A0\uFE0F Short link saved. Also paste coordinates above for GPS accuracy.");
+  }
+}
 
 function parseCoords(){
   var v=document.getElementById("fcoords").value.trim();
@@ -555,7 +583,7 @@ function exportConfig(){
   var a    = document.createElement('a');
   a.href = url; a.download = 'config.js';
   a.click(); URL.revokeObjectURL(url);
-  toast('config.js downloaded! Upload it to GitHub.');
+  toast('config.js downloaded! Upload it to GitHub to go live.');
 }
 
 
@@ -568,29 +596,35 @@ function renderEventsEditor(){
   el.innerHTML = '';
   _currentEvents.forEach(function(ev, i){
     var d = document.createElement('div');
-    d.style.cssText = 'background:var(--bg);border-radius:10px;padding:12px;border:1px solid var(--cd)';
+    d.style.cssText = 'background:var(--bg);border-radius:10px;padding:14px;border:1px solid var(--cd);margin-bottom:4px';
+    var cats = ['General','Lecture','Feeding','Project','Eid','Others'];
+    var catOpts = cats.map(function(c){ return '<option value="'+c.toLowerCase()+'"'+(ev.category===c.toLowerCase()?' selected':'')+'>'+c+'</option>'; }).join('');
     d.innerHTML = '<div style="display:grid;gap:8px">'
+      /* Row 1: Category + Title */
       +'<div style="display:flex;gap:8px">'
-      +'<input placeholder="Event title *" value="'+(ev.title||'')+'" oninput="_currentEvents['+i+'].title=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
-      +'<select oninput="_currentEvents['+i+'].category=this.value" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px">'
-      +'<option value="general"'+(ev.category==='general'?' selected':'')+'>General</option>'
-      +'<option value="lecture"'+(ev.category==='lecture'?' selected':'')+'>Lecture</option>'
-      +'<option value="feeding"'+(ev.category==='feeding'?' selected':'')+'>Feeding</option>'
-      +'<option value="donation"'+(ev.category==='donation'?' selected':'')+'>Donation</option>'
-      +'<option value="eid"'+(ev.category==='eid'?' selected':'')+'>Eid</option>'
-      +'</select></div>'
-      +'<input placeholder="Organiser / Speaker" value="'+(ev.organiser||'')+'" oninput="_currentEvents['+i+'].organiser=this.value" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px;width:100%"/>'
-      +'<input placeholder="Time (e.g. Every Sunday 2:00PM - 4:00PM)" value="'+(ev.time||'')+'" oninput="_currentEvents['+i+'].time=this.value" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px;width:100%"/>'
-      +'<div style="display:flex;gap:8px">'
-      +'<input type="date" title="End date (event auto-disappears after this date)" value="'+(ev.endDate||'')+'" oninput="_currentEvents['+i+'].endDate=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
-      +'<input placeholder="Contact phone" value="'+(ev.phone||'')+'" oninput="_currentEvents['+i+'].phone=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
+      +'<select oninput="_currentEvents['+i+'].category=this.value" style="width:130px;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px">'+catOpts+'</select>'
+      +'<input placeholder="Event / Project name *" value="'+(ev.title||'')+'" oninput="_currentEvents['+i+'].title=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
       +'</div>'
+      /* Row 2: Organiser */
+      +'<input placeholder="Organiser / Speaker name" value="'+(ev.organiser||'')+'" oninput="_currentEvents['+i+'].organiser=this.value" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px;width:100%;box-sizing:border-box"/>'
+      /* Row 3: Time (text) + End Date */
       +'<div style="display:flex;gap:8px">'
-      +'<input placeholder="Account number (optional)" value="'+(ev.accountNumber||'')+'" oninput="_currentEvents['+i+'].accountNumber=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
-      +'<input placeholder="Account name" value="'+(ev.accountName||'')+'" oninput="_currentEvents['+i+'].accountName=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
-      +'<input placeholder="Bank" value="'+(ev.bankName||'')+'" oninput="_currentEvents['+i+'].bankName=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
+      +'<input placeholder="Time e.g. Sun 2:00PM-4:00PM or Weekly" value="'+(ev.time||'')+'" oninput="_currentEvents['+i+'].time=this.value" style="flex:2;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
+      +'<input type="date" title="Auto-disappears after this date. Leave blank = permanent." value="'+(ev.endDate||'')+'" oninput="_currentEvents['+i+'].endDate=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px"/>'
       +'</div>'
-      +'<button type="button" onclick="deleteEvent('+i+')" style="height:32px;padding:0 12px;border-radius:7px;border:1px solid #fcc;background:#fee;color:#c00;font-family:inherit;font-size:12px;cursor:pointer">Remove Event</button>'
+      /* Row 4: Contact phone */
+      +'<input placeholder="Contact phone number" value="'+(ev.phone||'')+'" oninput="_currentEvents['+i+'].phone=this.value" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px;width:100%;box-sizing:border-box"/>'
+      /* Row 5: Account details */
+      +'<div style="display:flex;gap:6px">'
+      +'<input placeholder="Account number" value="'+(ev.accountNumber||'')+'" oninput="_currentEvents['+i+'].accountNumber=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:12px"/>'
+      +'<input placeholder="Account name" value="'+(ev.accountName||'')+'" oninput="_currentEvents['+i+'].accountName=this.value" style="flex:1.5;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:12px"/>'
+      +'<input placeholder="Bank" value="'+(ev.bankName||'')+'" oninput="_currentEvents['+i+'].bankName=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:12px"/>'
+      +'</div>'
+      /* Row 6: Banner image URL + Sponsors */
+      +'<input placeholder="Banner/poster image URL (Google Drive, Imgur, etc.) — optional" value="'+(ev.bannerUrl||'')+'" oninput="_currentEvents['+i+'].bannerUrl=this.value" style="height:38px;border-radius:8px;border:1.5px dashed var(--cd);padding:0 10px;font-family:inherit;font-size:12px;width:100%;box-sizing:border-box"/>'
+      +'<input placeholder="Sponsors (comma-separated, optional) e.g. Jaiz Bank, CFII Abuja" value="'+(ev.sponsors||'')+'" oninput="_currentEvents['+i+'].sponsors=this.value" style="height:38px;border-radius:8px;border:1.5px dashed var(--cd);padding:0 10px;font-family:inherit;font-size:12px;width:100%;box-sizing:border-box"/>'
+      /* Remove button */
+      +'<button type="button" onclick="deleteEvent('+i+')" style="height:30px;padding:0 12px;border-radius:7px;border:1px solid #fcc;background:#fee;color:#c00;font-family:inherit;font-size:12px;cursor:pointer;align-self:flex-start">✕ Remove</button>'
       +'</div>';
     el.appendChild(d);
   });
@@ -604,6 +638,47 @@ function addEventItem(){
 function deleteEvent(i){
   _currentEvents.splice(i,1);
   renderEventsEditor();
+}
+
+
+/* ═══ FILE UPLOAD HANDLER ═══ */
+function handleUpload(input){
+  var file = input.files[0];
+  if(!file){ return; }
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var content = e.target.result;
+    /* Detect if it's locations.js (has var LOCATIONS) or config.js (has APP_CONFIG) */
+    if(content.indexOf('var LOCATIONS')>-1 || content.indexOf('LOCATIONS =')>-1){
+      if(!confirm('Upload new locations data? This will replace your current mosque list with the data in this file. Your current work will be lost unless you exported first.')) return;
+      try{
+        /* Extract the array from the JS file */
+        var m = content.match(/var LOCATIONS\s*=\s*(\[[\s\S]*?\]);/);
+        if(!m) m = content.match(/LOCATIONS\s*=\s*(\[[\s\S]*?\]);/);
+        if(!m){ toast('Could not parse locations data from file.'); return; }
+        var parsed = JSON.parse(m[1]);
+        if(!parsed || !parsed.length){ toast('No location data found in file.'); return; }
+        DATA = parsed;
+        localStorage.setItem('dl_admin_data', JSON.stringify(DATA));
+        init();
+        toast('\u2705 Loaded '+DATA.length+' locations from file!');
+      }catch(err){ toast('Error reading file: '+err.message); }
+    } else if(content.indexOf('APP_CONFIG')>-1){
+      toast('\u2705 Config file detected. Copy the content and paste into the App Settings fields, then save.');
+    } else {
+      toast('\u26A0\uFE0F Unrecognized file format. Upload a locations.js or config.js file.');
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+/* ═══ RESET TO DEFAULT ═══ */
+function resetToDefault(){
+  if(!confirm('Reset ALL mosque data to the original 62 locations? This will DELETE all your edits. This cannot be undone.')) return;
+  if(!confirm('Are you sure? All custom mosques, events, and edits will be lost permanently.')) return;
+  localStorage.removeItem('dl_admin_data');
+  location.reload();
 }
 
 var _tt=null;
@@ -673,7 +748,12 @@ function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.c
   <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
     <button onclick="exportConfig()" style="height:44px;padding:0 24px;background:var(--gd);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">Download config.js</button>
     <button onclick="loadConfigDefaults()" style="height:44px;padding:0 24px;background:var(--cd);color:var(--tp);border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">Load Defaults</button>
+    <button onclick="resetToDefault()" style="height:44px;padding:0 24px;background:#fee;color:#c00;border:1.5px solid #fcc;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">&#128465; Reset All Data</button>
     <button onclick="document.getElementById('configPanel').style.display='none';document.getElementById('mainPanel').style.display='block'" style="height:44px;padding:0 24px;background:var(--cd);color:var(--tp);border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">Back</button>
+    <label style="height:44px;padding:0 24px;background:#0f5c42;color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+      &#8593; Upload Locations File
+      <input type="file" accept=".js" style="display:none" onchange="handleUpload(this)"/>
+    </label>
   </div>
   <div style="font-size:12px;color:var(--tm);margin-top:12px;line-height:1.6">
     After downloading config.js, go to github.com/mi2now/deenlocator → click config.js → pencil icon → paste content → Commit. Live in 2 minutes.

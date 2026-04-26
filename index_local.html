@@ -656,7 +656,7 @@ var LOCATIONS = [
   }
 
 ];
-  </script>
+</script>
   <script>
 /* ============================================================
    DeenLocator — App Configuration
@@ -729,7 +729,7 @@ var APP_CONFIG = {
 
 };
 
-  </script>
+</script>
 
   <!-- Google Analytics GA4 — replace G-XXXXXXXXXX with your real Measurement ID -->
   <!-- Get yours free at analytics.google.com — takes 5 minutes to set up -->
@@ -1068,6 +1068,37 @@ var APP_CONFIG = {
     .exp-doc-text strong{display:block;font-size:13px;font-weight:700;color:var(--tp);margin-bottom:1px}
     .exp-doc-badge{background:#6366f1;color:#fff;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;flex-shrink:0}
     .btn-notify.notify-active{background:var(--gd)!important;color:var(--white)!important;border-color:var(--gd)!important}
+
+    .exp-media-row{display:flex;gap:8px;margin:10px 0}
+    .exp-media-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:60px;border-radius:12px;background:var(--cd);text-decoration:none;border:1.5px solid transparent;font-size:12px;font-weight:600;color:var(--ts);cursor:pointer}
+    .exp-media-btn span:first-child{font-size:20px}
+    .exp-media-btn.dim{opacity:0.4;cursor:default}
+    .exp-media-btn:not(.dim){border-color:rgba(99,102,241,.25);background:rgba(99,102,241,.07);color:#6366f1}
+    .exp-media-btn.youtube:not(.dim){border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.07);color:#ef4444}
+    /* Horizontal events carousel */
+    .exp-events-scroll{display:flex;gap:10px;overflow-x:auto;padding:4px 0 8px;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory}
+    .exp-events-scroll::-webkit-scrollbar{display:none}
+    .event-card{min-width:240px;max-width:260px;scroll-snap-align:start;background:var(--white);border-radius:12px;padding:12px 14px;border-left:3px solid var(--gd);box-shadow:var(--sh);flex-shrink:0}
+    .event-card.lecture{border-left-color:#6366f1}
+    .event-card.feeding{border-left-color:#22c98a}
+    .event-card.donation,.event-card.project{border-left-color:#f0c96a}
+    .event-card.eid{border-left-color:var(--gold)}
+    .event-title{font-size:13px;font-weight:700;color:var(--tp);margin-bottom:2px}
+    .event-org{font-size:11px;color:var(--ts);margin-bottom:3px}
+    .event-time{font-size:11px;color:var(--gm);font-weight:600;margin-bottom:5px}
+    .event-actions{display:flex;gap:5px;flex-wrap:wrap}
+    .event-btn{height:28px;padding:0 10px;border-radius:7px;border:1.5px solid var(--cd);background:var(--white);color:var(--tp);font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;-webkit-tap-highlight-color:transparent}
+    .event-btn.call{border-color:rgba(34,201,138,.4);color:var(--gm);background:rgba(34,201,138,.08)}
+    .event-btn.copy-acc{border-color:rgba(240,201,106,.5);color:#856404;background:rgba(240,201,106,.12)}
+    .events-dots{display:flex;justify-content:center;gap:5px;padding:4px 0}
+    .events-dot{width:6px;height:6px;border-radius:50%;background:var(--cd);transition:background .2s}
+    .events-dot.active{background:var(--gm)}
+
+    .event-card{cursor:pointer;transition:all .2s ease}
+    .event-card .event-extra{display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--cd);font-size:12px;color:var(--ts);line-height:1.6}
+    .event-card.expanded .event-extra{display:block}
+    .event-card .event-chevron{font-size:12px;color:var(--tm);float:right;transition:transform .2s}
+    .event-card.expanded .event-chevron{transform:rotate(180deg)}
 </style>
 </head>
 <body>
@@ -1839,25 +1870,46 @@ function renderMosqueEvents(loc){
   if(!loc.events || !loc.events.length) return '';
   var today = new Date(); today.setHours(0,0,0,0);
   var active = loc.events.filter(function(ev){
-    if(!ev.endDate) return true; // no end date = permanent
+    if(!ev.endDate) return true;
     var ed = new Date(ev.endDate); ed.setHours(23,59,59,0);
     return ed >= today;
   });
   if(!active.length) return '';
-  var cats = {lecture:'lecture',feeding:'feeding',donation:'donation',eid:'eid',general:''};
-  var html = '<div class="exp-events"><div class="exp-events-title">📅 Events & Notices</div>';
-  active.forEach(function(ev){
-    var cls = 'event-card '+(cats[ev.category]||'');
-    html += '<div class="'+cls+'">';
-    html += '<div class="event-title">'+ev.title+'</div>';
-    if(ev.organiser) html += '<div class="event-org">'+ev.organiser+'</div>';
-    if(ev.time) html += '<div class="event-time">⏰ '+ev.time+'</div>';
+  var catCls = {lecture:'lecture',feeding:'feeding',donation:'donation',project:'project',eid:'eid',general:'',others:''};
+  var uid = 'evsc_'+loc.id;
+  var html = '<div class="exp-events"><div class="exp-events-title">\uD83D\uDCC5 Events & Notices</div>';
+  html += '<div class="exp-events-scroll" id="'+uid+'">';
+  active.forEach(function(ev, evIdx){
+    var cls = 'event-card '+(catCls[ev.category]||'');
+    html += '<div class="'+cls+'" onclick="this.classList.toggle(\'expanded\')">';
+    html += '<span class="event-chevron">&#9660;</span>';
+    if(ev.category && ev.category!=='general'){
+      html += '<div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tm);margin-bottom:3px">'+ev.category+'</div>';
+    }
+    html += '<div class="event-title">'+(ev.title||'')+'</div>';
+    if(ev.organiser) html += '<div class="event-org">'+(ev.organiser||'')+'</div>';
+    if(ev.time) html += '<div class="event-time">\u23F0 '+ev.time+'</div>';
     html += '<div class="event-actions">';
-    if(ev.phone) html += '<button class="event-btn call" onclick="window.open(\'tel:'+ev.phone+'\')">📞 Call</button>';
-    if(ev.accountNumber) html += '<button class="event-btn copy-acc" onclick="copyToClipboard(\''+ev.accountNumber+'\',\'Account number copied!\')">📋 Copy Account</button>';
-    if(ev.accountNumber) html += '<div style="width:100%;font-size:11px;color:var(--ts);margin-top:2px">'+ev.accountName+' · '+ev.bankName+'</div>';
-    html += '</div></div>';
+    if(ev.phone) html += '<button class="event-btn call" onclick="event.stopPropagation();window.open(\'tel:'+(ev.phone||'')+'\')">\uD83D\uDCDE Call</button>';
+    if(ev.accountNumber) html += '<button class="event-btn copy-acc" onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">\uD83D\uDCCB Copy Account</button>';
+    html += '</div>';
+    if(ev.accountNumber) html += '<div style="font-size:10px;color:var(--ts);margin-top:3px">'+(ev.accountName||'')+(ev.bankName?' \u00B7 '+ev.bankName:'')+'</div>';
+    /* Expandable extra section */
+    html += '<div class="event-extra">';
+    if(ev.bannerUrl) html += '<img src="'+ev.bannerUrl+'" style="width:100%;border-radius:8px;margin-bottom:8px;max-height:140px;object-fit:cover" onerror="this.style.display=\'none\'">';
+    if(ev.endDate){var _d=new Date(ev.endDate),_dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],_dm=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; html += '<div>\uD83D\uDCC5 Date: '+_dn[_d.getDay()]+' '+_d.getDate()+' '+_dm[_d.getMonth()]+' '+_d.getFullYear()+'</div>';}
+    if(ev.sponsors) html += '<div>\uD83E\uDD1D Sponsors: '+ev.sponsors+'</div>';
+    html += '<button class="event-btn" style="margin-top:8px;width:100%;justify-content:center;border-color:rgba(34,201,138,.4);color:var(--gm);background:rgba(34,201,138,.08)" onclick="event.stopPropagation();openEventShare('+loc.id+','+evIdx+')">\u2197 Share Event Card</button>';
+    html += '</div>';
+    html += '</div>';
   });
+  html += '</div>';
+  if(active.length > 1){
+    html += '<div class="events-dots">';
+    active.forEach(function(_,i){ html += '<div class="events-dot'+(i===0?' active':'')+'"></div>'; });
+    html += '</div>';
+    html += '<script>setTimeout(function(){var sc=document.getElementById("'+uid+'");if(!sc)return;sc.addEventListener("scroll",function(){var si=Math.round(sc.scrollLeft/(sc.scrollWidth/'+active.length+'));sc.parentNode.querySelectorAll(".events-dot").forEach(function(d,i){d.classList.toggle("active",i===si)});},false);},100);<\/script>';
+  }
   html += '</div>';
   return html;
 }
@@ -1899,6 +1951,100 @@ function openDonateSheet(){
   document.getElementById('notifSheetContent').innerHTML = html;
   document.getElementById('notifSheet').classList.add('show');
   document.body.style.overflow = 'hidden';
+}
+
+
+/* ═══ EVENT SHARE CARD ═══ */
+function openEventShare(locId, evIdx){
+  var loc = LOCATIONS.find(function(l){ return l.id===locId; });
+  if(!loc || !loc.events || !loc.events[evIdx]) return;
+  var ev = loc.events[evIdx];
+  trackEvent('event_share','engagement',ev.title||'');
+
+  var W=1080, H=1350;
+  var cv = document.createElement('canvas');
+  cv.width=W; cv.height=H;
+  var ctx = cv.getContext('2d');
+
+  /* Background */
+  var catColors = {lecture:'#6366f1',feeding:'#22c98a',donation:'#f0c96a',project:'#f59e0b',eid:'#d4a843',general:'#0f5c42',others:'#64748b'};
+  var catColor = catColors[ev.category||'general']||'#0f5c42';
+  var grad = ctx.createLinearGradient(0,0,W,H);
+  grad.addColorStop(0,'#0f5c42'); grad.addColorStop(1,'#051c15');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+
+  /* Dot pattern */
+  ctx.fillStyle='rgba(255,255,255,0.025)';
+  for(var r=0;r<10;r++) for(var c=0;c<8;c++){ctx.beginPath();ctx.arc(70+c*135,70+r*148,15,0,Math.PI*2);ctx.fill();}
+
+  /* Category badge */
+  var catLabel = (ev.category||'General').charAt(0).toUpperCase()+(ev.category||'General').slice(1);
+  ctx.font='bold 28px sans-serif'; ctx.fillStyle=catColor;
+  var bw=ctx.measureText(catLabel).width+40;
+  ctx.fillStyle='rgba(255,255,255,0.12)'; roundRect(ctx,72,60,bw,48,24); ctx.fill();
+  ctx.fillStyle=catColor; ctx.fillText(catLabel,92,94);
+
+  /* DeenLocator logo top-left */
+  try{var _li=new Image();_li.src=LOGO;if(_li.complete&&_li.naturalWidth>0)ctx.drawImage(_li,72,120,56,56);}catch(e){}
+  ctx.font='bold 38px sans-serif'; ctx.fillStyle='#22c98a'; ctx.fillText('Deen',138,160);
+  ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.fillText('Locator',138+ctx.measureText('Deen').width+3,160);
+
+  ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.fillRect(72,192,W-144,2);
+
+  /* Event title */
+  var curY=236; ctx.font='bold 80px sans-serif'; ctx.fillStyle='#ffffff';
+  var eWords=(ev.title||'').split(' '),eLine='',eLines=[];
+  eWords.forEach(function(w){var t=eLine?eLine+' '+w:w;if(ctx.measureText(t).width>W-144){eLines.push(eLine);eLine=w;}else eLine=t;});
+  if(eLine) eLines.push(eLine);
+  eLines.slice(0,3).forEach(function(nl){ctx.fillText(nl,72,curY);curY+=96;});
+  curY+=12;
+
+  /* Organiser */
+  if(ev.organiser){ctx.font='34px sans-serif';ctx.fillStyle='rgba(255,255,255,0.7)';ctx.fillText('by '+ev.organiser,72,curY);curY+=50;}
+
+  /* Time */
+  if(ev.time){ctx.font='bold 36px sans-serif';ctx.fillStyle=catColor;ctx.fillText('\u23F0 '+ev.time,72,curY);curY+=50;}
+
+  /* Date */
+  if(ev.endDate){var d=new Date(ev.endDate);var dN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],dM=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];ctx.font='32px sans-serif';ctx.fillStyle='rgba(255,255,255,0.6)';ctx.fillText('\uD83D\uDCC5 '+dN[d.getDay()]+' '+d.getDate()+' '+dM[d.getMonth()]+' '+d.getFullYear(),72,curY);curY+=48;}
+
+  /* Mosque name + address */
+  curY+=8; ctx.fillStyle='rgba(255,255,255,0.15)'; ctx.fillRect(72,curY,W-144,1); curY+=20;
+  ctx.font='bold 30px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.fillText('\uD83C\uDFDB\uFE0F '+loc.name,72,curY); curY+=42;
+  ctx.font='26px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.fillText('\uD83D\uDCCD '+(loc.address||loc.area+', Abuja'),72,curY); curY+=42;
+
+  /* Contact */
+  if(ev.phone){curY+=8;ctx.font='bold 30px sans-serif';ctx.fillStyle='#22c98a';ctx.fillText('\uD83D\uDCDE Enquiry: '+ev.phone,72,curY);curY+=44;}
+
+  /* Account */
+  if(ev.accountNumber){
+    ctx.font='bold 28px sans-serif';ctx.fillStyle='#f0c96a';ctx.fillText('\uD83C\uDFE6 Donations: '+ev.accountName,72,curY);curY+=36;
+    ctx.font='32px sans-serif';ctx.fillStyle='#f0c96a';ctx.fillText(ev.accountNumber+(ev.bankName?' · '+ev.bankName:''),72,curY);curY+=44;
+  }
+
+  /* Sponsors */
+  if(ev.sponsors){curY+=8;ctx.font='26px sans-serif';ctx.fillStyle='rgba(255,255,255,0.5)';ctx.fillText('Supported by: '+ev.sponsors,72,curY);curY+=38;}
+
+  /* Footer */
+  var fH=180; ctx.fillStyle='rgba(0,0,0,0.3)'; roundRect(ctx,0,H-fH,W,fH,{tl:0,tr:0,br:0,bl:0}); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.1)'; ctx.fillRect(72,H-fH,W-144,1);
+  ctx.font='bold 30px sans-serif'; ctx.fillStyle='#ffffff'; ctx.fillText('\uD83D\uDCF1 Find more on DeenLocator',72,H-fH+46);
+  ctx.font='26px sans-serif'; ctx.fillStyle='#22c98a'; ctx.fillText('mi2now.github.io/deenlocator',72,H-fH+82);
+  ctx.font='22px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.fillText('Free app for Eid & Jumuah locations in Abuja',72,H-fH+114);
+  ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.fillRect(72,H-fH+134,W-144,1);
+  ctx.font='20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.fillText('Powered by 2now Technology  \u00B7  '+( typeof APP_CONFIG!=='undefined'?APP_CONFIG.contactPhone:'+234 806 590 0110'),72,H-fH+158);
+
+  /* Share */
+  cv.toBlob(function(blob){
+    var fname='deenlocator-event-'+(ev.title||'event').replace(/[^a-z0-9]/gi,'_').toLowerCase()+'.png';
+    var file=new File([blob],fname,{type:'image/png'});
+    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+      navigator.share({files:[file],title:ev.title||'Event',text:'DeenLocator — '+loc.name});
+    } else {
+      triggerDownload(cv,fname);
+      showToast('\u2705 Event card saved — share from your gallery!');
+    }
+  },'image/png');
 }
 
 /* ══ GPS ══ */
@@ -2201,15 +2347,17 @@ function renderCards(){
         +'<div class="exp-divider"></div>'
         +'<div class="exp-row"><div class="exp-label">Imam</div><div class="exp-value'+(!loc.imam||loc.imam==="To be announced"?' muted':'')+'">'+( loc.imam||'To be announced')+'</div></div>'
         +'<div class="exp-divider"></div>'
-        +(loc.khutbaUrl?'<a class="exp-doc-row" href="'+loc.khutbaUrl+'" target="_blank"><div class="exp-doc-icon">📋</div><div class="exp-doc-text"><strong>Khutbah Document</strong>Tap to view or download</div><div class="exp-doc-badge">Open</div></a>':'')
-        +(loc.youtube?'<a class="exp-stream" href="'+loc.youtube+'" target="_blank" style="text-decoration:none"><div class="exp-stream-icon">▶</div><div class="exp-stream-text"><strong>Watch / Live Stream</strong>Tap to open on YouTube</div><div class="exp-stream-badge" style="background:rgba(239,68,68,.15);color:#f87171">Watch</div></a>':'')
+        +'<div class="exp-row"><div class="exp-label">Contact</div><div class="exp-contact-row">'+cb+wb+'</div></div>'
+        +'<div class="exp-divider"></div>'
+        +'<div class="exp-media-row">'
+        +(loc.khutbaUrl?'<a class="exp-media-btn" href="'+loc.khutbaUrl+'" target="_blank"><span>📋</span><span>Khutbah</span></a>':'<div class="exp-media-btn dim"><span>📋</span><span>Khutbah</span></div>')
+        +(loc.youtube?'<a class="exp-media-btn youtube" href="'+loc.youtube+'" target="_blank"><span>▶</span><span>Live Stream</span></a>':'<div class="exp-media-btn dim"><span>▶</span><span>Live Stream</span></div>')
+        +'</div>'
         +(loc.eventNote?'<div class="exp-event">📌 '+loc.eventNote+'</div>':'')
         +renderMosqueEvents(loc)
-        +'<div class="exp-divider"></div>'
-        +'<div class="exp-row"><div class="exp-label">Contact</div><div class="exp-contact-row">'+cb+wb+'</div></div>'
         +'<button class="btn-navigate" onclick="navById('+loc.id+')">🗺 Get Directions</button>'
         +'<div class="exp-bottom-row">'
-          +(function(n){var on=isMosqueNotified(n);return '<button class="btn-notify'+(on?' notify-active':'')+'" onclick="notifyMe(\''+n.replace(/\'/g,"\\'")+'\')">'+(on?'\uD83D\uDD14 Reminded':'\uD83D\uDD14 Notify Me')+'</button>';})(loc.name)
+          +(function(n){var on=isMosqueNotified(n);return '<button class="btn-notify'+(on?' notify-active':'')+'" onclick="notifyMe(\''+n.replace(/\'/g,"\\'")+'\')">'+(on?'🔔 Reminded':'🔔 Notify Me')+'</button>';})(loc.name)
           +'<button class="btn-share" onclick="openShare('+loc.id+')">↗ Share</button>'
         +'</div>'
       +'</div>'
