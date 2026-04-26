@@ -601,51 +601,55 @@ function renderEventsEditor(){
     var catOpts = cats.map(function(c){
       return '<option value="'+c.toLowerCase()+'"'+(ev.category===c.toLowerCase()?' selected':'')+'>'+c+'</option>';
     }).join('');
-    var socPlatforms = ['','Facebook','Instagram','WhatsApp','Twitter/X'];
-    var socOpts = socPlatforms.map(function(p){
-      return '<option value="'+p+'"'+(ev.socialPlatform===p?' selected':'')+'>'+( p||'+ Social Media')+'</option>';
-    }).join('');
-    var inp = function(ph, val, field, extra){
-      extra = extra||'';
-      return '<input placeholder="'+ph+'" value="'+(val||'')+'" oninput="_currentEvents['+i+'].'+field+'=this.value" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px;box-sizing:border-box'+extra+'"/>';
-    };
-    var ta = function(ph, val, field, rows){
+    function inp(ph, val, field, sty){
+      sty = sty||'';
+      return '<input placeholder="'+ph+'" value="'+(val||'')+'" oninput="_currentEvents['+i+'].'+field+'=this.value" '
+        +'style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px;box-sizing:border-box'+sty+'"/>';
+    }
+    function ta(ph, val, field, rows){
       rows = rows||2;
-      return '<textarea placeholder="'+ph+'" rows="'+rows+'" oninput="_currentEvents['+i+'].'+field+'=this.value" style="border-radius:8px;border:1.5px solid var(--cd);padding:6px 10px;font-family:inherit;font-size:13px;width:100%;box-sizing:border-box;resize:vertical">'+(val||'')+'</textarea>';
-    };
+      return '<textarea placeholder="'+ph+'" rows="'+rows+'" oninput="_currentEvents['+i+'].'+field+'=this.value" '
+        +'style="border-radius:8px;border:1.5px solid var(--cd);padding:6px 10px;font-family:inherit;font-size:13px;width:100%;box-sizing:border-box;resize:vertical">'
+        +(val||'')+'</textarea>';
+    }
     d.innerHTML =
       '<div style="display:grid;gap:8px">'
-      /* Category + Title */
-      +'<div style="display:flex;gap:8px"><select oninput="_currentEvents['+i+'].category=this.value" style="width:140px;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px">'+catOpts+'</select>'
+      /* Row 1: Category + Title */
+      +'<div style="display:flex;gap:8px">'
+      +'<select oninput="_currentEvents['+i+'].category=this.value" style="width:140px;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px">'+catOpts+'</select>'
       +inp('Event / Project name *', ev.title, 'title', ';flex:1')+'</div>'
-      /* Organiser */
+      /* Row 2: Organiser */
       +inp('Organiser / Speaker name', ev.organiser, 'organiser', ';width:100%')
-      /* Time + End Date */
+      /* Row 3: Time + End Date */
       +'<div style="display:flex;gap:8px">'
       +inp('Time e.g. 2:00PM-4:00PM or Weekly', ev.time, 'time', ';flex:2')
-      +'<input type="date" title="Event auto-disappears after this date" value="'+(ev.endDate||'')+'" oninput="_currentEvents['+i+'].endDate=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px"/>'
+      +'<input type="date" value="'+(ev.endDate||'')+'" oninput="_currentEvents['+i+'].endDate=this.value" '
+      +'title="Auto-disappears after this date" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px"/>'
       +'</div>'
-      /* Contact */
+      /* Row 4: Contact phone */
       +inp('Contact phone number', ev.phone, 'phone', ';width:100%')
-      /* Account */
+      /* Row 5: Account details */
       +'<div style="display:flex;gap:6px">'
       +inp('Account number', ev.accountNumber, 'accountNumber', ';flex:1')
       +inp('Account name', ev.accountName, 'accountName', ';flex:1.5')
       +inp('Bank', ev.bankName, 'bankName', ';flex:1')
       +'</div>'
-      /* Extra info */
-      +inp('Extra info (dress code, what to bring, etc.)', ev.extraInfo, 'extraInfo', ';width:100%')
-      /* Banner URL */
-      +inp('Banner/poster image URL (Google Drive, Imgur) — optional', ev.bannerUrl, 'bannerUrl', ';width:100%;border-style:dashed')
-      /* Sponsors - textarea vertical */
+      /* Row 6: Extra info */
+      +inp('Extra info for card (dress code, what to bring, etc.)', ev.extraInfo, 'extraInfo', ';width:100%')
+      /* Row 7: Banner image URL */
+      +inp('Banner/poster image URL (Google Drive, Imgur, etc.)', ev.bannerUrl, 'bannerUrl', ';width:100%;border-style:dashed')
+      /* Row 8: Sponsors - vertical textarea */
       +ta('Sponsors (one per line)\ne.g. Jaiz Bank\nCFII Abuja', ev.sponsors, 'sponsors', 2)
-      /* Social media */
-      +'<div style="display:flex;gap:8px">'
-      +'<select oninput="_currentEvents['+i+'].socialPlatform=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px dashed var(--cd);padding:0 8px;font-family:inherit;font-size:13px">'+socOpts+'</select>'
-      +inp('Handle / number / link', ev.socialHandle, 'socialHandle', ';flex:2;border-style:dashed')
+      /* Row 9: Social media - 4 separate fields in 2x2 grid */
+      +'<div style="font-size:11px;font-weight:700;color:var(--ts);margin-top:2px">SOCIAL MEDIA (optional)</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'
+      +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">Facebook</div>'+inp('Page name or URL', ev.facebook, 'facebook', ';font-size:12px;height:34px;border-style:dashed')+'</div>'
+      +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">Instagram</div>'+inp('@handle', ev.instagram, 'instagram', ';font-size:12px;height:34px;border-style:dashed')+'</div>'
+      +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">WhatsApp</div>'+inp('Number e.g. 08012345678', ev.whatsappSocial, 'whatsappSocial', ';font-size:12px;height:34px;border-style:dashed')+'</div>'
+      +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">Twitter / X</div>'+inp('@handle', ev.twitterX, 'twitterX', ';font-size:12px;height:34px;border-style:dashed')+'</div>'
       +'</div>'
-      /* Remove */
-      +'<button type="button" onclick="deleteEvent('+i+')" style="height:30px;padding:0 12px;border-radius:7px;border:1px solid #fcc;background:#fee;color:#c00;font-family:inherit;font-size:12px;cursor:pointer;align-self:flex-start">✕ Remove</button>'
+      /* Remove button */
+      +'<button type="button" onclick="deleteEvent('+i+')" style="height:30px;padding:0 12px;border-radius:7px;border:1px solid #fcc;background:#fee;color:#c00;font-family:inherit;font-size:12px;cursor:pointer">✕ Remove</button>'
       +'</div>';
     el.appendChild(d);
   });
