@@ -1176,10 +1176,12 @@ function renderMosqueEvents(loc){
   var uid='evsc_'+loc.id;
   var html='<div class="exp-events"><div class="exp-events-title">\uD83D\uDCC5 Events & Notices</div>';
   html+='<div class="exp-events-scroll" id="'+uid+'">';
+
   active.forEach(function(ev,evIdx){
     var cls='event-card '+(catCls[ev.category]||'');
     var isProj=(ev.category==='project'||ev.category==='feeding'||ev.category==='donation');
-    /* Build social links */
+
+    /* Social links */
     var sL=[];
     if(ev.facebook) sL.push('FB: '+ev.facebook);
     if(ev.instagram) sL.push('IG: '+ev.instagram);
@@ -1187,35 +1189,33 @@ function renderMosqueEvents(loc){
     if(ev.twitterX) sL.push('X: '+ev.twitterX);
 
     html+='<div class="'+cls+'" onclick="this.classList.toggle(\'expanded\')" style="position:relative;min-width:240px;max-width:260px">';
-    /* Small thumbnail top-right */
-    if(ev.bannerUrl){
-      html+='<img src="'+ev.bannerUrl+'" '
-        +'style="position:absolute;top:10px;right:10px;width:54px;height:54px;border-radius:8px;object-fit:cover;border:1.5px solid rgba(255,255,255,0.15)" '
-        +'onerror="this.style.display=\'none\'">';
-    }
     html+='<span class="event-chevron">&#9660;</span>';
+
+    /* ── COLLAPSED: only category + title + organiser + time ── */
     if(ev.category&&ev.category!=='general'){
       html+='<div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tm);margin-bottom:3px">'+ev.category+'</div>';
     }
-    html+='<div class="event-title" style="padding-right:'+(ev.bannerUrl?'68px':'0')+'">'+(ev.title||'')+'</div>';
+    html+='<div class="event-title">'+(ev.title||'')+'</div>';
     if(ev.organiser) html+='<div class="event-org">'+(ev.organiser||'')+'</div>';
     if(ev.time) html+='<div class="event-time">\u23F0 '+ev.time+'</div>';
-    html+='<div class="event-actions">';
-    if(ev.phone) html+='<button class="event-btn call" onclick="event.stopPropagation();window.open(\'tel:'+(ev.phone||'')+'\')">\uD83D\uDCDE Call</button>';
-    /* For non-project: show Copy Account immediately */
-    if(!isProj&&ev.accountNumber){
-      html+='<button class="event-btn copy-acc" onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">\uD83D\uDCCB Copy Account</button>';
-    }
-    html+='</div>';
-    if(!isProj&&ev.accountNumber){
-      html+='<div style="font-size:10px;color:var(--ts);margin-top:3px">'+(ev.accountName||'')+(ev.bankName?' \u00B7 '+ev.bankName:'')+'</div>';
-    }
-    if(sL.length) html+='<div style="font-size:11px;color:var(--gm);margin-top:4px">\uD83D\uDCF1 '+sL.join(' \u00B7 ')+'</div>';
-    /* Expandable section */
+    /* Tap to expand hint */
+    html+='<div style="font-size:10px;color:var(--tm);margin-top:4px">Tap for details \u203A</div>';
+
+    /* ── EXPANDED: everything else ── */
     html+='<div class="event-extra">';
-    /* For project/donation/feeding: account appears here on expand */
+    /* Thumbnail in expanded */
+    if(ev.bannerUrl){
+      html+='<img src="'+ev.bannerUrl+'" style="width:100%;border-radius:8px;margin-bottom:8px;max-height:140px;object-fit:cover" onerror="this.style.display=\'none\'">';
+    }
+    /* Call button */
+    if(ev.phone){
+      html+='<div class="event-actions"><button class="event-btn call" onclick="event.stopPropagation();window.open(\'tel:'+(ev.phone||'')+'\')">\uD83D\uDCDE Call</button></div>';
+    }
+    /* Social links */
+    if(sL.length) html+='<div style="font-size:11px;color:var(--gm);margin-top:4px">\uD83D\uDCF1 '+sL.join(' \u00B7 ')+'</div>';
+    /* For project/donation/feeding: account in gold box */
     if(isProj&&ev.accountNumber){
-      html+='<div style="background:rgba(240,201,106,0.12);border-radius:8px;padding:8px 10px;margin-bottom:6px">'
+      html+='<div style="background:rgba(240,201,106,0.12);border-radius:8px;padding:8px 10px;margin:6px 0">'
         +'<div style="font-size:10px;color:var(--tm);margin-bottom:2px">DONATIONS</div>'
         +'<div style="font-size:12px;font-weight:700;color:#856404">'+(ev.accountName||'')+'</div>'
         +'<div style="font-size:16px;font-weight:700;color:#856404;letter-spacing:.04em">'+ev.accountNumber+'</div>'
@@ -1224,22 +1224,36 @@ function renderMosqueEvents(loc){
         +'onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">\uD83D\uDCCB Copy Account Number</button>'
         +'</div>';
     }
-    if(ev.bannerUrl) html+='<img src="'+ev.bannerUrl+'" style="width:100%;border-radius:8px;margin-bottom:8px;max-height:140px;object-fit:cover" onerror="this.style.display=\'none\'">';
+    /* For non-project: show account immediately */
+    if(!isProj&&ev.accountNumber){
+      html+='<div style="margin-top:4px">'
+        +'<button class="event-btn copy-acc" onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">\uD83D\uDCCB Copy Account</button>'
+        +'<div style="font-size:10px;color:var(--ts);margin-top:2px">'+(ev.accountName||'')+(ev.bankName?' \u00B7 '+ev.bankName:'')+'</div>'
+        +'</div>';
+    }
+    /* Date */
     if(ev.endDate){
       var _d=new Date(ev.endDate),_dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],_dm=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      html+='<div>\uD83D\uDCC5 '+_dn[_d.getDay()]+' '+_d.getDate()+' '+_dm[_d.getMonth()]+' '+_d.getFullYear()+'</div>';
+      html+='<div style="margin-top:4px;font-size:11px">\uD83D\uDCC5 '+_dn[_d.getDay()]+' '+_d.getDate()+' '+_dm[_d.getMonth()]+' '+_d.getFullYear()+'</div>';
     }
+    /* Extra info */
     if(ev.extraInfo) html+='<div style="font-size:11px;color:var(--ts);margin-top:4px">\u2139\uFE0F '+ev.extraInfo+'</div>';
+    /* Sponsors */
     if(ev.sponsors){
       var spList=ev.sponsors.split('\n').filter(function(s){return s.trim();});
-      html+='<div style="margin-top:4px"><strong>Supported by:</strong></div>';
-      spList.forEach(function(s){ html+='<div style="padding-left:10px">\u2726 '+s.trim()+'</div>'; });
+      if(spList.length){
+        html+='<div style="margin-top:4px"><strong>Supported by:</strong></div>';
+        spList.forEach(function(s){ html+='<div style="padding-left:10px;font-size:11px">\u2726 '+s.trim()+'</div>'; });
+      }
     }
+    /* Share button */
     html+='<button class="event-btn" style="margin-top:8px;width:100%;justify-content:center;border-color:rgba(34,201,138,.4);color:var(--gm);background:rgba(34,201,138,.08)" '
       +'onclick="event.stopPropagation();openEventShare('+loc.id+','+evIdx+')">\u2197 Share Event Card</button>';
-    html+='</div></div>';
+    html+='</div>'; /* end event-extra */
+    html+='</div>'; /* end event-card */
   });
-  html+='</div>';
+
+  html+='</div>'; /* end scroll */
   if(active.length>1){
     html+='<div class="events-dots">';
     active.forEach(function(_,i){ html+='<div class="events-dot'+(i===0?' active':'')+'"></div>'; });
@@ -1367,7 +1381,7 @@ function openEventShare(locId, evIdx){
   ctx.fillStyle='rgba(0,0,0,0.8)'; ctx.fillText(catLabel,W-bw-50+22,80);
 
   /* ══ TITLE (push down slightly so it clears the header line) ══ */
-  var curY=hH+60;
+  var curY=hH+110;
   ctx.font='bold 84px sans-serif'; ctx.fillStyle='#ffffff';
   var eWords=(ev.title||'').split(' '),eLine='',eLines=[];
   eWords.forEach(function(w){
@@ -1419,6 +1433,9 @@ function openEventShare(locId, evIdx){
   if(ev.bannerUrl){
     var imgH=200, imgW=W-100;
     ctx.fillStyle='rgba(255,255,255,0.04)'; roundRect(ctx,50,curY,imgW,imgH,12); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.04)'; roundRect(ctx,50,curY,imgW,imgH,12); ctx.fill();
+    /* Placeholder */ ctx.font='26px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.18)';
+    ctx.textAlign='center'; ctx.fillText('Event Photo', W/2, curY+imgH/2+10); ctx.textAlign='left';
     var bannerImg=new Image(); bannerImg.crossOrigin='anonymous';
     bannerImg.onload=function(){
       try{ ctx.save(); roundRect(ctx,50,curY,imgW,imgH,12); ctx.clip(); ctx.drawImage(bannerImg,50,curY,imgW,imgH); ctx.restore(); }catch(e){}
@@ -1834,7 +1851,7 @@ function renderCards(){
         +(loc.khutbaUrl?'<a class="exp-media-btn" href="'+loc.khutbaUrl+'" target="_blank"><span>📋</span><span>Khutbah</span></a>':'<div class="exp-media-btn dim"><span>📋</span><span>Khutbah</span></div>')
         +(loc.youtube?'<a class="exp-media-btn youtube" href="'+loc.youtube+'" target="_blank"><span>▶</span><span>Live Stream</span></a>':'<div class="exp-media-btn dim"><span>▶</span><span>Live Stream</span></div>')
         +'</div>'
-        +(loc.eventNote?'<div class="exp-event" style="white-space:pre-line">📌 '+loc.eventNote+'</div>':'')
+        +(loc.eventNote?'<div class="exp-event" style="white-space:pre-line;line-height:1.8;font-size:13px">'+loc.eventNote.split('\n').map(function(l){l=l.trim();if(!l) return '';if(l.charAt(0)==='*'||l.charAt(0)==='.'||l.charAt(0)==='-') l='\u2022 '+l.replace(/^[*\.\-]\s*/,'');return l;}).filter(Boolean).join('\n')+'</div>':'')
         +renderMosqueEvents(loc)
         +'<button class="btn-navigate" onclick="navById('+loc.id+')">🗺 Get Directions</button>'
         +'<div class="exp-bottom-row">'
