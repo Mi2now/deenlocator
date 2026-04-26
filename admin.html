@@ -119,6 +119,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
       <select id="fsort" onchange="render()"><option value="id">Sort: ID</option><option value="name">Name A-Z</option><option value="area">Area</option></select>
       <button class="tbtn btn-add" onclick="openAdd()">+ Add</button>
       <button class="tbtn btn-exp" onclick="toggleExp()">Export</button>
+      <button class="tbtn" onclick="openConfigPanel()" style="background:#6366f1;color:#fff">⚙️ App Settings</button>
     </div>
     <div class="twrap"><div class="tscroll">
       <table><thead><tr><th>#</th><th>Name</th><th>Area</th><th>Type</th><th>Jumuah Time</th><th>Eid Time</th><th>Imam</th><th>Coordinates</th><th>Status</th><th>Actions</th></tr></thead>
@@ -162,164 +163,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
           <input type="hidden" id="flat"/><input type="hidden" id="flng"/>
           <span id="coordsOk" style="color:#0f5c42;font-size:18px;display:none">&#10003;</span>
         </div>
-        <div style="font-size:11px;color:#9a9a9a;margin-top:4px">Go to maps.google.com, find mosque, right-click → Copy coordinates, paste here</div>
-      </div></div>html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>DeenLocator Admin</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--gd:#0a3d2e;--gm:#0f5c42;--gg:#22c98a;--gold:#d4a843;--red:#dc2626;--white:#fff;--bg:#f3efe6;--cd:#ede8de;--tp:#1a1a1a;--ts:#5a5a5a;--tm:#9a9a9a}
-body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--tp);min-height:100vh}
-#login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-.lcard{background:#fff;border-radius:20px;padding:40px;width:100%;max-width:380px;box-shadow:0 4px 24px rgba(0,0,0,.12);text-align:center}
-.lcard h1{font-size:22px;color:var(--gd);margin:10px 0 4px}
-.lcard .sub{color:var(--tm);font-size:13px;margin-bottom:20px}
-.pwdwrap{position:relative;margin-bottom:12px}
-.pwdwrap input{width:100%;height:50px;border-radius:12px;border:2px solid var(--cd);padding:0 50px 0 16px;font-size:18px;outline:none;font-family:inherit;letter-spacing:2px;text-align:center}
-.pwdwrap input:focus{border-color:var(--gd)}
-.eyebtn{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:22px;cursor:pointer}
-.lbtn{width:100%;height:50px;background:var(--gd);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:10px}
-.lbtn:hover{background:var(--gm)}
-.lerr{color:var(--red);font-size:12px;padding:10px;background:#fee2e2;border-radius:8px;display:none;margin-top:8px;word-break:break-all}
-.lhint{font-size:12px;color:var(--tm);margin-top:8px;background:var(--bg);padding:8px;border-radius:8px}
-#app{display:none}
-.hdr{background:var(--gd);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.brand{font-size:17px;font-weight:700;color:#fff}.brand span{color:var(--gg)}
-.hstats{display:flex;gap:16px;align-items:center}
-.sbox{text-align:center}.sn{font-size:18px;font-weight:700;color:var(--gg);line-height:1}.sl{font-size:10px;color:rgba(255,255,255,.5)}
-.logoutbtn{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer}
-.body{max-width:1200px;margin:0 auto;padding:20px}
-.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-.toolbar input,.toolbar select{height:40px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-size:13px;font-family:inherit;outline:none;background:#fff}
-.toolbar input{flex:1;min-width:200px}.toolbar input:focus,.toolbar select:focus{border-color:var(--gd)}
-.tbtn{height:40px;padding:0 16px;border-radius:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
-.btn-add{background:var(--gg);color:var(--gd)}.btn-exp{background:var(--gd);color:#fff}.btn-sec{background:var(--cd);color:var(--ts)}
-.twrap{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.08);overflow:hidden}
-.tscroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:800px}
-thead{background:var(--gd)}th{padding:11px 12px;font-size:11px;font-weight:700;color:#fff;text-align:left;white-space:nowrap}
-td{padding:10px 12px;font-size:13px;border-bottom:1px solid var(--cd);vertical-align:middle}
-tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
-.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase}
-.bj{background:#d1fae5;color:#065f46}.be{background:#fef3c7;color:#92400e}.bb{background:#ede9fe;color:#4c1d95}.bv{background:#d1fae5;color:#065f46}.bu{background:#fee2e2;color:#991b1b}
-.acts{display:flex;gap:5px}
-.bedit,.bdel,.bmap{height:28px;padding:0 10px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
-.bedit{border:1.5px solid var(--cd);background:#fff;color:var(--gm)}.bedit:hover{background:var(--gd);color:#fff;border-color:var(--gd)}
-.bdel{border:1.5px solid #fca5a5;background:#fff;color:var(--red)}.bdel:hover{background:var(--red);color:#fff}
-.bmap{border:1.5px solid var(--cd);background:#fff;color:var(--ts)}
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
-.ov.show{display:flex}
-.mod{background:#fff;border-radius:18px;width:100%;max-width:580px;max-height:92vh;overflow-y:auto}
-.mhdr{background:var(--gd);padding:18px 22px;border-radius:18px 18px 0 0;display:flex;align-items:center;justify-content:space-between}
-.mhdr h2{font-size:16px;font-weight:700;color:#fff}
-.mclose{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:7px;font-size:16px;cursor:pointer}
-.mbody{padding:20px}.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.frow.full{grid-template-columns:1fr}
-.fg{display:flex;flex-direction:column;gap:4px}
-.fg label{font-size:10px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px}
-.fg input,.fg select{height:40px;border-radius:9px;border:1.5px solid var(--cd);padding:0 11px;font-size:13px;font-family:inherit;outline:none;width:100%}
-.fg input:focus,.fg select:focus{border-color:var(--gd)}
-.fhint{font-size:11px;color:var(--tm);margin-top:2px}
-.mfoot{padding:14px 22px;border-top:1px solid var(--cd);display:flex;gap:10px;justify-content:flex-end}
-.bsave{height:42px;padding:0 22px;background:var(--gd);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
-.bcancel{height:42px;padding:0 22px;background:var(--cd);color:var(--ts);border:none;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
-.dconf{background:#fff;border-radius:16px;padding:24px;max-width:340px;text-align:center}
-.dconf h3{margin:10px 0 6px;font-size:16px}.dconf p{font-size:13px;color:var(--tm);margin-bottom:18px}
-.dact{display:flex;gap:10px}
-.bdconf{flex:1;height:42px;background:var(--red);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer}
-.bdcanc{flex:1;height:42px;background:var(--cd);color:var(--ts);border:none;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer}
-.expanel{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:18px;margin-top:16px;display:none}
-.expanel.show{display:block}
-.code{background:#1a1a1a;border-radius:10px;padding:14px;font-family:monospace;font-size:11px;color:#22c98a;overflow-x:auto;white-space:pre;max-height:320px;overflow-y:auto;line-height:1.5}
-.exbtns{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-.exnote{font-size:12px;color:var(--tm);margin-top:10px;line-height:1.7;background:var(--bg);padding:12px;border-radius:8px}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(30px);background:var(--gd);color:#fff;padding:10px 22px;border-radius:30px;font-size:14px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;max-width:90vw;text-align:center}
-.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-@media(max-width:600px){.frow{grid-template-columns:1fr}.hstats .sbox:nth-child(n+3){display:none}}
-    .faq-editor{background:var(--bg);border-radius:12px;padding:16px;margin-top:16px;}
-    .faq-editor h3{margin:0 0 12px;color:var(--gd);font-size:15px;}
-    .faq-item{background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;}
-    .faq-item input,.faq-item textarea{width:100%;border:1px solid #ddd;border-radius:6px;padding:6px 8px;font-family:inherit;font-size:13px;box-sizing:border-box;margin-bottom:4px;}
-    .faq-item textarea{min-height:60px;resize:vertical;}
-    .faq-del{background:#fee;color:#c00;border:1px solid #fcc;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;}
-    .faq-add{background:var(--gd);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;margin-top:8px;}
-    .faq-save{background:var(--gd);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;margin-left:8px;}
-</style>
-</head>
-<body>
-
-<div id="login">
-  <div class="lcard">
-    <div style="font-size:52px">&#128332;</div>
-    <h1>DeenLocator Admin</h1>
-    <p class="sub">2now Technology &middot; Abuja FCT</p>
-    <div class="pwdwrap">
-      <input type="password" id="pwdInput" placeholder="Password" autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')doLogin()"/>
-      <button class="eyebtn" onclick="togglePwd()" title="Show password">&#128065;</button>
-    </div>
-    <button class="lbtn" onclick="doLogin()">&#128275; Sign In</button>
-    <div class="lerr" id="lerr"></div>
-    <div class="lhint">&#128274; Enter your admin password</div>
-  </div>
-</div>
-
-<div id="app">
-  <div class="hdr">
-    <div class="brand">Deen<span>Locator</span> Admin</div>
-    <div class="hstats">
-      <div class="sbox"><div class="sn" id="stT">0</div><div class="sl">Total</div></div>
-      <div class="sbox"><div class="sn" id="stJ">0</div><div class="sl">Jumuah</div></div>
-      <div class="sbox"><div class="sn" id="stE">0</div><div class="sl">Eid</div></div>
-      <div class="sbox"><div class="sn" id="stB">0</div><div class="sl">Both</div></div>
-      <button class="logoutbtn" onclick="doLogout()">Sign Out</button>
-    </div>
-  </div>
-  <div class="body" id="mainPanel">
-    <div class="toolbar">
-      <input id="srch" placeholder="Search name, area, imam..." oninput="render()"/>
-      <select id="ftype" onchange="render()"><option value="">All Types</option><option value="jumuah">Jumuah</option><option value="eid">Eid</option><option value="both">Both</option></select>
-      <select id="farea" onchange="render()"><option value="">All Areas</option></select>
-      <select id="fsort" onchange="render()"><option value="id">Sort: ID</option><option value="name">Name A-Z</option><option value="area">Area</option></select>
-      <button class="tbtn btn-add" onclick="openAdd()">+ Add</button>
-      <button class="tbtn btn-exp" onclick="toggleExp()">Export</button>
-    </div>
-    <div class="twrap"><div class="tscroll">
-      <table><thead><tr><th>#</th><th>Name</th><th>Area</th><th>Type</th><th>Jumuah Time</th><th>Eid Time</th><th>Imam</th><th>Coordinates</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody id="tbody"></tbody></table>
-    </div></div>
-    <div class="expanel" id="expanel">
-      <h3 style="margin-bottom:12px;color:var(--gd)">Export locations.js</h3>
-      <div class="code" id="expcode"></div>
-      <div class="exbtns">
-        <button class="tbtn btn-exp" onclick="copyExp()">Copy to Clipboard</button>
-        <button class="tbtn btn-add" onclick="dlExp()">Download locations.js</button>
-        <button class="tbtn btn-sec" onclick="toggleExp()">Close</button>
-      </div>
-      <div class="exnote">
-        <strong>How to update the live app:</strong><br>
-        1. Click Download locations.js<br>
-        2. Go to github.com/mi2now/deenlocator<br>
-        3. Upload the file (replaces old one)<br>
-        4. Wait 2 minutes &rarr; live app updates automatically
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="ov" id="editOv">
-  <div class="mod">
-    <div class="mhdr"><h2 id="mtitle">Add Location</h2><button class="mclose" onclick="closeEdit()">X</button></div>
-    <div class="mbody">
-      <input type="hidden" id="fid"/>
-      <div class="frow full"><div class="fg"><label>Mosque / Eid Ground Name *</label><input id="fname" placeholder="Full name"/></div></div>
-      <div class="frow full"><div class="fg"><label>Full Address</label><input id="faddress" placeholder="Street, landmark, area, city"/></div></div>
-      <div class="frow"><div class="fg"><label>Area *</label><input id="farea2" list="arealist" placeholder="e.g. Garki, Wuse"/><datalist id="arealist"></datalist></div><div class="fg"><label>City</label><input id="fcity" value="Abuja"/></div></div>
-      <div class="frow"><div class="fg"><label>Type *</label><select id="ftype2" onchange="updType()"><option value="jumuah">Jumuah (Friday Mosque)</option><option value="eid">Eid Ground</option><option value="both">Both (Eid + Jumuah)</option></select></div><div class="fg"><label>Verified</label><select id="fverified"><option value="true">Yes - Verified</option><option value="false">No - Pending</option></select></div></div>
-      <div class="frow"><div class="fg" id="fjg"><label>Jumuah Time</label><input id="fjumuah" placeholder="e.g. 1:30 PM"/></div><div class="fg" id="feg"><label>Eid Time</label><input id="feid" placeholder="e.g. 8:00 AM"/></div></div>
-      <div class="frow"><div class="fg"><label>Imam Name</label><input id="fimam" placeholder="Sheikh / Ustaz (optional)"/></div><div class="fg"><label>Phone</label><input id="fphone" placeholder="+2348012345678"/></div></div>
-      <div class="frow"><div class="fg"><label>WhatsApp Number</label><input id="fwa" placeholder="2348012345678"/></div><div class="fg"><label>Featured</label><select id="ffeat"><option value="false">No</option><option value="true">Yes</option></select></div></div>
-      <div class="frow"><div class="fg"><label>Latitude *</label><input type="number" id="flat" step="0.000001" placeholder="e.g. 9.0579"/><span class="fhint">Right-click Google Maps, copy first number</span></div><div class="fg"><label>Longitude *</label><input type="number" id="flng" step="0.000001" placeholder="e.g. 7.4951"/><span class="fhint">Second number from Google Maps</span></div></div>
+        <div style="font-size:11px;color:#9a9a9a;margin-top:4px">Open Google Maps → find mosque → right-click the pin → Copy coordinates → paste here</div>
+      </div></div>
       <div class="frow full"><div class="fg">
         <label>YouTube Video / Live Stream Link <small style="font-weight:400;color:#9a9a9a">(optional)</small></label>
         <input id="fyoutube" placeholder="https://youtube.com/watch?v=... or live stream URL"/>
@@ -329,9 +174,21 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
         <input id="fkhutba" placeholder="https://drive.google.com/..."/>
       </div></div>
       <div class="frow full"><div class="fg">
+        <label>Short Description / About This Mosque <small style="font-weight:400;color:#9a9a9a">(permanent info shown on card — optional)</small></label>
+        <textarea id="fmosqueInfo" rows="2" placeholder="e.g. One of the oldest mosques in Garki. Accommodates 500 worshippers. Accessible from main road." style="width:100%;border-radius:10px;border:1.5px solid var(--cd);padding:8px 12px;font-family:inherit;font-size:13px;resize:vertical"></textarea>
+      </div></div>
+      <div class="frow full"><div class="fg">
         <label>Short Notice / Event for this Mosque <small style="font-weight:400;color:#9a9a9a">(shows on card as a notice — optional)</small></label>
         <input id="feventNote" placeholder="e.g. Eid Mubarak — Prayer 8AM sharp, bring your mat"/>
       </div></div>
+
+      <!-- Full Events Editor -->
+      <div class="frow full"><div class="fg">
+        <label style="margin-bottom:8px;display:block">Mosque Events <small style="font-weight:400;color:#9a9a9a">(lectures, feeding, donations — auto-disappear after end date)</small></label>
+        <div id="eventsEditor" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px"></div>
+        <button type="button" onclick="addEventItem()" style="height:36px;padding:0 16px;border-radius:8px;border:1.5px dashed var(--gg);background:transparent;color:var(--gm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">+ Add Event</button>
+      </div></div>
+
       <div class="frow full"><div class="fg"><label>Paste Google Maps Link (auto-extracts coordinates)</label><input id="fmaps" placeholder="Paste full Google Maps URL here"/></div></div>
     </div>
     <div class="mfoot"><button class="bcancel" onclick="closeEdit()">Cancel</button><button class="bsave" onclick="saveLoc()">Save</button></div>
@@ -462,9 +319,10 @@ function updType(){var t=document.getElementById("ftype2").value;document.getEle
 function nextId(){var mx=0;for(var i=0;i<DATA.length;i++)if(DATA[i].id>mx)mx=DATA[i].id;return mx+1;}
 
 function clearForm(){
-  var ids=["fid","fname","faddress","fimam","fphone","fwa","flat","flng","fmaps","fcoords","fyoutube","fkhutba","feventNote"];
+  var ids=["fid","fname","faddress","fimam","fphone","fwa","flat","flng","fmaps","fcoords","fyoutube","fkhutba","feventNote","fmosqueInfo"];
   for(var i=0;i<ids.length;i++)document.getElementById(ids[i]).value="";
   document.getElementById("farea2").value=""; var cok=document.getElementById("coordsOk"); if(cok) cok.style.display="none";
+  _currentEvents=[]; renderEventsEditor();
   document.getElementById("fcity").value="Abuja";
   document.getElementById("fjumuah").value="";
   document.getElementById("feid").value="";
@@ -498,6 +356,8 @@ function openEdit(id){
   document.getElementById("fyoutube").value=l.youtube||"";
   document.getElementById("fkhutba").value=l.khutbaUrl||"";
   if(document.getElementById("feventNote")) document.getElementById("feventNote").value=l.eventNote||"";
+  _currentEvents=JSON.parse(JSON.stringify(l.events||[])); renderEventsEditor();
+  if(document.getElementById("fmosqueInfo")) document.getElementById("fmosqueInfo").value=l.mosqueInfo||"";
   document.getElementById("fverified").value=l.verified?"true":"false";
   document.getElementById("ffeat").value=l.featured?"true":"false";
   updType();
@@ -515,8 +375,9 @@ function saveLoc(){
   var yt=document.getElementById("fyoutube").value.trim();
   var khut=document.getElementById("fkhutba").value.trim();
   var evtNote=document.getElementById("feventNote")?document.getElementById("feventNote").value.trim():"";
+  var mosqueInfoVal=document.getElementById("fmosqueInfo")?document.getElementById("fmosqueInfo").value.trim():"";
   var idv=document.getElementById("fid").value;
-  var loc={id:idv?parseInt(idv):nextId(),name:name,address:document.getElementById("faddress").value.trim()||area+", Abuja",area:area,city:document.getElementById("fcity").value.trim()||"Abuja",type:document.getElementById("ftype2").value,eidTime:document.getElementById("feid").value.trim()||"",jumuahTime:document.getElementById("fjumuah").value.trim()||"",imam:document.getElementById("fimam").value.trim()||"To be announced",youtube:yt||null,khutbaUrl:khut||null,mapsUrl:mapsLink||null,eventNote:evtNote||null,phone:document.getElementById("fphone").value.trim()||"",whatsapp:document.getElementById("fwa").value.trim()||"",lat:lat,lng:lng,verified:document.getElementById("fverified").value==="true",featured:document.getElementById("ffeat").value==="true"};
+  var loc={id:idv?parseInt(idv):nextId(),name:name,address:document.getElementById("faddress").value.trim()||area+", Abuja",area:area,city:document.getElementById("fcity").value.trim()||"Abuja",type:document.getElementById("ftype2").value,eidTime:document.getElementById("feid").value.trim()||"",jumuahTime:document.getElementById("fjumuah").value.trim()||"",imam:document.getElementById("fimam").value.trim()||"To be announced",youtube:yt||null,khutbaUrl:khut||null,mapsUrl:mapsLink||null,eventNote:evtNote||null,mosqueInfo:mosqueInfoVal||null,events:_currentEvents.length?_currentEvents:undefined,phone:document.getElementById("fphone").value.trim()||"",whatsapp:document.getElementById("fwa").value.trim()||"",lat:lat,lng:lng,verified:document.getElementById("fverified").value==="true",featured:document.getElementById("ffeat").value==="true"};
   if(idv){for(var i=0;i<DATA.length;i++)if(DATA[i].id===parseInt(idv)){DATA[i]=loc;break;}}else{DATA.push(loc);}
   closeEdit();updateStats();buildAreaFilter();render();
   toast(idv?"Updated! Click Export to save.":"Added! Click Export to save.");
@@ -548,7 +409,14 @@ function buildJS(){
     if(l.jumuahTime)out+=", jumuahTime: "+JSON.stringify(l.jumuahTime);
     out+=",\n";
     out+="    imam: "+JSON.stringify(l.imam||"To be announced")+", phone: "+(l.phone?JSON.stringify(l.phone):"null")+", whatsapp: "+(l.whatsapp?JSON.stringify(l.whatsapp):"null")+",\n";
-    out+="    lat: "+l.lat+", lng: "+l.lng+", verified: "+(l.verified?"true":"false")+", featured: "+(l.featured?"true":"false")+"\n";
+    var extraFields="";
+    if(l.youtube)extraFields+=", youtube: "+JSON.stringify(l.youtube);
+    if(l.khutbaUrl)extraFields+=", khutbaUrl: "+JSON.stringify(l.khutbaUrl);
+    if(l.mapsUrl)extraFields+=", mapsUrl: "+JSON.stringify(l.mapsUrl);
+    if(l.mosqueInfo)extraFields+=", mosqueInfo: "+JSON.stringify(l.mosqueInfo);
+    if(l.eventNote)extraFields+=", eventNote: "+JSON.stringify(l.eventNote);
+    if(l.events&&l.events.length)extraFields+=", events: "+JSON.stringify(l.events);
+    out+="    lat: "+l.lat+", lng: "+l.lng+", verified: "+(l.verified?"true":"false")+", featured: "+(l.featured?"true":"false")+extraFields+"\n";
     out+="  }"+(i<DATA.length-1?",":"")+"\n";
   }
   out+="];";
@@ -620,6 +488,124 @@ function openFaqEditor(){
   document.getElementById('faqPanel').style.display='block';
 }
 
+
+/* App Settings / Config Editor */
+var CFG_DEFAULTS = {
+  whatsappNumber: '2348065900110',
+  adminEmail: 'mustytunau@gmail.com',
+  googleFormUrl: 'https://forms.gle/deenlocator',
+  appUrl: 'https://mi2now.github.io/deenlocator',
+  jumuahMessage: "Adhan ~12:30 PM · Khutbah follows · Salah ends ~2:30 PM",
+  donationAccount: '0123456789',
+  donationAccName: 'DeenLocator — 2now Technology',
+  donationBank: 'First Bank Nigeria',
+  gaId: 'G-XXXXXXXXXX'
+};
+
+function openConfigPanel(){
+  loadConfigDefaults();
+  document.getElementById('mainPanel').style.display='none';
+  document.getElementById('configPanel').style.display='block';
+}
+
+function loadConfigDefaults(){
+  var saved = {};
+  try{ saved = JSON.parse(localStorage.getItem('dl_admin_config')||'{}'); }catch(e){}
+  var c = Object.assign({}, CFG_DEFAULTS, saved);
+  document.getElementById('cfg_whatsapp').value = c.whatsappNumber||'';
+  document.getElementById('cfg_email').value    = c.adminEmail||'';
+  document.getElementById('cfg_form').value     = c.googleFormUrl||'';
+  document.getElementById('cfg_url').value      = c.appUrl||'';
+  document.getElementById('cfg_jumuah').value   = c.jumuahMessage||'';
+  document.getElementById('cfg_don_acc').value  = c.donationAccount||'';
+  document.getElementById('cfg_don_name').value = c.donationAccName||'';
+  document.getElementById('cfg_don_bank').value = c.donationBank||'';
+  document.getElementById('cfg_ga').value       = c.gaId||'';
+}
+
+function exportConfig(){
+  var c = {
+    whatsappNumber:  document.getElementById('cfg_whatsapp').value.trim(),
+    contactPhone:    '+'+document.getElementById('cfg_whatsapp').value.trim().replace(/^234/,'+234').replace(/^\+?/,''),
+    adminEmail:      document.getElementById('cfg_email').value.trim(),
+    googleFormUrl:   document.getElementById('cfg_form').value.trim(),
+    appUrl:          document.getElementById('cfg_url').value.trim(),
+    appName:         'DeenLocator',
+    appTagline:      'Eid & Jumuah Locator · Abuja',
+    poweredBy:       '2now Technology',
+    jumuahMessage:   document.getElementById('cfg_jumuah').value.trim(),
+    suggestHeadline: 'Do you know a Mosque or Eid Ground?',
+    suggestSubtext:  'Help us build the most complete prayer directory in Abuja — FREE.',
+    shareCardTagline:'Find Eid & Jumuah locations in Abuja instantly',
+    copyCardIntro:   '🕌 DeenLocator — Abuja Prayer Locations',
+    donationAccount: document.getElementById('cfg_don_acc').value.trim(),
+    donationAccName: document.getElementById('cfg_don_name').value.trim(),
+    donationBank:    document.getElementById('cfg_don_bank').value.trim(),
+    gaId:            document.getElementById('cfg_ga').value.trim()
+  };
+  try{ localStorage.setItem('dl_admin_config', JSON.stringify(c)); }catch(e){}
+
+  var out = '/* DeenLocator App Configuration\n'
+    +'   Edit in admin.html → App Settings → Download config.js\n'
+    +'   Upload to GitHub to go live. Takes 2 minutes.\n*/\n\n'
+    +'var APP_CONFIG = '+JSON.stringify(c, null, 2)+';\n';
+
+  var blob = new Blob([out], {type:'text/javascript'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url; a.download = 'config.js';
+  a.click(); URL.revokeObjectURL(url);
+  toast('config.js downloaded! Upload it to GitHub.');
+}
+
+
+/* Events editor per mosque */
+var _currentEvents = [];
+
+function renderEventsEditor(){
+  var el = document.getElementById('eventsEditor');
+  if(!el) return;
+  el.innerHTML = '';
+  _currentEvents.forEach(function(ev, i){
+    var d = document.createElement('div');
+    d.style.cssText = 'background:var(--bg);border-radius:10px;padding:12px;border:1px solid var(--cd)';
+    d.innerHTML = '<div style="display:grid;gap:8px">'
+      +'<div style="display:flex;gap:8px">'
+      +'<input placeholder="Event title *" value="'+(ev.title||'')+'" oninput="_currentEvents['+i+'].title=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
+      +'<select oninput="_currentEvents['+i+'].category=this.value" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px">'
+      +'<option value="general"'+(ev.category==='general'?' selected':'')+'>General</option>'
+      +'<option value="lecture"'+(ev.category==='lecture'?' selected':'')+'>Lecture</option>'
+      +'<option value="feeding"'+(ev.category==='feeding'?' selected':'')+'>Feeding</option>'
+      +'<option value="donation"'+(ev.category==='donation'?' selected':'')+'>Donation</option>'
+      +'<option value="eid"'+(ev.category==='eid'?' selected':'')+'>Eid</option>'
+      +'</select></div>'
+      +'<input placeholder="Organiser / Speaker" value="'+(ev.organiser||'')+'" oninput="_currentEvents['+i+'].organiser=this.value" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px;width:100%"/>'
+      +'<input placeholder="Time (e.g. Every Sunday 2:00PM - 4:00PM)" value="'+(ev.time||'')+'" oninput="_currentEvents['+i+'].time=this.value" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px;width:100%"/>'
+      +'<div style="display:flex;gap:8px">'
+      +'<input type="date" title="End date (event auto-disappears after this date)" value="'+(ev.endDate||'')+'" oninput="_currentEvents['+i+'].endDate=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
+      +'<input placeholder="Contact phone" value="'+(ev.phone||'')+'" oninput="_currentEvents['+i+'].phone=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
+      +'</div>'
+      +'<div style="display:flex;gap:8px">'
+      +'<input placeholder="Account number (optional)" value="'+(ev.accountNumber||'')+'" oninput="_currentEvents['+i+'].accountNumber=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
+      +'<input placeholder="Account name" value="'+(ev.accountName||'')+'" oninput="_currentEvents['+i+'].accountName=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
+      +'<input placeholder="Bank" value="'+(ev.bankName||'')+'" oninput="_currentEvents['+i+'].bankName=this.value" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px"/>'
+      +'</div>'
+      +'<button type="button" onclick="deleteEvent('+i+')" style="height:32px;padding:0 12px;border-radius:7px;border:1px solid #fcc;background:#fee;color:#c00;font-family:inherit;font-size:12px;cursor:pointer">Remove Event</button>'
+      +'</div>';
+    el.appendChild(d);
+  });
+}
+
+function addEventItem(){
+  _currentEvents.push({title:'',category:'general',organiser:'',time:'',endDate:'',phone:'',accountNumber:'',accountName:'',bankName:''});
+  renderEventsEditor();
+}
+
+function deleteEvent(i){
+  _currentEvents.splice(i,1);
+  renderEventsEditor();
+}
+
 var _tt=null;
 function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("on");clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove("on");},3500);}
 </script>
@@ -635,6 +621,62 @@ function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.c
   <div id="faqExport" style="margin-top:12px;display:none">
     <div class="code" id="faqCode" style="font-size:11px;max-height:200px;overflow-y:auto"></div>
     <button class="tbtn btn-exp" onclick="copyFaqExport()" style="margin-top:8px">Copy FAQ JSON</button>
+  </div>
+</div>
+
+
+<!-- App Settings Panel -->
+<div id="configPanel" style="display:none;padding:20px;max-width:700px;margin:0 auto">
+  <h2 style="color:var(--gd);margin-bottom:4px">App Settings</h2>
+  <p style="font-size:13px;color:var(--tm);margin-bottom:20px">Edit and export config.js — then upload to GitHub</p>
+
+  <div style="display:grid;gap:14px">
+    <div>
+      <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">WhatsApp Number (no + sign)</label>
+      <input id="cfg_whatsapp" placeholder="2348065900110" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Admin Email</label>
+      <input id="cfg_email" placeholder="mustytunau@gmail.com" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Google Form Link (Mosque Suggestion)</label>
+      <input id="cfg_form" placeholder="https://forms.gle/..." style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">App URL</label>
+      <input id="cfg_url" placeholder="https://mi2now.github.io/deenlocator" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Jumuah Message (shown on Prayer Times screen)</label>
+      <input id="cfg_jumuah" placeholder="Adhan ~12:30 PM · Khutbah follows · Salah ends ~2:30 PM" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Donation Account Number</label>
+      <input id="cfg_don_acc" placeholder="0123456789" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Donation Account Name</label>
+      <input id="cfg_don_name" placeholder="DeenLocator — 2now Technology" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Donation Bank Name</label>
+      <input id="cfg_don_bank" placeholder="First Bank Nigeria" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Google Analytics ID (GA4)</label>
+      <input id="cfg_ga" placeholder="G-XXXXXXXXXX" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+      <div style="font-size:11px;color:var(--tm);margin-top:4px">Get yours free at analytics.google.com · Takes 5 minutes</div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+    <button onclick="exportConfig()" style="height:44px;padding:0 24px;background:var(--gd);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">Download config.js</button>
+    <button onclick="loadConfigDefaults()" style="height:44px;padding:0 24px;background:var(--cd);color:var(--tp);border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">Load Defaults</button>
+    <button onclick="document.getElementById('configPanel').style.display='none';document.getElementById('mainPanel').style.display='block'" style="height:44px;padding:0 24px;background:var(--cd);color:var(--tp);border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">Back</button>
+  </div>
+  <div style="font-size:12px;color:var(--tm);margin-top:12px;line-height:1.6">
+    After downloading config.js, go to github.com/mi2now/deenlocator → click config.js → pencil icon → paste content → Commit. Live in 2 minutes.
   </div>
 </div>
 
