@@ -490,8 +490,8 @@
   <div class="screen" id="screen-map">
     <div class="map-filter-bar">
       <button class="map-tab active" data-mf="all">🕌 All</button>
-      <button class="map-tab" data-mf="eid">🌙 Eid Only</button>
       <button class="map-tab" data-mf="jumuah">📿 Jumuʼah Only</button>
+      <button class="map-tab" data-mf="eid">🌙 Eid Only</button>
     </div>
     <div class="map-nearest" id="mapNearest" style="display:none">
       <span class="map-nearest-label">📍 Nearest</span>
@@ -527,9 +527,18 @@
       </div>
       <span class="pt-mode-status" id="ptModeStatus">Loading...</span>
     </div>
+    <!-- My Mosque name + edit bar -->
     <div class="pt-edit-bar" id="ptEditBar" style="display:none">
-      <div class="pt-edit-bar-text">Set your mosque's exact prayer times. Saved on your device.</div>
-      <button class="pt-edit-btn" id="ptEditBtn" onclick="toggleEdit()">Edit</button>
+      <div style="width:100%">
+        <input id="myMosqueName" type="text" placeholder="Your mosque name (optional)"
+          value=""
+          oninput="try{localStorage.setItem('dl_my_mosque_name',this.value);}catch(e){}"
+          style="width:100%;border:1.5px solid var(--cd);border-radius:8px;padding:8px 12px;font-family:inherit;font-size:13px;background:var(--bg);color:var(--tp);margin-bottom:6px;box-sizing:border-box"/>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="pt-edit-bar-text">Set your exact prayer times below. Tap <b>Save</b> when done.</div>
+          <button class="pt-edit-btn" id="ptEditBtn" onclick="toggleEdit()">Edit</button>
+        </div>
+      </div>
     </div>
     <div class="pt-cards" id="ptCards"></div>
     <div class="pt-jumuah">
@@ -540,13 +549,16 @@
         <div class="pt-jumuah-sub">Adhan ~12:30 PM · Khutbah follows · Salah ends ~2:00 PM</div>
       </div>
     </div>
+    <!-- Share My Mosque Card button (My Mosque mode only) -->
+    <div id="ptShareRow" style="display:none;padding:0 16px 4px">
+      <button onclick="shareMosqueTimeCard()" style="width:100%;height:44px;border-radius:12px;border:1.5px solid rgba(34,201,138,.4);background:rgba(34,201,138,.08);color:var(--gm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">↗ Share My Mosque Prayer Times</button>
+    </div>
     <div class="pt-note">
       <strong>📌 About these times</strong>
-      These are approximate times for Abuja (FCT). Tap <b>Edit</b> to set your mosque's exact times — your changes are saved on your phone only and do not affect other users.
+      These are approximate times for Abuja (FCT). Tap <b>Edit</b> to set your mosque&#39;s exact times — your changes are saved on your phone only.
     </div>
     <div class="pt-reset">
-      <button class="pt-reset-btn" onclick="resetTimes()">Reset to default Abuja times</button>
-      <button class="pt-reset-btn" onclick="resetTimes(); setPrayerMode('api')">🔄 Reset to Default Abuja Times</button>
+      <button class="pt-reset-btn" onclick="resetTimes()">↺ Reset to Default Abuja Times</button>
   </div>
 
   <!-- SCREEN 4: SETTINGS -->
@@ -1581,6 +1593,126 @@ function fixImgurUrl(url){
   if(m) return 'https://i.imgur.com/'+m[1]+'.png';
   /* Album URL imgur.com/a/XXXXX — cannot auto-resolve, return as-is */
   return url;
+}
+
+
+/* ═══ SHARE MY MOSQUE PRAYER TIMES CARD ═══ */
+function shareMosqueTimeCard(){
+  var mosqueName = '';
+  try{ mosqueName = localStorage.getItem('dl_my_mosque_name')||''; }catch(e){}
+  if(!mosqueName) mosqueName = 'My Mosque';
+
+  var W=1080, H=1350;
+  var cv = document.createElement('canvas');
+  cv.width=W; cv.height=H;
+  var ctx = cv.getContext('2d');
+
+  /* Background */
+  var grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'#0f5c42'); grad.addColorStop(1,'#040e09');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+  /* Dot pattern */
+  ctx.fillStyle='rgba(255,255,255,0.025)';
+  for(var r=0;r<12;r++) for(var c=0;c<9;c++){ctx.beginPath();ctx.arc(60+c*120,60+r*120,12,0,Math.PI*2);ctx.fill();}
+
+  /* Header band */
+  ctx.fillStyle='rgba(255,255,255,0.05)'; ctx.fillRect(0,0,W,160);
+  ctx.fillStyle='#22c98a'; ctx.fillRect(0,157,W,3);
+
+  /* Logo + DeenLocator */
+  var _li=new Image();
+  function drawBrand(){
+    ctx.font='bold 44px sans-serif'; ctx.fillStyle='#22c98a';
+    ctx.fillText('Deen',148,84);
+    ctx.fillStyle='rgba(255,255,255,0.92)';
+    ctx.fillText('Locator',148+ctx.measureText('Deen').width+4,84);
+    ctx.font='22px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)';
+    ctx.fillText('by 2now Technology',148,112);
+  }
+  _li.onload=function(){ try{ctx.drawImage(_li,50,28,80,80);}catch(e){} drawBrand(); };
+  _li.onerror=drawBrand; _li.src=LOGO; drawBrand();
+
+  /* Mosque name */
+  var curY=200;
+  ctx.font='bold 72px sans-serif'; ctx.fillStyle='#ffffff';
+  /* Word-wrap mosque name */
+  var words=mosqueName.split(' '),line='',mLines=[];
+  words.forEach(function(w){ var t=line?line+' '+w:w; if(ctx.measureText(t).width>W-100){mLines.push(line);line=w;}else line=t; });
+  if(line) mLines.push(line);
+  mLines.slice(0,2).forEach(function(ml){ ctx.fillText(ml,50,curY); curY+=82; });
+  curY+=10;
+
+  /* Date + Hijri */
+  var now=new Date();
+  var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  ctx.font='28px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.5)';
+  ctx.fillText(days[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear(),50,curY);
+  curY+=46;
+  try{
+    var hd=gregorianToHijri(now.getFullYear(),now.getMonth()+1,now.getDate());
+    var hm=['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Awwal','Jumada al-Thani','Rajab','Shaban','Ramadan','Shawwal','Dhul Qidah','Dhul Hijjah'];
+    ctx.fillText(hd.day+' '+hm[hd.month-1]+' '+hd.year+' AH',50,curY);
+  }catch(e){}
+  curY+=20;
+
+  /* Divider */
+  ctx.fillStyle='rgba(255,255,255,0.1)'; ctx.fillRect(50,curY,W-100,1); curY+=32;
+
+  /* Prayer time rows */
+  PRAYERS.forEach(function(pr){
+    var timeStr=fmtTime(pr.h,pr.m);
+    /* Row background */
+    ctx.fillStyle='rgba(255,255,255,0.06)';
+    roundRect(ctx,50,curY,W-100,88,14); ctx.fill();
+    /* Icon */
+    ctx.font='38px sans-serif'; ctx.fillText(pr.icon,80,curY+58);
+    /* Name */
+    ctx.font='bold 34px sans-serif'; ctx.fillStyle='#ffffff';
+    ctx.fillText(pr.name,140,curY+42);
+    ctx.font='22px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)';
+    ctx.fillText(pr.arabic,140,curY+70);
+    /* Time */
+    ctx.font='bold 40px sans-serif'; ctx.fillStyle='#22c98a';
+    ctx.fillText(timeStr,W-50-ctx.measureText(timeStr).width,curY+58);
+    curY+=100;
+  });
+
+  /* Jumuah row */
+  curY+=8;
+  ctx.fillStyle='rgba(34,201,138,0.12)'; roundRect(ctx,50,curY,W-100,88,14); ctx.fill();
+  ctx.strokeStyle='rgba(34,201,138,0.3)'; ctx.lineWidth=1; roundRect(ctx,50,curY,W-100,88,14); ctx.stroke();
+  ctx.font='bold 30px sans-serif'; ctx.fillStyle='#22c98a';
+  ctx.fillText('🕌 Jumuah Prayer',80,curY+38);
+  ctx.font='24px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.55)';
+  ctx.fillText('Every Friday · Adhan ~12:30 PM · Khutbah follows',80,curY+68);
+  curY+=100;
+
+  /* Footer */
+  var fY=H-130;
+  ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.fillRect(0,fY,W,130);
+  ctx.fillStyle='#22c98a'; ctx.fillRect(0,fY,W,2);
+  ctx.font='bold 26px sans-serif'; ctx.fillStyle='#ffffff';
+  ctx.fillText('📱 Download DeenLocator — Free App',50,fY+44);
+  ctx.font='22px sans-serif'; ctx.fillStyle='#22c98a';
+  ctx.fillText('mi2now.github.io/deenlocator',50,fY+74);
+  ctx.font='18px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.35)';
+  ctx.fillText('Find Eid & Jumuah prayer locations in Abuja',50,fY+100);
+
+  /* Share */
+  function doShare(){
+    cv.toBlob(function(blob){
+      var fname='deenlocator-prayer-times-'+mosqueName.replace(/[^a-z0-9]/gi,'_').toLowerCase()+'.png';
+      var file=new File([blob],fname,{type:'image/png'});
+      if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+        navigator.share({files:[file],title:mosqueName+' Prayer Times',text:'Prayer times shared via DeenLocator'});
+      } else {
+        triggerDownload(cv,fname);
+        showToast('✅ Prayer card saved — share from your gallery!');
+      }
+    },'image/png');
+  }
+  _li.complete&&_li.naturalWidth>0 ? setTimeout(doShare,200) : setTimeout(doShare,700);
 }
 
 /* ══ GPS ══ */
@@ -3624,6 +3756,10 @@ function setPrayerMode(mode){
     if(manualBtn){ manualBtn.classList.add('active'); }
     if(apiBtn){    apiBtn.classList.remove('active'); }
     if(editBar){   editBar.style.display = 'flex'; }
+    var shareRow=document.getElementById('ptShareRow'); if(shareRow) shareRow.style.display='block';
+    /* Load saved mosque name */
+    var nameEl=document.getElementById('myMosqueName');
+    if(nameEl){ try{nameEl.value=localStorage.getItem('dl_my_mosque_name')||'';}catch(e){} }
     if(statusEl){  statusEl.textContent = '✏️ Using your custom times'; }
     /* Use saved manual times */
     PRAYERS = loadPrayers();
@@ -3636,6 +3772,7 @@ function setPrayerMode(mode){
     if(apiBtn){    apiBtn.classList.add('active'); }
     if(manualBtn){ manualBtn.classList.remove('active'); }
     if(editBar){   editBar.style.display = 'none'; }
+    var shareRow2=document.getElementById('ptShareRow'); if(shareRow2) shareRow2.style.display='none';
     /* Reset to DEFAULT_PRAYERS (official Abuja times, always works offline) */
     try{ localStorage.removeItem('dl_prayers_edited'); }catch(e){}
     PRAYERS = JSON.parse(JSON.stringify(DEFAULT_PRAYERS));
