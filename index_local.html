@@ -1146,8 +1146,8 @@ var APP_CONFIG = {
     </div>
     <div class="filter-tabs">
       <button class="tab active" data-filter="all">All Locations</button>
-            <button class="tab" data-filter="jumuah">Jumuʼah (Friday)</button>
       <button class="tab" data-filter="eid">Eid Prayer</button>
+            <button class="tab" data-filter="jumuah">Jumuʼah (Friday)</button>
     </div>
     <div class="filter-bar">
       <select class="filter-select" id="areaSelect"><option value="">All Areas</option></select>
@@ -1230,7 +1230,7 @@ var APP_CONFIG = {
     <div class="pt-mode-bar">
       <div class="pt-mode-btns">
         <button class="pt-mode-btn" id="modeManualBtn" onclick="setPrayerMode('manual')">✏️ My Mosque</button>
-        <button class="pt-mode-btn" id="modeApiBtn" onclick="setPrayerMode('api')">🌐 Auto Abuja (API)</button>
+        <button class="pt-mode-btn" id="modeApiBtn" onclick="setPrayerMode('api')">🕌 Default Abuja Time</button>
       </div>
       <span class="pt-mode-status" id="ptModeStatus">Loading...</span>
     </div>
@@ -1253,7 +1253,7 @@ var APP_CONFIG = {
     </div>
     <div class="pt-reset">
       <button class="pt-reset-btn" onclick="resetTimes()">Reset to default Abuja times</button>
-    </div>
+      <button class="pt-reset-btn" onclick="resetTimes(); setPrayerMode('api')">🔄 Reset to Default Abuja Times</button>
   </div>
 
   <!-- SCREEN 4: SETTINGS -->
@@ -1945,9 +1945,10 @@ function renderMosqueEvents(loc){
     }
     /* Extra info as a pill */
     if(ev.extraInfo){
-      html+='<div style="background:var(--cd);border-radius:20px;padding:5px 12px;'
-        +'margin-top:6px;display:inline-block;font-size:11px;color:var(--ts);max-width:100%">'
-        +'\u2139\uFE0F '+ev.extraInfo+'</div>';
+      var _eiLines=ev.extraInfo.split('\n').filter(function(l){return l.trim();});
+      html+='<div style="background:rgba(255,255,255,0.88);border-radius:12px;padding:10px 14px;margin-top:8px;border-left:3px solid var(--gd)">';
+      _eiLines.forEach(function(eil){var c=eil.trim();if(c.charAt(0)==='*'||c.charAt(0)==='.'||c.charAt(0)==='-')c='\u2022 '+c.replace(/^[*\.\-]\s*/,'');html+='<div style="font-size:12px;font-weight:600;color:var(--tp);line-height:1.7">'+c+'</div>';});
+      html+='</div>';
     }
     /* Sponsors */
     if(ev.sponsors){
@@ -4342,10 +4343,13 @@ function setPrayerMode(mode){
     if(apiBtn){    apiBtn.classList.add('active'); }
     if(manualBtn){ manualBtn.classList.remove('active'); }
     if(editBar){   editBar.style.display = 'none'; }
-    if(statusEl){  statusEl.textContent = '⏳ Fetching today\'s Abuja times...'; }
-    /* Clear manual override and fetch from API */
+    /* Reset to DEFAULT_PRAYERS (official Abuja times, always works offline) */
     try{ localStorage.removeItem('dl_prayers_edited'); }catch(e){}
-    fetchPrayerTimesForMode(statusEl);
+    PRAYERS = JSON.parse(JSON.stringify(DEFAULT_PRAYERS));
+    savePrayers(PRAYERS);
+    renderPtCards(); updateBanner(); scheduleAll();
+    if(statusEl){ statusEl.textContent = '🗔️ Using standard Abuja prayer times'; }
+    showToast('🕌 Default Abuja times loaded');
   }
 }
 

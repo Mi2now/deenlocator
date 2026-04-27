@@ -646,7 +646,7 @@ function renderEventsEditor(){
       +inp('Bank', ev.bankName, 'bankName', ';flex:1')
       +'</div>'
 
-      +inp('Extra info for card (dress code, what to bring, etc.)', ev.extraInfo, 'extraInfo', ';width:100%')
+      +ta('Extra info for card (optional — one item per line, bullet points auto-added)\ne.g.\nDress code: Modest\nBring your own mat\nWomen space available', ev.extraInfo, 'extraInfo', 3)
 
       +inp('Banner/poster image 1 URL (recommended: 1080x607px or square 1:1)', ev.bannerUrl, 'bannerUrl', ';width:100%;border-style:dashed')
       +'<div style="font-size:11px;background:rgba(34,201,138,0.08);border-radius:6px;padding:5px 8px;color:var(--ts);margin:4px 0;line-height:1.5">HOW TO GET IMAGE URL: Upload to imgur.com, click the 3-dot menu, click Get Share Links, copy the BBCode URL (starts with https://i.imgur.com/), paste here. Recommended: 1080x810px or 1080x1080px.</div>'
