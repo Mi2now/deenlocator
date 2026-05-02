@@ -158,7 +158,26 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
       <div class="frow"><div class="fg"><label>Area *</label><input id="farea2" list="arealist" placeholder="e.g. Garki, Wuse"/><datalist id="arealist"></datalist></div><div class="fg"><label>City</label><input id="fcity" value="Abuja"/></div></div>
       <div class="frow"><div class="fg"><label>Type *</label><select id="ftype2" onchange="updType()"><option value="jumuah">Jumuah (Friday Mosque)</option><option value="eid">Eid Ground</option><option value="both">Both (Eid + Jumuah)</option></select></div><div class="fg"><label>Verified</label><select id="fverified"><option value="true">Yes - Verified</option><option value="false">No - Pending</option></select></div></div>
       <div class="frow"><div class="fg" id="fjg"><label>Jumuah Time</label><input id="fjumuah" placeholder="e.g. 1:30 PM"/></div><div class="fg" id="feg"><label>Eid Time</label><input id="feid" placeholder="e.g. 8:00 AM"/></div></div>
-      <div class="frow"><div class="fg"><label>Imam Name</label><input id="fimam" placeholder="Sheikh / Ustaz (optional)"/></div><div class="fg"><label>Phone</label><input id="fphone" placeholder="+2348012345678"/></div></div>
+      <div class="frow">
+        <div class="fg" style="flex:0.7">
+          <label>Role</label>
+          <select id="fimamrole" onchange="toggleImamOther()" style="width:100%;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px;background:#fff">
+            <option value="Imam">Imam</option>
+            <option value="Mu'azzin">Mu'azzin</option>
+            <option value="Mosque Representative">Mosque Representative</option>
+            <option value="Other">Other (specify)</option>
+          </select>
+          <input id="fimamrole_other" placeholder="Enter role title" style="display:none;margin-top:4px;width:100%;height:34px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px"/>
+        </div>
+        <div class="fg" style="flex:1.3">
+          <label>Name</label>
+          <input id="fimam" placeholder="Sheikh / Ustaz name (optional)"/>
+        </div>
+        <div class="fg">
+          <label>Phone</label>
+          <input id="fphone" placeholder="+2348012345678"/>
+        </div>
+      </div>
       <div class="frow"><div class="fg"><label>WhatsApp Number</label><input id="fwa" placeholder="2348012345678"/></div><div class="fg"><label>Featured</label><select id="ffeat"><option value="false">No</option><option value="true">Yes</option></select></div></div>
       <div class="frow full"><div class="fg">
         <label>Coordinates <small style="font-weight:400;color:#9a9a9a">(optional — paste "lat, lng" e.g. 9.0749, 7.4849)</small></label>
@@ -183,8 +202,20 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
         <input id="fkhutba" placeholder="https://drive.google.com/..."/>
       </div></div>
       <div class="frow full"><div class="fg">
-        <label>Short Notice / Event for this Mosque <small style="font-weight:400;color:#9a9a9a">(shows on card as a notice — optional)</small></label>
-        <textarea id="feventNote" rows="3" placeholder="e.g.&#10;• Tarawih starts @ 8:00PM&#10;• Jumuah Mubarak - Pray at home if unwell&#10;• Next Eid prayer confirmed 8:00AM" style="width:100%;border-radius:10px;border:1.5px solid var(--cd);padding:8px 12px;font-family:inherit;font-size:13px;resize:vertical;line-height:1.6"></textarea>
+        <label>Short Notice / Event for this Mosque
+          <small style="font-weight:400;color:#9a9a9a"> — appears as a styled pill on the card (optional)</small>
+        </label>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+          <span style="font-size:11px;color:var(--ts);font-weight:600">Pill font size:</span>
+          <input type="range" id="feventNoteSize" min="10" max="18" value="13"
+            oninput="document.getElementById('feventNoteSizeLbl').textContent=this.value+'px'"
+            style="flex:1;accent-color:var(--gd)"/>
+          <span id="feventNoteSizeLbl" style="font-size:12px;font-weight:700;color:var(--gm);min-width:36px">13px</span>
+        </div>
+        <textarea id="feventNote" rows="3"
+          placeholder="e.g.&#10;• Tarawih starts @ 8:00PM&#10;• Jumuah Mubarak - Pray at home if unwell&#10;• Next Eid prayer confirmed 8:00AM"
+          style="width:100%;border-radius:10px;border:1.5px solid var(--cd);padding:8px 12px;font-family:inherit;font-size:13px;resize:vertical;line-height:1.6"></textarea>
+        <div style="font-size:11px;color:var(--tm);margin-top:3px">Lines starting with • - * are auto-formatted as bullet points on the card</div>
       </div></div>
 
       <!-- Full Events Editor -->
@@ -213,6 +244,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
 
 <script>
 var PWD = "deenlocator2026";
+var DEEN_LOGO = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%231a472a'/%3E%3Ctext y='.9em' font-size='70' x='18'%3E%F0%9F%95%8C%3C/text%3E%3C/svg%3E";
 var DATA = [{"id": 1, "name": "National Eid Ground", "address": "Along Airport Road, After City Gate, Abuja", "area": "Airport Road", "city": "Abuja", "type": "eid", "eidTime": "9:00 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0097, "lng": 7.4553, "verified": true, "featured": true}, {"id": 2, "name": "Gwarimpa Eid Prayer Ground", "address": "Gwarimpa Estate, Abuja", "area": "Gwarimpa", "city": "Abuja", "type": "eid", "eidTime": "8:30 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.1167, "lng": 7.4167, "verified": true, "featured": false}, {"id": 3, "name": "Citec Estate Eid Ground", "address": "Citec Estate, After Salbas Filling Station, Before Idu-Junction, Mbora District, Abuja", "area": "Mbora", "city": "Abuja", "type": "eid", "eidTime": "8:30 AM", "jumuahTime": "", "imam": "To be announced", "phone": "08036241247", "whatsapp": "", "lat": 9.095, "lng": 7.52, "verified": true, "featured": true}, {"id": 4, "name": "Kubwa Muslim Community Eid Ground", "address": "Phase 3 Junction, Kubwa, Abuja", "area": "Kubwa", "city": "Abuja", "type": "eid", "eidTime": "8:30 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.15, "lng": 7.3167, "verified": true, "featured": false}, {"id": 5, "name": "JIBWIS Prayer Ground Gbazango", "address": "NYSC Junction by the Expressway, Gbazango, Kubwa, Abuja", "area": "Kubwa", "city": "Abuja", "type": "eid", "eidTime": "8:30 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.1453, "lng": 7.3231, "verified": true, "featured": false}, {"id": 6, "name": "Old Berger Yard Eid Ground", "address": "Old Berger Yard, Airport Road, Lugbe, Abuja", "area": "Lugbe", "city": "Abuja", "type": "eid", "eidTime": "8:15 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0167, "lng": 7.4, "verified": true, "featured": false}, {"id": 7, "name": "Mambilla Barracks Eid Ground", "address": "Guards Brigade Garrison Parade Ground, Mambilla Barracks, Asokoro, Abuja", "area": "Asokoro", "city": "Abuja", "type": "eid", "eidTime": "8:00 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0417, "lng": 7.5167, "verified": true, "featured": false}, {"id": 8, "name": "Abacha Barracks Eid Ground", "address": "Mugadishu Cantonment, Abacha Barracks Parade Ground, Asokoro, Abuja", "area": "Asokoro", "city": "Abuja", "type": "eid", "eidTime": "8:00 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.06, "lng": 7.495, "verified": true, "featured": false}, {"id": 9, "name": "Pegi Muslim Community Eid Ground", "address": "Pegi Muslim Community Eid Praying Ground, Pegi, Kuje, Abuja", "area": "Kuje", "city": "Abuja", "type": "eid", "eidTime": "8:00 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 8.88, "lng": 7.23, "verified": true, "featured": false}, {"id": 10, "name": "Kuduru Muslim Community (KMC)", "address": "GSS Kuduru Premises, Bwari, Abuja", "area": "Bwari", "city": "Abuja", "type": "eid", "eidTime": "8:00 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.21, "lng": 7.3833, "verified": true, "featured": false}, {"id": 11, "name": "Esteem Boys College Eid Ground", "address": "Esteem Boys", "area": "Lokogoma", "city": "Abuja", "type": "eid", "eidTime": "8:30 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 8.95, "lng": 7.38, "verified": true, "featured": false}, {"id": 12, "name": "Dutse Baumpa Eid Ground", "address": "By Shafa Energy, Tipper Garage, Bmuko Junction, Along Dutse-Bwari Road, Abuja", "area": "Dutse", "city": "Abuja", "type": "eid", "eidTime": "9:00 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.1833, "lng": 7.35, "verified": true, "featured": false}, {"id": 13, "name": "Gbazango West Muslim Community", "address": "Near Train Station and Behind Police Station, Gbazango West, Kubwa, Abuja", "area": "Kubwa", "city": "Abuja", "type": "eid", "eidTime": "9:00 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.148, "lng": 7.321, "verified": true, "featured": false}, {"id": 14, "name": "Brick City Eid Ground", "address": "Brick City Estate, Abuja", "area": "Bwari", "city": "Abuja", "type": "eid", "eidTime": "8:00 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0733, "lng": 7.465, "verified": true, "featured": false}, {"id": 15, "name": "Bmuko Muslim Community", "address": "Off Tipper Garage, Dutse, Off Bwari Expressway, Abuja", "area": "Dutse", "city": "Abuja", "type": "eid", "eidTime": "8:00 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.19, "lng": 7.345, "verified": true, "featured": false}, {"id": 16, "name": "NDA Prayer Ground", "address": "NDA Officers Mess Ground, Asokoro, Abuja", "area": "Asokoro", "city": "Abuja", "type": "eid", "eidTime": "8:30 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.045, "lng": 7.52, "verified": true, "featured": false}, {"id": 17, "name": "National Assembly Central Mosque", "address": "National Assembly Complex, Three Arms Zone, Abuja", "area": "Central Area", "city": "Abuja", "type": "eid", "eidTime": "8:00 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.06, "lng": 7.498, "verified": true, "featured": false}, {"id": 18, "name": "Kubwa FO1 Eid Ground", "address": "FO1 Eid Ground, Kubwa, Abuja", "area": "Kubwa", "city": "Abuja", "type": "eid", "eidTime": "8:00 AM", "jumuahTime": "", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.1633, "lng": 7.3383, "verified": true, "featured": false}, {"id": 19, "name": "Al-Noor Masjid (ICICE Centre)", "address": "Al-Noor Masjid, ICICE Centre, Wuse 2, Abuja", "area": "Wuse", "city": "Abuja", "type": "both", "eidTime": "8:30 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0556, "lng": 7.4892, "verified": true, "featured": true}, {"id": 20, "name": "APO Legislative Quarters Mosque", "address": "Central Mosque, APO Legislative Quarters, Zone E, Abuja", "area": "Apo", "city": "Abuja", "type": "both", "eidTime": "8:30 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0128, "lng": 7.5433, "verified": true, "featured": false}, {"id": 21, "name": "JIBWIS Headquarters Mosque", "address": "JIBWIS Headquarters, Utako Berger, Utako, Abuja", "area": "Utako", "city": "Abuja", "type": "both", "eidTime": "8:30 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0667, "lng": 7.45, "verified": true, "featured": false}, {"id": 22, "name": "Nurul Yaqeen Mosque", "address": "Plot 268, Kafe, Life Camp, Opp. Godab Estate, Abuja", "area": "Life Camp", "city": "Abuja", "type": "both", "eidTime": "9:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "08039584612", "whatsapp": "", "lat": 9.0833, "lng": 7.4333, "verified": true, "featured": false}, {"id": 23, "name": "Uthman Bin Affan Masjid (Banex Plaza)", "address": "FOMWAN International School, Adjacent Banex Plaza, Wuse 2, Abuja", "area": "Wuse", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.06, "lng": 7.485, "verified": true, "featured": false}, {"id": 24, "name": "Ibrahim Maimunat Foundation (IMF) Masjid", "address": "No 4 IMF Close, FO1 Kubwa, FCT Abuja", "area": "Kubwa", "city": "Abuja", "type": "both", "eidTime": "9:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.1633, "lng": 7.3333, "verified": true, "featured": false}, {"id": 25, "name": "Al-Habibiyyah Mosque", "address": "Plot 753, Babagana Kingibe Street, Guzape, Asokoro District, Abuja", "area": "Guzape", "city": "Abuja", "type": "both", "eidTime": "9:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0383, "lng": 7.5117, "verified": true, "featured": true}, {"id": 26, "name": "Muslim Community Central Mosque Kubwa", "address": "Shelter Farm, Kubwa, Abuja", "area": "Kubwa", "city": "Abuja", "type": "both", "eidTime": "9:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.1667, "lng": 7.325, "verified": true, "featured": false}, {"id": 27, "name": "FOMWAN Headquarters Jumuah Masjid", "address": "FOMWAN Headquarters Central Mosque, Utako, Abuja", "area": "Utako", "city": "Abuja", "type": "both", "eidTime": "8:45 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.07, "lng": 7.448, "verified": true, "featured": false}, {"id": 28, "name": "Al-Huda Masjid", "address": "Uwadia-Resorts, Millionaires Quarters, Byazhin-Kubwa, Abuja", "area": "Byazhin", "city": "Abuja", "type": "both", "eidTime": "9:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.1383, "lng": 7.3067, "verified": true, "featured": false}, {"id": 29, "name": "Al-Ikhlas Masjid", "address": "FCDA Owner Occupier Estate, Kubwa, Abuja", "area": "Kubwa", "city": "Abuja", "type": "both", "eidTime": "9:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.1583, "lng": 7.3167, "verified": true, "featured": false}, {"id": 30, "name": "JIBWIS Islamic Centre Guzape", "address": "Adamu Aliero Crescent, Guzape, Abuja", "area": "Guzape", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.035, "lng": 7.5083, "verified": true, "featured": false}, {"id": 31, "name": "Masjid Shaikh Ja", "address": "Along Kaduna-Lokoja Expressway, Zuba, Abuja", "area": "Zuba", "city": "Abuja", "type": "both", "eidTime": "9:30 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.125, "lng": 7.2083, "verified": true, "featured": false}, {"id": 32, "name": "Area 8 Jumu", "address": "Area 8 Masjid, Section 1, Sheda Close, Garki, Abuja", "area": "Garki", "city": "Abuja", "type": "both", "eidTime": "8:30 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.045, "lng": 7.4783, "verified": true, "featured": false}, {"id": 33, "name": "Sun City Estate Mosque (SEMRA)", "address": "Sun City Estate, Jumu", "area": "Lugbe", "city": "Abuja", "type": "both", "eidTime": "8:30 AM", "jumuahTime": "1:15 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.01, "lng": 7.4133, "verified": true, "featured": false}, {"id": 34, "name": "Dambatta Masjid", "address": "No 23 Kaltungo Street, Garki II, Abuja", "area": "Garki", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0517, "lng": 7.4967, "verified": true, "featured": false}, {"id": 35, "name": "Jedo Estate Islamic Centre", "address": "Jumu", "area": "Lugbe", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.005, "lng": 7.4083, "verified": true, "featured": false}, {"id": 36, "name": "Cyclic Energy Jumu", "address": "Cyclic Energy Limited, Airport Road, Abuja", "area": "Airport Road", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0183, "lng": 7.45, "verified": true, "featured": false}, {"id": 37, "name": "Masjid Abubakar Siddique", "address": "Wuse Zone 6, Abuja", "area": "Wuse", "city": "Abuja", "type": "both", "eidTime": "8:45 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.06, "lng": 7.475, "verified": true, "featured": false}, {"id": 38, "name": "Chika Jumu", "address": "Along Airport Road, Opposite ECOWAS, Chika, Abuja", "area": "Chika", "city": "Abuja", "type": "both", "eidTime": "9:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0017, "lng": 7.425, "verified": true, "featured": false}, {"id": 39, "name": "OTM Islamic Centre", "address": "Cluster 5, Promenade/Kwankwaso Estate, Lokogoma, FCT Abuja", "area": "Lokogoma", "city": "Abuja", "type": "both", "eidTime": "8:15 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 8.9617, "lng": 7.395, "verified": true, "featured": false}, {"id": 40, "name": "Ansar-ud-Deen Mosque Wuse 2", "address": "No 80 Aguiyi Ironsi Street, Wuse 2, Abuja", "area": "Wuse", "city": "Abuja", "type": "both", "eidTime": "9:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0583, "lng": 7.4917, "verified": true, "featured": false}, {"id": 41, "name": "Maitama Central Mosque", "address": "No 120 Nile Street, Maitama, Abuja", "area": "Maitama", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.08, "lng": 7.4933, "verified": true, "featured": false}, {"id": 42, "name": "Shehu Shagari Central Mosque", "address": "Mosque Premises, Section 2, Area 1, Garki, Abuja", "area": "Garki", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0517, "lng": 7.4767, "verified": true, "featured": false}, {"id": 43, "name": "NASFAT Islamic Centre Utako", "address": "Plot 313 Augustus Alkhomu Way, Utako District, Abuja", "area": "Utako", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.07, "lng": 7.455, "verified": true, "featured": false}, {"id": 44, "name": "Ansar-ud-Deen Central Mosque Kubwa", "address": "Off Arab Road by Mango Tree, Kubwa, Abuja", "area": "Kubwa", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.1583, "lng": 7.3117, "verified": true, "featured": false}, {"id": 45, "name": "Wuye Central Masjid", "address": "Wuye District, FCT Abuja", "area": "Wuye", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0833, "lng": 7.4667, "verified": true, "featured": false}, {"id": 46, "name": "Anoor Islamic Centre Masjid", "address": "Plot 107, Cadastral C20, Behind Nizamiye Turkish Hospital, Mbora District, Abuja", "area": "Mbora", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0917, "lng": 7.5183, "verified": true, "featured": false}, {"id": 47, "name": "Federal Housing Authority Mosque Asokoro", "address": "Federal Housing Authority Mosque, Asokoro, Abuja", "area": "Asokoro", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0383, "lng": 7.5233, "verified": true, "featured": false}, {"id": 48, "name": "Sanusi Dantata Jumu", "address": "Sanusi Dantata Memorial Mosque, Central Area, Abuja", "area": "Central Area", "city": "Abuja", "type": "both", "eidTime": "9:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.06, "lng": 7.4833, "verified": true, "featured": false}, {"id": 49, "name": "AYA Central Mosque Asokoro", "address": "AYA Central Mosque, Asokoro, Abuja", "area": "Asokoro", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.045, "lng": 7.5167, "verified": true, "featured": false}, {"id": 50, "name": "Anas Ibn Malik Islamic Centre (AMSSCO)", "address": "Anas Ibn Malik Islamic Centre, AMSSCO Estate, Galadimawa, Abuja", "area": "Galadimawa", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0133, "lng": 7.4317, "verified": true, "featured": false}, {"id": 51, "name": "Airport Masjid", "address": "Praying Ground, Area B, Abuja Airport, Abuja", "area": "Airport Road", "city": "Abuja", "type": "both", "eidTime": "8:30 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0067, "lng": 7.4633, "verified": true, "featured": false}, {"id": 52, "name": "Sunnyvale Homes Masjid", "address": "Sunnyvale Homes Sports Complex (Near Old Gate), Dakwo District, Abuja", "area": "Dakwo", "city": "Abuja", "type": "both", "eidTime": "9:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0033, "lng": 7.51, "verified": true, "featured": false}, {"id": 53, "name": "JIBWIS Dawaki", "address": "JIBWIS FCT, Dawaki Extension, News Engineering, Abuja", "area": "Dawaki", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.08, "lng": 7.505, "verified": true, "featured": false}, {"id": 54, "name": "Dape Village Masjid", "address": "Dape Village, Off Julius Berger Camp Road, Abuja", "area": "Dape", "city": "Abuja", "type": "both", "eidTime": "9:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.1033, "lng": 7.4117, "verified": true, "featured": false}, {"id": 55, "name": "Hayatul Islam Karu", "address": "Karu Hayatul Islam Jumu", "area": "Karu", "city": "Abuja", "type": "both", "eidTime": "8:30 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 8.9983, "lng": 7.5883, "verified": true, "featured": false}, {"id": 56, "name": "Anwaru-L-Huda (AHLON)", "address": "Anwaru-L-Huda League of Nigeria, Area 1, Section 1, Garki, Abuja", "area": "Garki", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0533, "lng": 7.48, "verified": true, "featured": false}, {"id": 57, "name": "Nile University Central Masjid", "address": "Nile University of Nigeria, Jabi Airport Road Bypass, Abuja", "area": "Jabi", "city": "Abuja", "type": "both", "eidTime": "8:00 AM", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0617, "lng": 7.4367, "verified": true, "featured": false}, {"id": 58, "name": "Abdullateef Adegbite Masjid (MSS)", "address": "1st Avenue (14 Road), Gwarimpa Estate, Abuja", "area": "Gwarimpa", "city": "Abuja", "type": "jumuah", "eidTime": "", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.12, "lng": 7.415, "verified": true, "featured": false}, {"id": 59, "name": "7th Avenue Islamic Center", "address": "7th Avenue Islamic Center Juma", "area": "Gwarimpa", "city": "Abuja", "type": "jumuah", "eidTime": "", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.1217, "lng": 7.4183, "verified": true, "featured": false}, {"id": 60, "name": "Ansar-Deen Mosque Gwarimpa", "address": "Ansar-Deen Mosque, Gwarimpa, Abuja", "area": "Gwarimpa", "city": "Abuja", "type": "jumuah", "eidTime": "", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.1183, "lng": 7.4133, "verified": true, "featured": false}, {"id": 61, "name": "Suncity Estate Jumu", "address": "Suncity Estate Juma", "area": "Galadimawa", "city": "Abuja", "type": "jumuah", "eidTime": "", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 9.0117, "lng": 7.43, "verified": true, "featured": false}, {"id": 62, "name": "Esteem Learning Centre Masjid", "address": "Esteem Learning Centre, Lokogoma, Abuja", "area": "Lokogoma", "city": "Abuja", "type": "jumuah", "eidTime": "", "jumuahTime": "1:30 PM", "imam": "To be announced", "phone": "", "whatsapp": "", "lat": 8.9533, "lng": 7.3817, "verified": true, "featured": false}];
 var AREAS = ["Airport Road", "Apo", "Asokoro", "Bwari", "Byazhin", "Central Area", "Chika", "Dakwo", "Dape", "Dawaki", "Dutse", "Galadimawa", "Garki", "Guzape", "Gwarimpa", "Jabi", "Karu", "Kubwa", "Kuje", "Life Camp", "Lokogoma", "Lugbe", "Maitama", "Mbora", "Utako", "Wuse", "Wuye", "Zuba"];
 
@@ -359,7 +391,25 @@ function openEdit(id){
   document.getElementById("ftype2").value=l.type||"jumuah";
   document.getElementById("fjumuah").value=l.jumuahTime||"";
   document.getElementById("feid").value=l.eidTime||"";
-  document.getElementById("fimam").value=(l.imam==="To be announced"?"":l.imam)||"";
+  // Imam role + name
+  var _imamRole = l.imamRole || 'Imam';
+  var _imamName = (l.imam === 'To be announced' ? '' : l.imam) || '';
+  var _roles = ['Imam','Mu\u2019azzin','Mosque Representative'];
+  var _roleEl = document.getElementById('fimamrole');
+  var _roleOther = document.getElementById('fimamrole_other');
+  if(_roles.indexOf(_imamRole) !== -1){
+    _roleEl.value = _imamRole;
+    if(_roleOther) _roleOther.style.display = 'none';
+  } else {
+    _roleEl.value = 'Other';
+    if(_roleOther){ _roleOther.style.display = 'block'; _roleOther.value = _imamRole; }
+  }
+  document.getElementById('fimam').value = _imamName;
+  // eventNote font size
+  if(document.getElementById('feventNoteSize') && l.eventNoteSize){
+    document.getElementById('feventNoteSize').value = l.eventNoteSize;
+    document.getElementById('feventNoteSizeLbl').textContent = l.eventNoteSize + 'px';
+  };
   document.getElementById("fphone").value=l.phone||"";
   document.getElementById("fwa").value=l.whatsapp||"";
   document.getElementById("flat").value=l.lat||"";
@@ -388,7 +438,9 @@ function saveLoc(){
   var khut=document.getElementById("fkhutba").value.trim();
   var evtNote=document.getElementById("feventNote")?document.getElementById("feventNote").value.trim():"";
   var idv=document.getElementById("fid").value;
-  var loc={id:idv?parseInt(idv):nextId(),name:name,address:document.getElementById("faddress").value.trim()||area+", Abuja",area:area,city:document.getElementById("fcity").value.trim()||"Abuja",type:document.getElementById("ftype2").value,eidTime:document.getElementById("feid").value.trim()||"",jumuahTime:document.getElementById("fjumuah").value.trim()||"",imam:document.getElementById("fimam").value.trim()||"To be announced",youtube:yt||null,khutbaUrl:khut||null,mapsUrl:mapsLink||null,eventNote:evtNote||null,events:_currentEvents.length?_currentEvents:undefined,phone:document.getElementById("fphone").value.trim()||"",whatsapp:document.getElementById("fwa").value.trim()||"",lat:lat,lng:lng,verified:document.getElementById("fverified").value==="true",featured:document.getElementById("ffeat").value==="true"};
+  var loc={id:idv?parseInt(idv):nextId(),name:name,address:document.getElementById("faddress").value.trim()||area+", Abuja",area:area,city:document.getElementById("fcity").value.trim()||"Abuja",type:document.getElementById("ftype2").value,eidTime:document.getElementById("feid").value.trim()||"",jumuahTime:document.getElementById("fjumuah").value.trim()||"",imamRole:(function(){var r=document.getElementById('fimamrole').value;return r==='Other'?(document.getElementById('fimamrole_other').value.trim()||'Other'):r;})(),
+    imam:document.getElementById('fimam').value.trim()||'To be announced',
+    eventNoteSize:parseInt(document.getElementById('feventNoteSize')?document.getElementById('feventNoteSize').value:13)||13,youtube:yt||null,khutbaUrl:khut||null,mapsUrl:mapsLink||null,eventNote:evtNote||null,events:_currentEvents.length?_currentEvents:undefined,phone:document.getElementById("fphone").value.trim()||"",whatsapp:document.getElementById("fwa").value.trim()||"",lat:lat,lng:lng,verified:document.getElementById("fverified").value==="true",featured:document.getElementById("ffeat").value==="true"};
   if(idv){for(var i=0;i<DATA.length;i++)if(DATA[i].id===parseInt(idv)){DATA[i]=loc;break;}}else{DATA.push(loc);}
   try{localStorage.setItem('dl_admin_data',JSON.stringify(DATA));}catch(e){}
   closeEdit();updateStats();buildAreaFilter();render();
@@ -542,6 +594,7 @@ function loadConfigDefaults(){
   try{ saved = JSON.parse(localStorage.getItem('dl_admin_config')||'{}'); }catch(e){}
   var c = Object.assign({}, CFG_DEFAULTS, saved);
   document.getElementById('cfg_whatsapp').value = c.whatsappNumber||'';
+  if(document.getElementById('cfg_phone')) document.getElementById('cfg_phone').value = c.contactPhone||'';
   document.getElementById('cfg_email').value    = c.adminEmail||'';
   document.getElementById('cfg_form').value     = c.googleFormUrl||'';
   document.getElementById('cfg_url').value      = c.appUrl||'';
@@ -555,7 +608,7 @@ function loadConfigDefaults(){
 function exportConfig(){
   var c = {
     whatsappNumber:  document.getElementById('cfg_whatsapp').value.trim(),
-    contactPhone:    '+'+document.getElementById('cfg_whatsapp').value.trim().replace(/^234/,'+234').replace(/^\+?/,''),
+    contactPhone:    document.getElementById('cfg_phone').value.trim().replace(/^\+?/,''),
     adminEmail:      document.getElementById('cfg_email').value.trim(),
     googleFormUrl:   document.getElementById('cfg_form').value.trim(),
     appUrl:          document.getElementById('cfg_url').value.trim(),
@@ -601,78 +654,272 @@ function _fixImgurLocal(u){
   var m=u.match(/^https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)(?:\.[a-z]+)?$/);
   return m ? 'https://i.imgur.com/'+m[1]+'.png' : u;
 }
+function fontSlider(evIdx, label, ev, field, minV, maxV, defaultV){
+  var val = (ev && ev[field]) ? ev[field] : defaultV;
+  var sid = 'fslider_'+evIdx+'_'+field;
+  var lid = 'flbl_'+evIdx+'_'+field;
+  return '<div>'
+    +'<div style="font-size:10px;font-weight:700;color:var(--ts);margin-bottom:3px">'+label+'</div>'
+    +'<div style="display:flex;align-items:center;gap:6px">'
+    +'<input type="range" id="'+sid+'" min="'+minV+'" max="'+maxV+'" value="'+val+'" '
+    +'oninput="_currentEvents['+evIdx+'].'+field+'=parseInt(this.value);document.getElementById(\''+lid+'\').textContent=this.value+\'px\'" '
+    +'style="flex:1;accent-color:var(--gd);height:4px">'
+    +'<span id="'+lid+'" style="font-size:11px;font-weight:700;color:var(--gm);min-width:32px">'+val+'px</span>'
+    +'</div>'
+    +'</div>';
+}
+
 function renderEventsEditor(){
-  var el = document.getElementById('eventsEditor');
-  if(!el) return;
-  el.innerHTML = '';
-  var cats = ['General','Lecture','Feeding','Project','Eid','Others'];
-  _currentEvents.forEach(function(ev, i){
-    var d = document.createElement('div');
-    d.style.cssText = 'background:var(--bg);border-radius:10px;padding:14px;border:1px solid var(--cd);margin-bottom:6px';
-    var catOpts = cats.map(function(c){
+  var el=document.getElementById('eventsEditor');
+  if(!el)return;
+  el.innerHTML='';
+  var cats=['General','Lecture','Feeding','Project','Donation','Eid','Others'];
+
+  _currentEvents.forEach(function(ev,i){
+    var d=document.createElement('div');
+    d.style.cssText='background:var(--bg);border-radius:10px;padding:14px;border:1.5px solid var(--cd);margin-bottom:10px';
+
+    var catOpts=cats.map(function(c){
       return '<option value="'+c.toLowerCase()+'"'+(ev.category===c.toLowerCase()?' selected':'')+'>'+c+'</option>';
     }).join('');
-    function inp(ph, val, field, sty){
-      sty = sty||'';
+
+    function inp(ph,val,field,sty){
+      sty=sty||'';
       return '<input placeholder="'+ph+'" value="'+(val||'')+'" oninput="_currentEvents['+i+'].'+field+'=this.value" '
         +'style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 10px;font-family:inherit;font-size:13px;box-sizing:border-box'+sty+'"/>';
     }
-    function ta(ph, val, field, rows){
-      rows = rows||2;
+    function ta(ph,val,field,rows){
+      rows=rows||2;
       return '<textarea placeholder="'+ph+'" rows="'+rows+'" oninput="_currentEvents['+i+'].'+field+'=this.value" '
         +'style="border-radius:8px;border:1.5px solid var(--cd);padding:6px 10px;font-family:inherit;font-size:13px;width:100%;box-sizing:border-box;resize:vertical">'
         +(val||'')+'</textarea>';
     }
-    d.innerHTML =
-      '<div style="display:grid;gap:8px">'
+    function lbl(text,sub){
+      return '<div style="font-size:11px;font-weight:700;color:var(--ts);margin:10px 0 3px">'+text
+        +(sub?'<span style="font-weight:400;color:var(--tm);margin-left:6px">'+sub+'</span>':'')+'</div>';
+    }
+    function imgField(ph,val,field,sizeGuide,position){
+      var urlId='imgurl_'+i+'_'+field;
+      var fileId='imgfile_'+i+'_'+field;
+      var previewId='imgprev_'+i+'_'+field;
+      return '<div style="border:1.5px dashed var(--cd);border-radius:10px;padding:10px;background:rgba(34,201,138,0.03)">'
+        +(position?'<div style="font-size:10px;font-weight:700;color:var(--gm);margin-bottom:4px;text-transform:uppercase">'+position+'</div>':'')
+        +'<div style="font-size:10px;color:var(--tm);margin-bottom:6px">'+sizeGuide+'</div>'
+        +'<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">'
+        +'<input id="'+urlId+'" placeholder="Paste Imgur URL e.g. https://i.imgur.com/abc.jpg" value="'+(val||'')+'" '
+        +'oninput="_currentEvents['+i+'].'+field+'=this.value;document.getElementById(\''+previewId+'\').src=this.value||DEEN_LOGO" '
+        +'style="flex:1;height:34px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:12px"/>'
+        +'<label style="height:34px;padding:0 10px;background:var(--gd);color:#fff;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap">'
+        +'📁 Upload'
+        +'<input type="file" accept="image/*" style="display:none" onchange="handleImgUpload(this,\''+urlId+'\',\''+previewId+'\','+i+',\''+field+'\')">'
+        +'</label></div>'
+        +'<img id="'+previewId+'" src="'+(val||'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==')+'" '
+        +'style="width:100%;max-height:100px;object-fit:contain;border-radius:6px;background:#f0ede6;display:'+(val?'block':'none')+'" '
+        +'onerror="this.style.display=\'none\'" onload="this.style.display=\'block\'">'
+        +'</div>';
+    }
 
-      +'<div style="display:flex;gap:8px">'
-      +'<select oninput="_currentEvents['+i+'].category=this.value" style="width:140px;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px">'+catOpts+'</select>'
-      +inp('Event / Project name *', ev.title, 'title', ';flex:1')+'</div>'
+    // ── Has date+time? or expiry days? ──
+    var hasDateTime = !!(ev.time&&ev.endDate);
+    var expiryDays = ev.expiryDays||30;
+    var expiryOpts='';
+    for(var dd=1;dd<=30;dd++){
+      expiryOpts+='<option value="'+dd+'"'+(expiryDays==dd?' selected':'')+'>'+dd+' day'+(dd>1?'s':'')+'</option>';
+    }
 
-      +inp('Organiser / Speaker name', ev.organiser, 'organiser', ';width:100%')
-
-      +'<div style="display:flex;gap:8px">'
-      +inp('Time e.g. 2:00PM-4:00PM or Weekly', ev.time, 'time', ';flex:2')
-      +'<input type="date" value="'+(ev.endDate||'')+'" oninput="_currentEvents['+i+'].endDate=this.value" '
-      +'title="Auto-disappears after this date" style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px"/>'
+    d.innerHTML=
+      // Row 1: Category + Title
+      '<div style="display:flex;gap:8px;margin-bottom:8px">'
+      +'<select oninput="_currentEvents['+i+'].category=this.value" style="width:130px;height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px">'+catOpts+'</select>'
+      +inp('Event / Project title *',ev.title,'title',';flex:1;width:auto')
       +'</div>'
 
-      +inp('Contact phone number', ev.phone, 'phone', ';width:100%')
+      // Row 2: Organiser
+      +lbl('Organiser / Speaker')
+      +inp('e.g. Sheikh Ahmad & Sheikh Ibrahim',ev.organiser,'organiser',';width:100%')
 
-      +'<div style="display:flex;gap:6px">'
-      +inp('Account number', ev.accountNumber, 'accountNumber', ';flex:1')
-      +inp('Account name', ev.accountName, 'accountName', ';flex:1.5')
-      +inp('Bank', ev.bankName, 'bankName', ';flex:1')
+      // Row 3: Time + Date/Expiry toggle
+      +lbl('Date & Time','(fill time if event has a specific time)')
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px">'
+      +inp('Time e.g. 10:00AM - 1:00PM or Weekly Fridays',ev.time,'time',';width:100%')
+      +'<input type="date" value="'+(ev.endDate||'')+'" oninput="_currentEvents['+i+'].endDate=this.value;_currentEvents['+i+'].expiryDays=0" '
+      +'title="Card auto-disappears after event date" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px"/>'
+      +'</div>'
+      +'<div style="background:rgba(255,193,7,0.08);border:1px solid rgba(255,193,7,0.25);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--ts)">'
+      +'<strong>OR</strong> — if no specific date, auto-expire after: '
+      +'<select oninput="_currentEvents['+i+'].expiryDays=parseInt(this.value);_currentEvents['+i+'].endDate=calcExpiry(parseInt(this.value))" '
+      +'style="height:28px;border-radius:6px;border:1px solid var(--cd);padding:0 6px;font-size:12px;font-family:inherit;margin:0 4px">'+expiryOpts+'</select>'
+      +' days from today'
       +'</div>'
 
-      +ta('Extra info for card (optional — one item per line, bullet points auto-added)\ne.g.\nDress code: Modest\nBring your own mat\nWomen space available', ev.extraInfo, 'extraInfo', 3)
+      // Contact
+      +lbl('Contact Phone')
+      +inp('e.g. +2348012345678',ev.phone,'phone',';width:100%')
 
-      +inp('Banner/poster image 1 URL (recommended: 1080x607px or square 1:1)', ev.bannerUrl, 'bannerUrl', ';width:100%;border-style:dashed')
-      +'<div style="font-size:11px;background:rgba(34,201,138,0.08);border-radius:6px;padding:5px 8px;color:var(--ts);margin:4px 0;line-height:1.5">HOW TO GET IMAGE URL: Upload to imgur.com, click the 3-dot menu, click Get Share Links, copy the BBCode URL (starts with https://i.imgur.com/), paste here. Recommended: 1080x810px or 1080x1080px.</div>'
-      +inp('Banner image 2 URL (optional)', ev.bannerUrl2, 'bannerUrl2', ';width:100%;border-style:dashed')
-      +inp('Banner image 3 URL (optional — max 3 images)', ev.bannerUrl3, 'bannerUrl3', ';width:100%;border-style:dashed')
+      // Account
+      +lbl('Donation / Account Details','(for Project, Feeding, Donation categories)')
+      +'<div style="display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:6px">'
+      +inp('Account Number',ev.accountNumber,'accountNumber','')
+      +inp('Account Name',ev.accountName,'accountName','')
+      +inp('Bank',ev.bankName,'bankName','')
+      +'</div>'
 
-      +ta('Sponsors (one per line)\ne.g. Jaiz Bank\nCFII Abuja', ev.sponsors, 'sponsors', 2)
+      // Extra info
+      +lbl('Extra Info / Notes','(one item per line — bullet points auto-added on card)')
+      +ta('e.g.\nDress code: Modest\nWomen space available\nBring your own mat',ev.extraInfo,'extraInfo',3)
 
-      +'<div style="font-size:11px;font-weight:700;color:var(--ts);margin-top:2px">SOCIAL MEDIA (optional)</div>'
+      // THUMBNAIL (collapsed card thumbnail — right side)
+      +lbl('Thumbnail Image','(shows on right side of collapsed card — if empty: DeenLocator logo shows)')
+      +'<div style="background:rgba(99,102,241,0.06);border:1.5px dashed rgba(99,102,241,0.3);border-radius:10px;padding:10px">'
+      +'<div style="font-size:10px;color:var(--tm);margin-bottom:6px">📐 <strong>Recommended size: 200×200px (square)</strong> · Shows as 72×72px thumbnail on the card</div>'
+      +'<div style="display:flex;gap:6px;align-items:center">'
+      +'<input id="thumb_url_'+i+'" placeholder="Paste Imgur URL" value="'+(ev.thumbnailUrl||'')+'" '
+      +'oninput="_currentEvents['+i+'].thumbnailUrl=this.value;var p=document.getElementById(\'thumbprev_'+i+'\');if(p){p.src=this.value;p.style.display=this.value?\'block\':\'none\'}" '
+      +'style="flex:1;height:34px;border-radius:8px;border:1.5px solid rgba(99,102,241,0.3);padding:0 8px;font-family:inherit;font-size:12px"/>'
+      +'<label style="height:34px;padding:0 10px;background:#6366f1;color:#fff;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px">'
+      +'📁 Upload<input type="file" accept="image/*" style="display:none" onchange="handleImgUpload(this,\'thumb_url_'+i+'\',\'thumbprev_'+i+'\','+i+',\'thumbnailUrl\')">'
+      +'</label></div>'
+      +'<img id="thumbprev_'+i+'" src="'+(ev.thumbnailUrl||'')+'" style="width:72px;height:72px;object-fit:cover;border-radius:8px;margin-top:6px;display:'+(ev.thumbnailUrl?'block':'none')+'" onerror="this.style.display=\'none\'">'
+      +'</div>'
+
+      // BANNER IMAGES
+      +lbl('Banner / Poster Images','(shown on Share Event Card)')
+      +'<div style="display:grid;gap:8px">'
+      +imgField('Banner image 1 URL',ev.bannerUrl,'bannerUrl','📐 Recommended: 540×540px (square) — shows as LEFT image when 2 images used, full-width when only image','🖼 LEFT IMAGE (or only image)')
+      +imgField('Banner image 2 URL',ev.bannerUrl2,'bannerUrl2','📐 Recommended: 540×540px (square) — shows as RIGHT image when used alongside Image 1','🖼 RIGHT IMAGE (optional)')
+      +'<div style="font-size:10px;color:var(--tm);background:rgba(34,201,138,0.07);border-radius:6px;padding:6px 8px;line-height:1.6">'
+      +'💡 <strong>How to get image URL:</strong> Upload to <a href="https://imgur.com" target="_blank" style="color:var(--gm)">imgur.com</a> → 3-dot menu → Get Share Links → copy BBCode URL (https://i.imgur.com/…). '
+      +'Alternatively use the Upload button to upload directly from your device.'
+      +'</div>'
+      +'</div>'
+
+      // SPONSORS
+      +lbl('Sponsors / Supported By','(each sponsor on a new line)')
+      +'<div id="sponsors_list_'+i+'"></div>'
+      +'<button type="button" onclick="addSponsorRow('+i+')" style="height:30px;padding:0 12px;border-radius:7px;border:1.5px solid var(--gd);background:rgba(34,201,138,0.08);color:var(--gm);font-family:inherit;font-size:12px;cursor:pointer;margin-top:4px">＋ Add Sponsor</button>'
+
+      // PER-FIELD FONT SIZES
+      +lbl('Share Card Font Sizes','(adjust each field individually)')
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;background:rgba(34,201,138,0.04);border-radius:10px;padding:10px;border:1px solid rgba(34,201,138,0.15)">'
+      +fontSlider(i,'Title',ev,'titleFontSize',48,100,84)
+      +fontSlider(i,'Organiser',ev,'organiserFontSize',16,50,32)
+      +fontSlider(i,'Date & Time',ev,'timeFontSize',16,40,28)
+      +fontSlider(i,'Donation Details',ev,'donationFontSize',14,42,26)
+      +fontSlider(i,'Extra Info',ev,'extraInfoFontSize',14,42,30)
+      +fontSlider(i,'Sponsor Name',ev,'sponsorFontSize',12,32,22)
+      +fontSlider(i,'Sponsor Logo Size (card)',ev,'sponsorLogoSize',20,80,32)
+      +'</div>'
+
+      // SOCIAL MEDIA
+      +lbl('Social Media','(optional — appears on share card)')
       +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'
-      +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">Facebook</div>'+inp('Page name or URL', ev.facebook, 'facebook', ';font-size:12px;height:34px;border-style:dashed')+'</div>'
-      +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">Instagram</div>'+inp('@handle', ev.instagram, 'instagram', ';font-size:12px;height:34px;border-style:dashed')+'</div>'
-      +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">WhatsApp</div>'+inp('Number e.g. 08012345678', ev.whatsappSocial, 'whatsappSocial', ';font-size:12px;height:34px;border-style:dashed')+'</div>'
-      +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">Twitter / X</div>'+inp('@handle', ev.twitterX, 'twitterX', ';font-size:12px;height:34px;border-style:dashed')+'</div>'
+      +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">Facebook</div>'+inp('Page name or @handle',ev.facebook,'facebook',';font-size:12px;height:34px;border-style:dashed;width:100%')+'</div>'
+      +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">Instagram</div>'+inp('@handle',ev.instagram,'instagram',';font-size:12px;height:34px;border-style:dashed;width:100%')+'</div>'
+      +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">WhatsApp</div>'+inp('Number e.g. 08012345678',ev.whatsappSocial,'whatsappSocial',';font-size:12px;height:34px;border-style:dashed;width:100%')+'</div>'
+      +'<div><div style="font-size:10px;color:var(--tm);margin-bottom:2px">Twitter / X</div>'+inp('@handle',ev.twitterX,'twitterX',';font-size:12px;height:34px;border-style:dashed;width:100%')+'</div>'
       +'</div>'
 
-      +'<button type="button" onclick="deleteEvent('+i+')" style="height:30px;padding:0 12px;border-radius:7px;border:1px solid #fcc;background:#fee;color:#c00;font-family:inherit;font-size:12px;cursor:pointer">✕ Remove</button>'
-      +'</div>';
+      // REMOVE BUTTON
+      +'<button type="button" onclick="deleteEvent('+i+')" style="height:30px;padding:0 12px;border-radius:7px;border:1px solid #fcc;background:#fee;color:#c00;font-family:inherit;font-size:12px;cursor:pointer;margin-top:10px">✕ Remove Event</button>';
+
     el.appendChild(d);
+
+    // Render sponsor rows
+    renderSponsorRows(i, ev.sponsors||[]);
   });
 }
 
+function calcExpiry(days){
+  var d=new Date(); d.setDate(d.getDate()+days);
+  return d.toISOString().slice(0,10);
+}
+
+function renderSponsorRows(evIdx, sponsors){
+  var wrap=document.getElementById('sponsors_list_'+evIdx);
+  if(!wrap)return;
+  wrap.innerHTML='';
+  if(!Array.isArray(sponsors)) sponsors=[];
+  sponsors.forEach(function(sp,si){
+    var row=document.createElement('div');
+    row.style.cssText='display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:center;margin-bottom:6px;padding:8px;background:rgba(34,201,138,0.05);border-radius:8px;border:1px solid rgba(34,201,138,0.15)';
+    var nameId='spname_'+evIdx+'_'+si;
+    var urlId='spurl_'+evIdx+'_'+si;
+    var fileId='spfile_'+evIdx+'_'+si;
+    var prevId='spprev_'+evIdx+'_'+si;
+    row.innerHTML=
+      '<input id="'+nameId+'" placeholder="Sponsor name" value="'+(sp.name||'')+'" '
+      +'oninput="_currentEvents['+evIdx+'].sponsors['+si+'].name=this.value" '
+      +'style="height:34px;border-radius:7px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:12px"/>'
+      +'<div>'
+      +'<div style="font-size:10px;color:var(--tm);margin-bottom:2px">Logo (optional) · 80×80px recommended</div>'
+      +'<div style="display:flex;gap:4px">'
+      +'<input id="'+urlId+'" placeholder="Logo URL or upload" value="'+(sp.logoUrl||'')+'" '
+      +'oninput="_currentEvents['+evIdx+'].sponsors['+si+'].logoUrl=this.value;var p=document.getElementById(\''+prevId+'\');if(p){p.src=this.value;p.style.display=this.value?\'block\':\'none\'}" '
+      +'style="flex:1;height:28px;border-radius:6px;border:1px solid var(--cd);padding:0 6px;font-family:inherit;font-size:11px"/>'
+      +'<label style="height:28px;padding:0 8px;background:var(--gd);color:#fff;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center">'
+      +'📁<input type="file" accept="image/*" style="display:none" onchange="handleImgUpload(this,\''+urlId+'\',\''+prevId+'\','+evIdx+',\'sponsors.'+si+'.logoUrl\')">'
+      +'</label>'
+      +'<img id="'+prevId+'" src="'+(sp.logoUrl||'')+'" style="width:28px;height:28px;object-fit:contain;border-radius:4px;display:'+(sp.logoUrl?'block':'none')+'" onerror="this.style.display=\'none\'">'
+      +'</div></div>'
+      +'<button type="button" onclick="removeSponsor('+evIdx+','+si+')" style="height:34px;width:34px;border-radius:7px;border:1px solid #fcc;background:#fee;color:#c00;font-family:inherit;font-size:14px;cursor:pointer">✕</button>';
+    wrap.appendChild(row);
+  });
+}
+
+function addSponsorRow(evIdx){
+  if(!Array.isArray(_currentEvents[evIdx].sponsors)) _currentEvents[evIdx].sponsors=[];
+  _currentEvents[evIdx].sponsors.push({name:'',logoUrl:''});
+  renderSponsorRows(evIdx, _currentEvents[evIdx].sponsors);
+}
+
+function removeSponsor(evIdx,si){
+  _currentEvents[evIdx].sponsors.splice(si,1);
+  renderSponsorRows(evIdx, _currentEvents[evIdx].sponsors);
+}
+
+function handleImgUpload(input, urlFieldId, previewId, evIdx, field){
+  var file=input.files[0]; if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var dataUrl=e.target.result;
+    var urlEl=document.getElementById(urlFieldId);
+    if(urlEl) urlEl.value=dataUrl;
+    var prevEl=document.getElementById(previewId);
+    if(prevEl){prevEl.src=dataUrl;prevEl.style.display='block';}
+    // Set in data model
+    var parts=field.split('.');
+    if(parts.length===1){
+      _currentEvents[evIdx][field]=dataUrl;
+    } else if(parts.length===3 && parts[0]==='sponsors'){
+      var si=parseInt(parts[1]);
+      if(_currentEvents[evIdx].sponsors&&_currentEvents[evIdx].sponsors[si]){
+        _currentEvents[evIdx].sponsors[si][parts[2]]=dataUrl;
+      }
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function toggleImamOther(){
+  var sel = document.getElementById('fimamrole');
+  var other = document.getElementById('fimamrole_other');
+  if(!sel || !other) return;
+  other.style.display = sel.value === 'Other' ? 'block' : 'none';
+}
+
 function addEventItem(){
-  _currentEvents.push({title:'',category:'general',organiser:'',time:'',endDate:'',phone:'',accountNumber:'',accountName:'',bankName:''});
+  _currentEvents.push({
+    title:'',category:'general',organiser:'',time:'',endDate:'',
+    expiryDays:30,thumbnailUrl:'',phone:'',
+    accountNumber:'',accountName:'',bankName:'',
+    extraInfo:'',bannerUrl:'',bannerUrl2:'',
+    sponsors:[],facebook:'',instagram:'',whatsappSocial:'',twitterX:'',
+    titleFontSize:84, organiserFontSize:32, timeFontSize:28,
+    donationFontSize:26, extraInfoFontSize:30, sponsorFontSize:22, sponsorLogoSize:32
+  });
   renderEventsEditor();
 }
+
 
 function deleteEvent(i){
   _currentEvents.splice(i,1);
@@ -758,6 +1005,10 @@ function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.c
     <div>
       <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">WhatsApp Number (no + sign)</label>
       <input id="cfg_whatsapp" placeholder="2348065900110" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Contact Phone Number</label>
+      <input id="cfg_phone" placeholder="+2348065900110" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 14px;font-family:inherit;font-size:14px"/>
     </div>
     <div>
       <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Admin Email</label>

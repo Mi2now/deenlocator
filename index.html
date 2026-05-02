@@ -359,6 +359,8 @@
     .exp-doc-icon{font-size:22px;flex-shrink:0}
     .exp-doc-text{flex:1;min-width:0}
     .exp-doc-text strong{display:block;font-size:13px;font-weight:700;color:var(--tp);margin-bottom:1px}
+    .exp-notice-pill{background:linear-gradient(135deg,rgba(34,201,138,0.12),rgba(34,201,138,0.06));border:1px solid rgba(34,201,138,0.3);border-left:4px solid var(--gm);border-radius:12px;padding:10px 14px;margin:8px 0;font-family:inherit}
+    .exp-notice-line{line-height:1.7;color:var(--tp);font-weight:500}
     .exp-doc-badge{background:#6366f1;color:#fff;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;flex-shrink:0}
     .btn-notify.notify-active{background:var(--gd)!important;color:var(--white)!important;border-color:var(--gd)!important}
 
@@ -490,8 +492,8 @@
   <div class="screen" id="screen-map">
     <div class="map-filter-bar">
       <button class="map-tab active" data-mf="all">🕌 All</button>
-      <button class="map-tab" data-mf="jumuah">📿 Jumuʼah Only</button>
       <button class="map-tab" data-mf="eid">🌙 Eid Only</button>
+      <button class="map-tab" data-mf="jumuah">📿 Jumuʼah Only</button>
     </div>
     <div class="map-nearest" id="mapNearest" style="display:none">
       <span class="map-nearest-label">📍 Nearest</span>
@@ -530,10 +532,16 @@
     <!-- My Mosque name + edit bar -->
     <div class="pt-edit-bar" id="ptEditBar" style="display:none">
       <div style="width:100%">
-        <input id="myMosqueName" type="text" placeholder="Your mosque name (optional)"
-          value=""
-          oninput="try{localStorage.setItem('dl_my_mosque_name',this.value);}catch(e){}"
-          style="width:100%;border:1.5px solid var(--cd);border-radius:8px;padding:8px 12px;font-family:inherit;font-size:13px;background:var(--bg);color:var(--tp);margin-bottom:6px;box-sizing:border-box"/>
+        <div style="display:flex;gap:8px;margin-bottom:6px">
+          <input id="myMosqueName" type="text" placeholder="Your mosque name (optional)"
+            value=""
+            oninput="try{localStorage.setItem('dl_my_mosque_name',this.value);}catch(e){}"
+            style="flex:1;border:1.5px solid var(--cd);border-radius:8px;padding:8px 12px;font-family:inherit;font-size:13px;background:var(--bg);color:var(--tp);box-sizing:border-box"/>
+          <input id="myPrayerName" type="text" placeholder="Your name (optional)"
+            value=""
+            oninput="try{localStorage.setItem('dl_my_prayer_name',this.value);}catch(e){}"
+            style="flex:1;border:1.5px solid var(--cd);border-radius:8px;padding:8px 12px;font-family:inherit;font-size:13px;background:var(--bg);color:var(--tp);box-sizing:border-box"/>
+        </div>
         <div style="display:flex;align-items:center;gap:8px">
           <div class="pt-edit-bar-text">Set your exact prayer times below. Tap <b>Save</b> when done.</div>
           <button class="pt-edit-btn" id="ptEditBtn" onclick="toggleEdit()">Edit</button>
@@ -549,6 +557,11 @@
         <div class="pt-jumuah-sub">Adhan ~12:30 PM · Khutbah follows · Salah ends ~2:00 PM</div>
       </div>
     </div>
+    <!-- Community pill -->
+    <div style="margin:8px 16px 0;background:rgba(34,201,138,0.08);border:1px solid rgba(34,201,138,0.2);border-radius:14px;padding:12px 16px">
+      <div style="font-size:12px;font-weight:700;color:var(--gm);margin-bottom:4px">🌟 DeenLocator Community</div>
+      <div style="font-size:11px;color:var(--ts);line-height:1.6">Share with friends &middot; Add your mosque or Eid ground &middot; Help us map every prayer location in Abuja &mdash; free, always.</div>
+    </div>
     <!-- Share My Mosque Card button (My Mosque mode only) -->
     <div id="ptShareRow" style="display:none;padding:0 16px 4px">
       <button onclick="shareMosqueTimeCard()" style="width:100%;height:44px;border-radius:12px;border:1.5px solid rgba(34,201,138,.4);background:rgba(34,201,138,.08);color:var(--gm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">↗ Share My Mosque Prayer Times</button>
@@ -559,6 +572,7 @@
     </div>
     <div class="pt-reset">
       <button class="pt-reset-btn" onclick="resetTimes()">↺ Reset to Default Abuja Times</button>
+    </div>
   </div>
 
   <!-- SCREEN 4: SETTINGS -->
@@ -566,7 +580,7 @@
     <div class="settings-hero">
       <div class="settings-logo-wrap"><img id="settingsLogo" src="" alt="2now Technology"/></div>
       <div class="settings-app-name">Deen<span>Locator</span></div>
-      <div class="settings-version">v1.0 · Launched 20 March 2026 · 1 Shawwal 1447</div>
+      <div class="settings-version">v2.0 · Launched 20 March 2026 · 1 Shawwal 1447</div>
       <div class="settings-tagline">Launched on Eid al-Fitr · 1 Shawwal 1447 AH</div>
     </div>
     <div class="settings-section">
@@ -730,8 +744,9 @@
       <div class="settings-group">
         <div class="settings-row static"><div class="settings-row-icon">🕌</div><div class="settings-row-body"><div class="settings-row-title">Locations in Database</div><div class="settings-row-sub" id="settingsLocCount">28 verified locations</div></div></div>
         <div class="settings-row static"><div class="settings-row-icon">🗺️</div><div class="settings-row-body"><div class="settings-row-title">Coverage</div><div class="settings-row-sub">Abuja (FCT) · Expanding to all Nigeria</div></div></div>
+        <div class="settings-row static"><div class="settings-row-icon">📋</div><div class="settings-row-body"><div class="settings-row-title">Data Sources</div><div class="settings-row-sub">CFII (Committee of FCT Imams Initiative) · CEMA Masjid · praysalat.com</div></div></div>
         <div class="settings-row static"><div class="settings-row-icon">🗓️</div><div class="settings-row-body"><div class="settings-row-title">Launched</div><div class="settings-row-sub">Eid al-Fitr · 20 March 2026 · 1 Shawwal 1447 AH</div></div></div>
-        <div class="settings-row static"><div class="settings-row-icon">ℹ️</div><div class="settings-row-body"><div class="settings-row-title">Version</div><div class="settings-row-sub">1.0 · Free · No login required</div></div></div>
+        <div class="settings-row static"><div class="settings-row-icon">ℹ️</div><div class="settings-row-body"><div class="settings-row-title">Version</div><div class="settings-row-sub">2.0 · Free · No login required</div></div></div>
         <div class="settings-row" onclick="shareApp()"><div class="settings-row-icon">↗️</div><div class="settings-row-body"><div class="settings-row-title">Share DeenLocator</div><div class="settings-row-sub">Help others find their nearest mosque</div></div><div class="settings-row-right">›</div></div>
       </div>
     </div>
@@ -907,7 +922,7 @@ function gregorianToHijri(date){
   l=l-Math.floor((30-j)/15)*Math.floor((17719*j)/50)-Math.floor(j/16)*Math.floor((15238*j)/43)+29;
   var hy=30*n+j-30,hm=Math.floor((24*l)/709),hd=l-Math.floor((709*hm)/24);
   var MN=['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani',
-          'Jumada al-Awwal','Jumada al-Thani','Rajab',"Sha'ban",
+          'Jumada al-Awwal','Jumada al-Thani','Rajab',"Shaban",
           'Ramadan','Shawwal','Dhul Qi\'dah','Dhul Hijjah'];
   return hd+' '+MN[hm-1]+' '+hy+' AH';
 }
@@ -1184,9 +1199,10 @@ function renderMosqueEvents(loc){
     var ed=new Date(ev.endDate); ed.setHours(23,59,59,0); return ed>=today;
   });
   if(!active.length) return '';
+
   var catCls={lecture:'lecture',feeding:'feeding',donation:'donation',project:'project',eid:'eid',general:'',others:''};
   var uid='evsc_'+loc.id;
-  var html='<div class="exp-events"><div class="exp-events-title">\uD83D\uDCC5 Events & Notices</div>';
+  var html='<div class="exp-events"><div class="exp-events-title">📅 Events & Notices</div>';
   html+='<div class="exp-events-scroll" id="'+uid+'">';
 
   active.forEach(function(ev,evIdx){
@@ -1198,34 +1214,67 @@ function renderMosqueEvents(loc){
     if(ev.whatsappSocial) sL.push('WA: '+ev.whatsappSocial);
     if(ev.twitterX) sL.push('X: '+ev.twitterX);
 
+    /* Thumbnail: use thumbnailUrl first, then bannerUrl, then LOGO */
+    var thumbSrc = ev.thumbnailUrl || ev.bannerUrl || LOGO;
+
     html+='<div class="'+cls+'" onclick="this.classList.toggle(\'expanded\')" style="position:relative;min-width:240px;max-width:260px">';
     html+='<span class="event-chevron">&#9660;</span>';
 
-    /* ── COLLAPSED: thumbnail (72px) + category + title + organiser + time ── */
-    if(ev.bannerUrl){
-      var _tu=typeof fixImgurUrl==='function'?fixImgurUrl(ev.bannerUrl):ev.bannerUrl;
-      /* FIX: use contain so image isn't distorted */
-      html+='<img src="'+_tu+'" style="float:right;width:72px;height:72px;border-radius:8px;'
-        +'object-fit:contain;background:#f0ede6;margin:0 0 4px 8px;'
-        +'border:1.5px solid rgba(0,0,0,0.08)" onerror="this.style.display=\'none\'">';
-    }
-    if(ev.category&&ev.category!=='general'){
-      html+='<div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tm);margin-bottom:3px">'+ev.category+'</div>';
-    }
-    html+='<div class="event-title" style="padding-right:'+(ev.bannerUrl?'84px':'0')+'">'+(ev.title||'')+'</div>';
-    if(ev.organiser) html+='<div class="event-org">'+(ev.organiser||'')+'</div>';
-    if(ev.time) html+='<div class="event-time">\u23F0 '+ev.time+'</div>';
-    html+='<div style="font-size:10px;color:var(--tm);margin-top:4px;clear:both">Tap for details \u203A</div>';
+    /* ── COLLAPSED: category + title + organiser + date/time + thumbnail RIGHT ── */
+    /* Thumbnail floated RIGHT */
+    html+='<img src="'+thumbSrc+'" style="float:right;width:72px;height:72px;border-radius:8px;'
+      +'object-fit:cover;background:#f0ede6;margin:0 0 4px 10px;'
+      +'border:1.5px solid rgba(0,0,0,0.08);flex-shrink:0" onerror="this.src=\''+LOGO+'\'">';
 
-    /* ── EXPANDED: NO big banner — just the info pill + everything else ── */
+    /* Category label */
+    if(ev.category&&ev.category!=='general'){
+      html+='<div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tm);margin-bottom:2px">'+ev.category+'</div>';
+    }
+    /* Title */
+    html+='<div class="event-title" style="padding-right:84px;font-size:14px;font-weight:700;margin-bottom:1px">'+(ev.title||'')+'</div>';
+    /* Organiser */
+    if(ev.organiser) html+='<div class="event-org" style="padding-right:84px;font-size:12px;color:var(--ts);margin-bottom:2px">'+(ev.organiser||'')+'</div>';
+    /* Time */
+    if(ev.time) html+='<div class="event-time" style="font-size:12px;color:var(--gm);font-weight:600;margin-bottom:2px">⏰ '+ev.time+'</div>';
+    /* Date pill */
+    if(ev.endDate){
+      var _d=new Date(ev.endDate),_dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],_dm=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      html+='<div style="display:inline-block;background:rgba(34,201,138,0.1);border:1px solid rgba(34,201,138,0.25);border-radius:12px;padding:2px 8px;font-size:11px;font-weight:600;color:var(--gm);clear:both">📅 '+_dn[_d.getDay()]+' '+_d.getDate()+' '+_dm[_d.getMonth()]+' '+_d.getFullYear()+'</div>';
+    }
+    html+='<div style="font-size:10px;color:var(--tm);margin-top:6px;clear:both">Tap for details ›</div>';
+
+    /* ── EXPANDED: full details ── */
     html+='<div class="event-extra" style="clear:both">';
+
     /* Call button */
     if(ev.phone){
-      html+='<div class="event-actions"><button class="event-btn call" onclick="event.stopPropagation();window.open(\'tel:'+(ev.phone||'')+'\')">\uD83D\uDCDE Call</button></div>';
+      html+='<div class="event-actions"><button class="event-btn call" onclick="event.stopPropagation();window.open(\'tel:'+(ev.phone||'')+'\')">📞 Call</button></div>';
     }
-    /* Social */
-    if(sL.length) html+='<div style="font-size:11px;color:var(--gm);margin-top:4px">\uD83D\uDCF1 '+sL.join(' \u00B7 ')+'</div>';
-    /* Account for project */
+    /* Social handles */
+    if(sL.length){
+      var _socHtml = '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">';
+      var _socMap = {facebook:{icon:'fb',url:'https://facebook.com/'},instagram:{icon:'ig',url:'https://instagram.com/'},whatsappSocial:{icon:'wa',url:'https://wa.me/'},twitterX:{icon:'x',url:'https://x.com/'}};
+      var _socFields = [{k:'facebook',v:ev.facebook},{k:'instagram',v:ev.instagram},{k:'whatsappSocial',v:ev.whatsappSocial},{k:'twitterX',v:ev.twitterX}];
+      var _activeSoc = _socFields.filter(function(s){return s.v;});
+      for(var _si=0; _si<_activeSoc.length; _si+=2){
+        _socHtml += '<div style="display:flex;gap:6px;flex:1">';
+        for(var _sj=_si; _sj<Math.min(_si+2,_activeSoc.length); _sj++){
+          var _sf = _activeSoc[_sj];
+          var _sm = _socMap[_sf.k];
+          var _surl = _sm.url + _sf.v.replace(/^@/,'').replace(/^https?:\/\//,'');
+          _socHtml += '<a href="'+_surl+'" target="_blank" rel="noopener" '
+            +'style="display:flex;align-items:center;gap:4px;text-decoration:none;background:rgba(0,0,0,0.06);border-radius:20px;padding:4px 8px;flex:1;min-width:0">'
+            +'<img src="'+SOC_ICONS[_sm.icon]+'" style="width:16px;height:16px;border-radius:3px;flex-shrink:0">'
+            +'<span style="font-size:11px;color:var(--tp);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+_sf.v+'</span>'
+            +'</a>';
+        }
+        _socHtml += '</div>';
+      }
+      _socHtml += '</div>';
+      html += _socHtml;
+    }
+
+    /* Donation box */
     if(isProj&&ev.accountNumber){
       html+='<div style="background:rgba(240,201,106,0.12);border-radius:8px;padding:8px 10px;margin:6px 0">'
         +'<div style="font-size:10px;color:var(--tm);margin-bottom:2px">DONATIONS</div>'
@@ -1233,46 +1282,52 @@ function renderMosqueEvents(loc){
         +'<div style="font-size:16px;font-weight:700;color:#856404;letter-spacing:.04em">'+ev.accountNumber+'</div>'
         +'<div style="font-size:10px;color:var(--ts)">'+(ev.bankName||'')+'</div>'
         +'<button class="event-btn copy-acc" style="margin-top:6px" '
-        +'onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">\uD83D\uDCCB Copy Account Number</button>'
+        +'onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">📋 Copy Account Number</button>'
         +'</div>';
     }
-    /* Non-project account */
     if(!isProj&&ev.accountNumber){
       html+='<div style="margin-top:4px">'
-        +'<button class="event-btn copy-acc" onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">\uD83D\uDCCB Copy Account</button>'
-        +'<div style="font-size:10px;color:var(--ts);margin-top:2px">'+(ev.accountName||'')+(ev.bankName?' \u00B7 '+ev.bankName:'')+'</div>'
+        +'<button class="event-btn copy-acc" onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">📋 Copy Account</button>'
+        +'<div style="font-size:10px;color:var(--ts);margin-top:2px">'+(ev.accountName||'')+(ev.bankName?' · '+ev.bankName:'')+'</div>'
         +'</div>';
     }
-    /* Date */
-    if(ev.endDate){
-      var _d=new Date(ev.endDate),_dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],_dm=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      html+='<div style="margin-top:4px;font-size:11px">\uD83D\uDCC5 '+_dn[_d.getDay()]+' '+_d.getDate()+' '+_dm[_d.getMonth()]+' '+_d.getFullYear()+'</div>';
-    }
-    /* Extra info as a pill */
+
+    /* Extra info */
     if(ev.extraInfo){
       var _eiLines=ev.extraInfo.split('\n').filter(function(l){return l.trim();});
       html+='<div style="background:rgba(255,255,255,0.88);border-radius:12px;padding:10px 14px;margin-top:8px;border-left:3px solid var(--gd)">';
-      _eiLines.forEach(function(eil){var c=eil.trim();if(c.charAt(0)==='*'||c.charAt(0)==='.'||c.charAt(0)==='-')c='\u2022 '+c.replace(/^[*\.\-]\s*/,'');html+='<div style="font-size:12px;font-weight:600;color:var(--tp);line-height:1.7">'+c+'</div>';});
+      _eiLines.forEach(function(eil){var c=eil.trim();if(c.charAt(0)==='*'||c.charAt(0)==='.'||c.charAt(0)==='-')c='• '+c.replace(/^[*.\-]\s*/,'');html+='<div style="font-size:12px;font-weight:600;color:var(--tp);line-height:1.7">'+c+'</div>';});
       html+='</div>';
     }
-    /* Sponsors */
-    if(ev.sponsors){
-      var spList=ev.sponsors.split('\n').filter(function(s){return s.trim();});
+
+    /* Sponsors (show logos if available) */
+    if(ev.sponsors&&ev.sponsors.length){
+      var spList = Array.isArray(ev.sponsors) ? ev.sponsors : ev.sponsors.split('\n').map(function(s){return {name:s.trim(),logoUrl:''};});
+      spList=spList.filter(function(s){return (s.name||s).trim();});
       if(spList.length){
-        html+='<div style="margin-top:4px"><strong>Supported by:</strong></div>';
-        spList.forEach(function(s){ html+='<div style="padding-left:10px;font-size:11px">\u2726 '+s.trim()+'</div>'; });
+        html+='<div style="margin-top:6px"><div style="font-size:10px;color:var(--tm);font-weight:700;margin-bottom:4px">SUPPORTED BY</div>';
+        html+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
+        spList.forEach(function(s){
+          var name = typeof s==='string'?s:s.name;
+          var logo = typeof s==='object'?s.logoUrl:'';
+          html+='<div style="display:flex;align-items:center;gap:4px;background:rgba(0,0,0,0.04);border-radius:6px;padding:3px 7px">';
+          if(logo) html+='<img src="'+logo+'" style="width:18px;height:18px;object-fit:contain;border-radius:3px" onerror="this.style.display=\'none\'">';
+          html+='<span style="font-size:11px;color:var(--ts)">'+name+'</span></div>';
+        });
+        html+='</div></div>';
       }
     }
+
     /* Share button */
     html+='<button class="event-btn" style="margin-top:8px;width:100%;justify-content:center;border-color:rgba(34,201,138,.4);color:var(--gm);background:rgba(34,201,138,.08)" '
-      +'onclick="event.stopPropagation();openEventShare('+loc.id+','+evIdx+')">\u2197 Share Event Card</button>';
+      +'onclick="event.stopPropagation();openEventShare('+loc.id+','+evIdx+')">↗ Share Event Card</button>';
     html+='</div></div>';
   });
 
   html+='</div>';
   if(active.length>1){
     html+='<div class="events-dots">';
-    active.forEach(function(_,i){ html+='<div class="events-dot'+(i===0?' active':'')+'"></div>'; });
+    active.forEach(function(_,i){ html+='<div class="events-dot'+(i===0?' active':'')+'\"></div>'; });
     html+='</div>';
     html+='<script>setTimeout(function(){var sc=document.getElementById("'+uid+'");if(!sc)return;'
       +'sc.addEventListener("scroll",function(){'
@@ -1332,7 +1387,16 @@ function openEventShare(locId, evIdx){
   var ev = loc.events[evIdx];
   trackEvent('event_share','engagement',ev.title||'');
 
-  var W=1080, H=1680; /* Extra height for social handles */
+  /* Per-field font sizes */
+  var titleFs    = ev.titleFontSize     || 84;
+  var orgFs      = ev.organiserFontSize || 34;
+  var timeFs     = ev.timeFontSize      || 26;
+  var donFs      = ev.donationFontSize  || 26;
+  var extraFs    = ev.extraInfoFontSize || 30;
+  var sponsorFs  = ev.sponsorFontSize   || 22;
+  var sponsorLogoSz = ev.sponsorLogoSize || 32;
+
+  var W=1080, H=1680;
   var cv = document.createElement('canvas');
   cv.width=W; cv.height=H;
   var ctx = cv.getContext('2d');
@@ -1362,7 +1426,7 @@ function openEventShare(locId, evIdx){
   ctx.fillStyle='rgba(255,255,255,0.04)'; ctx.fillRect(0,0,W,hH);
   ctx.fillStyle=pal.accent; ctx.fillRect(0,hH-3,W,3);
 
-  /* Logo */
+  /* Logo + Brand */
   function drawBrand(){
     ctx.font='bold 44px sans-serif'; ctx.fillStyle=pal.accent;
     ctx.fillText('Deen',148,76);
@@ -1375,28 +1439,32 @@ function openEventShare(locId, evIdx){
   _li.onload=function(){ try{ctx.drawImage(_li,50,22,80,80);}catch(e){} drawBrand(); };
   _li.onerror=drawBrand; _li.src=LOGO; drawBrand();
 
-  /* Category pill top-right */
+  /* Category pill */
   var catLabel=(ev.category||'General').charAt(0).toUpperCase()+(ev.category||'General').slice(1);
   ctx.font='bold 26px sans-serif';
   var bw=ctx.measureText(catLabel).width+44;
   ctx.fillStyle=pal.accent; roundRect(ctx,W-bw-50,42,bw,54,27); ctx.fill();
   ctx.fillStyle='rgba(0,0,0,0.8)'; ctx.fillText(catLabel,W-bw-50+22,80);
 
-  /* Title */
+  /* Title — word wrap using wrapText */
   var curY=hH+110;
-  ctx.font='bold 84px sans-serif'; ctx.fillStyle='#ffffff';
-  var eWords=(ev.title||'').split(' '),eLine='',eLines=[];
-  eWords.forEach(function(w){var t=eLine?eLine+' '+w:w;if(ctx.measureText(t).width>W-100){eLines.push(eLine);eLine=w;}else eLine=t;});
-  if(eLine) eLines.push(eLine);
-  eLines.slice(0,3).forEach(function(nl){ctx.fillText(nl,50,curY);curY+=98;});
-  curY+=8;
-  if(ev.organiser){ctx.font='italic 34px sans-serif';ctx.fillStyle='rgba(255,255,255,0.6)';ctx.fillText('by '+ev.organiser,50,curY);curY+=52;}
+  ctx.font='bold '+titleFs+'px sans-serif'; ctx.fillStyle='#ffffff'; ctx.textAlign='left';
+  curY = wrapText(ctx, ev.title||'', 50, curY, W-100, Math.round(titleFs*1.15));
+  curY += 8;
+
+  /* Organiser */
+  if(ev.organiser){
+    ctx.font='italic '+orgFs+'px sans-serif';
+    ctx.fillStyle='rgba(255,255,255,0.6)';
+    curY = wrapText(ctx, 'by '+ev.organiser, 50, curY, W-100, Math.round(orgFs*1.4));
+    curY += 6;
+  }
 
   /* Time + Date pills */
   curY+=10;
   var pillX=50,pillH=64,pillGap=14;
   function drawPill(icon,text,border){
-    ctx.font='bold 26px sans-serif';
+    ctx.font='bold '+timeFs+'px sans-serif'; ctx.textAlign='left';
     var tw=ctx.measureText(icon+' '+text).width+36;
     ctx.fillStyle='rgba(255,255,255,0.07)'; roundRect(ctx,pillX,curY,tw,pillH,pillH/2); ctx.fill();
     ctx.strokeStyle=border||'rgba(255,255,255,0.2)'; ctx.lineWidth=1.5;
@@ -1412,20 +1480,15 @@ function openEventShare(locId, evIdx){
   curY+=pillH+24;
 
   /* Venue block */
-  var lightBg='rgba(255,255,255,0.07)';
-  ctx.fillStyle=lightBg; roundRect(ctx,50,curY,W-100,110,16); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.07)'; roundRect(ctx,50,curY,W-100,110,16); ctx.fill();
   ctx.strokeStyle=pal.accent; ctx.lineWidth=1; roundRect(ctx,50,curY,W-100,110,16); ctx.stroke();
-  ctx.font='bold 28px sans-serif'; ctx.fillStyle=pal.accent;
+  ctx.font='bold 28px sans-serif'; ctx.fillStyle=pal.accent; ctx.textAlign='left';
   ctx.fillText('\uD83C\uDFDB\uFE0F  '+loc.name,80,curY+42);
   ctx.font='24px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.55)';
   ctx.fillText('\uD83D\uDCCD  '+(loc.address||loc.area+', Abuja'),80,curY+82);
   curY+=130;
 
-  /* ══ BANNER IMAGES (1, 2, or 3) ══
-     Standard size recommendation: 1080x607px (16:9) or 1080x1080px (1:1)
-     On canvas: scaled to fit proportionally */
-  /* ══ IMAGES — max 2 side by side ══ */
-  /* DIMENSIONS: 1 image = 1080x810px (4:3) | 2 images = 540x540px each (square) */
+  /* Banner images — same as original working code */
   var banners=[ev.bannerUrl,ev.bannerUrl2].filter(Boolean);
   if(banners.length){
     var imgAreaW=W-100, imgGap=12;
@@ -1433,8 +1496,8 @@ function openEventShare(locId, evIdx){
       var imgH=300;
       ctx.fillStyle='rgba(255,255,255,0.05)'; roundRect(ctx,50,curY,imgAreaW,imgH,14); ctx.fill();
       var b1=new Image(); b1.crossOrigin='anonymous';
-      (function(bImg,bx,by,bw,bh){
-        bImg.onload=function(){try{ctx.save();roundRect(ctx,bx,by,bw,bh,14);ctx.clip();ctx.fillStyle='#ffffff';ctx.fillRect(bx,by,bw,bh);var iw=bImg.naturalWidth,ih=bImg.naturalHeight,scale=Math.min(bw/iw,bh/ih),dw=iw*scale,dh=ih*scale;ctx.drawImage(bImg,bx+(bw-dw)/2,by+(bh-dh)/2,dw,dh);ctx.restore();}catch(e){}};
+      (function(bImg,bx,by,bw2,bh2){
+        bImg.onload=function(){try{ctx.save();roundRect(ctx,bx,by,bw2,bh2,14);ctx.clip();ctx.fillStyle='#ffffff';ctx.fillRect(bx,by,bw2,bh2);var iw=bImg.naturalWidth,ih=bImg.naturalHeight,scale=Math.min(bw2/iw,bh2/ih),dw=iw*scale,dh=ih*scale;ctx.drawImage(bImg,bx+(bw2-dw)/2,by+(bh2-dh)/2,dw,dh);ctx.restore();}catch(e){}};
         try{bImg.src=fixImgurUrl(banners[0]);}catch(e){}
       })(b1,50,curY,imgAreaW,imgH);
       curY+=imgH+30;
@@ -1444,8 +1507,8 @@ function openEventShare(locId, evIdx){
         var bx=50+k*(hw+imgGap), by=curY;
         ctx.fillStyle='rgba(255,255,255,0.05)'; roundRect(ctx,bx,by,hw,imgH2,12); ctx.fill();
         var bi=new Image(); bi.crossOrigin='anonymous';
-        (function(img,x,y,w,h){
-          img.onload=function(){try{ctx.save();roundRect(ctx,x,y,w,h,12);ctx.clip();ctx.fillStyle='#ffffff';ctx.fillRect(x,y,w,h);var iw=img.naturalWidth,ih=img.naturalHeight,scale=Math.min(w/iw,h/ih),dw=iw*scale,dh=ih*scale;ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);ctx.restore();}catch(e){}};
+        (function(img,x,y,w2,h2){
+          img.onload=function(){try{ctx.save();roundRect(ctx,x,y,w2,h2,12);ctx.clip();ctx.fillStyle='#ffffff';ctx.fillRect(x,y,w2,h2);var iw=img.naturalWidth,ih=img.naturalHeight,scale=Math.min(w2/iw,h2/ih),dw=iw*scale,dh=ih*scale;ctx.drawImage(img,x+(w2-dw)/2,y+(h2-dh)/2,dw,dh);ctx.restore();}catch(e){}};
           try{img.src=fixImgurUrl(banners[k]);}catch(e){}
         })(bi,bx,by,hw,imgH2);
       });
@@ -1453,35 +1516,42 @@ function openEventShare(locId, evIdx){
     }
   }
 
-  /* ══ INFO PILL ══ */
+  /* Extra info pill — wrapText for long lines */
   if(ev.extraInfo&&ev.extraInfo.trim()){
     curY+=28;
     var infoLines=ev.extraInfo.split('\n').filter(function(l){return l.trim();});
-    var pPad=28, lineH2=44;
-    var pillH2=pPad*2+(infoLines.length*lineH2);
-    /* Outer glow */
-    ctx.fillStyle='rgba(255,255,255,0.06)'; roundRect(ctx,44,curY-4,W-88,pillH2+8,20); ctx.fill();
-    /* Main pill - solid semi-transparent */
-    ctx.fillStyle='rgba(255,255,255,0.13)'; roundRect(ctx,50,curY,W-100,pillH2,16); ctx.fill();
-    /* Left accent bar (like mosque block) */
-    ctx.fillStyle=pal.accent; ctx.fillRect(50,curY,5,pillH2);
-    /* Text */
-    ctx.font='bold 30px sans-serif'; ctx.fillStyle='#ffffff';
-    var ty2=curY+pPad+30;
+    var pPad=28, lineH2=Math.round(extraFs*1.4);
+    /* Pre-measure all wrapped lines to get correct pill height */
+    ctx.font='bold '+extraFs+'px sans-serif';
+    var allWrapped=[];
     infoLines.forEach(function(il){
       var clean=il.trim();
       if(clean.charAt(0)==='*'||clean.charAt(0)==='.'||clean.charAt(0)==='-') clean='\u2022 '+clean.replace(/^[*.\-]\s*/,'');
-      ctx.fillText(clean,50+24,ty2); ty2+=lineH2;
+      var words=clean.split(' '),line='',wrapped=[];
+      words.forEach(function(w){
+        var test=line?line+' '+w:w;
+        if(ctx.measureText(test).width>W-130&&line){wrapped.push(line);line=w;}
+        else line=test;
+      });
+      if(line) wrapped.push(line);
+      allWrapped=allWrapped.concat(wrapped);
     });
+    var pillH2=pPad*2+(allWrapped.length*lineH2);
+    ctx.fillStyle='rgba(255,255,255,0.06)'; roundRect(ctx,44,curY-4,W-88,pillH2+8,20); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.13)'; roundRect(ctx,50,curY,W-100,pillH2,16); ctx.fill();
+    ctx.fillStyle=pal.accent; ctx.fillRect(50,curY,5,pillH2);
+    ctx.font='bold '+extraFs+'px sans-serif'; ctx.fillStyle='#ffffff'; ctx.textAlign='left';
+    var ty2=curY+pPad+Math.round(extraFs*0.85);
+    allWrapped.forEach(function(rl){ ctx.fillText(rl,74,ty2); ty2+=lineH2; });
     curY+=pillH2+28;
   }
 
-  /* ══ BOTTOM TWO-COLUMN LAYOUT ══ */
-  var bottomY=H-310;
+  /* BOTTOM TWO-COLUMN LAYOUT — pinned fixed distance above footer */
+  var fY = H-132;
+  var bottomY = fY - 280; /* always fixed above footer */
   var colW=(W-120)/2, leftX=50, rightX=50+colW+20;
   ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.fillRect(50,bottomY-14,W-100,1);
 
-  /* Helper: truncate text to fit column width */
   function fitText(txt, maxW, font){
     ctx.font=font||'22px sans-serif';
     if(ctx.measureText(txt).width<=maxW) return txt;
@@ -1493,65 +1563,116 @@ function openEventShare(locId, evIdx){
   if(isProjectOrFeeding){
     /* LEFT: Donations */
     if(ev.accountNumber){
-      ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.fillText('DONATIONS',leftX,bottomY+20);
-      ctx.font='bold 26px sans-serif'; ctx.fillStyle='#f0c96a';
-      if(ev.accountName) ctx.fillText(fitText(ev.accountName,colMaxW,'bold 26px sans-serif'),leftX,bottomY+52);
-      ctx.font='34px sans-serif'; ctx.fillStyle='#f0c96a'; ctx.fillText(ev.accountNumber,leftX,bottomY+88);
+      ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.textAlign='left';
+      ctx.fillText('DONATIONS',leftX,bottomY+20);
+      ctx.font='bold '+donFs+'px sans-serif'; ctx.fillStyle='#f0c96a';
+      if(ev.accountName) ctx.fillText(fitText(ev.accountName,colMaxW,'bold '+donFs+'px sans-serif'),leftX,bottomY+52);
+      ctx.font=(donFs+8)+'px sans-serif'; ctx.fillStyle='#f0c96a';
+      ctx.fillText(ev.accountNumber,leftX,bottomY+90);
       ctx.font='20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)';
-      if(ev.bankName) ctx.fillText(ev.bankName,leftX,bottomY+116);
+      if(ev.bankName) ctx.fillText(ev.bankName,leftX,bottomY+118);
     }
     /* RIGHT: Enquiry + Social */
     var ry=bottomY+20;
     if(ev.phone){
-      ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.fillText('ENQUIRY',rightX,ry); ry+=30;
-      ctx.font='bold 26px sans-serif'; ctx.fillStyle='#22c98a'; ctx.fillText('\uD83D\uDCDE  '+ev.phone,rightX,ry); ry+=34;
+      ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.textAlign='left';
+      ctx.fillText('ENQUIRY',rightX,ry); ry+=30;
+      ctx.font='bold 26px sans-serif'; ctx.fillStyle='#22c98a';
+      ctx.fillText('\uD83D\uDCDE  '+ev.phone,rightX,ry); ry+=34;
     }
     var soc=[];
-    if(ev.facebook) soc.push('FB: '+ev.facebook);
-    if(ev.instagram) soc.push('IG: '+ev.instagram);
-    if(ev.whatsappSocial) soc.push('WA: '+ev.whatsappSocial);
-    if(ev.twitterX) soc.push('X: '+ev.twitterX);
+    if(ev.facebook) soc.push({icon:'fb',txt:'FB: '+ev.facebook});
+    if(ev.instagram) soc.push({icon:'ig',txt:'IG: '+ev.instagram});
+    if(ev.whatsappSocial) soc.push({icon:'wa',txt:'WA: '+ev.whatsappSocial});
+    if(ev.twitterX) soc.push({icon:'x',txt:'X: '+ev.twitterX});
     if(soc.length){
-      ctx.font='20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.55)';
-      ctx.font='19px sans-serif';
-      soc.forEach(function(sp){ ctx.fillText(fitText('\uD83D\uDCF1 '+sp,colMaxW,'19px sans-serif'),rightX,ry); ry+=26; });
+      ctx.font='19px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.textAlign='left';
+      var halfCW=Math.floor((colW-8)/2);
+      for(var si=0;si<soc.length;si+=2){
+        for(var sj=si;sj<Math.min(si+2,soc.length);sj++){
+          var _s=soc[sj], _sx=rightX+(sj%2)*(halfCW+8);
+          var sIco=new Image(); sIco.crossOrigin='anonymous';
+          (function(img,x,y,k){ img.onload=function(){try{ctx.drawImage(img,x,y,18,18);}catch(e){};}; try{img.src=SOC_ICONS[k];}catch(e){} })(sIco,_sx,ry-14,_s.icon);
+          ctx.fillText(fitText(_s.txt,halfCW-24,'19px sans-serif'),_sx+22,ry);
+        }
+        ry+=26;
+      }
     }
   } else {
-    /* LEFT: Supported by */
-    if(ev.sponsors&&ev.sponsors.trim()){
-      ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.fillText('SUPPORTED BY',leftX,bottomY+20);
-      var spons=ev.sponsors.split('\n').filter(function(s){return s.trim();});
-      var sy=bottomY+52;
-      spons.slice(0,5).forEach(function(s){
-        ctx.font='22px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.75)';
-        ctx.fillText(fitText('\u2726  '+s.trim(),colMaxW,'22px sans-serif'),leftX,sy); sy+=30;
+    /* LEFT: Supported by — with sponsor logos using sponsorLogoSz */
+    var spArr=[];
+    if(ev.sponsors){
+      if(Array.isArray(ev.sponsors)) spArr=ev.sponsors;
+      else spArr=ev.sponsors.split('\n').map(function(s){return{name:s.trim(),logoUrl:''};});
+      spArr=spArr.filter(function(s){return(s.name||s).trim();});
+    }
+    if(spArr.length){
+      ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.textAlign='left';
+      ctx.fillText('SUPPORTED BY',leftX,bottomY+20);
+      var spX=leftX, spY=bottomY+52+sponsorLogoSz;
+      var spMaxX=leftX+colMaxW;
+      spArr.slice(0,6).forEach(function(s){
+        var sName=typeof s==='string'?s:s.name;
+        var sLogo=typeof s==='object'&&s.logoUrl?s.logoUrl:'';
+        ctx.font=sponsorFs+'px sans-serif';
+        var chipW=ctx.measureText(sName).width+(sLogo?(sponsorLogoSz+12):8)+16;
+        if(spX+chipW>spMaxX&&spX>leftX){ spX=leftX; spY+=Math.round(sponsorLogoSz*1.6)+8; }
+        ctx.fillStyle='rgba(255,255,255,0.1)';
+        roundRect(ctx,spX,spY-Math.round(sponsorLogoSz*0.85),chipW,Math.round(sponsorLogoSz*1.3)+6,6); ctx.fill();
+        var txtX=spX+8;
+        if(sLogo){
+          var lImg=new Image(); lImg.crossOrigin='anonymous';
+          (function(img,x,y,sz){
+            img.onload=function(){try{ctx.save();ctx.beginPath();ctx.arc(x+sz/2,y+sz/2,sz/2,0,Math.PI*2);ctx.clip();ctx.drawImage(img,x,y,sz,sz);ctx.restore();}catch(e){}};
+            try{img.src=sLogo;}catch(e){}
+          })(lImg,spX+6,spY-Math.round(sponsorLogoSz*0.7),sponsorLogoSz);
+          txtX=spX+sponsorLogoSz+14;
+        } else {
+          ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.fillText('\u2726',spX+8,spY);
+          txtX=spX+28;
+        }
+        ctx.font=sponsorFs+'px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.textAlign='left';
+        ctx.fillText(fitText(sName,colMaxW-txtX+leftX,sponsorFs+'px sans-serif'),txtX,spY);
+        spX+=chipW+8;
       });
     }
     /* RIGHT: Enquiry + Social */
     var ry2=bottomY+20;
     if(ev.phone){
-      ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.fillText('ENQUIRY',rightX,ry2); ry2+=30;
-      ctx.font='bold 26px sans-serif'; ctx.fillStyle='#22c98a'; ctx.fillText('\uD83D\uDCDE  '+ev.phone,rightX,ry2); ry2+=34;
+      ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.textAlign='left';
+      ctx.fillText('ENQUIRY',rightX,ry2); ry2+=30;
+      ctx.font='bold 26px sans-serif'; ctx.fillStyle='#22c98a';
+      ctx.fillText('\uD83D\uDCDE  '+ev.phone,rightX,ry2); ry2+=34;
     }
     var soc2=[];
-    if(ev.facebook) soc2.push('FB: '+ev.facebook);
-    if(ev.instagram) soc2.push('IG: '+ev.instagram);
-    if(ev.whatsappSocial) soc2.push('WA: '+ev.whatsappSocial);
-    if(ev.twitterX) soc2.push('X: '+ev.twitterX);
+    if(ev.facebook) soc2.push({icon:'fb',txt:'FB: '+ev.facebook});
+    if(ev.instagram) soc2.push({icon:'ig',txt:'IG: '+ev.instagram});
+    if(ev.whatsappSocial) soc2.push({icon:'wa',txt:'WA: '+ev.whatsappSocial});
+    if(ev.twitterX) soc2.push({icon:'x',txt:'X: '+ev.twitterX});
     if(soc2.length){
-      ctx.font='20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.55)';
-      ctx.font='19px sans-serif';
-      soc2.forEach(function(sp){ ctx.fillText(fitText('\uD83D\uDCF1 '+sp,colMaxW,'19px sans-serif'),rightX,ry2); ry2+=26; });
+      ctx.font='19px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.textAlign='left';
+      var halfCW2=Math.floor((colW-8)/2);
+      for(var si2=0;si2<soc2.length;si2+=2){
+        for(var sj2=si2;sj2<Math.min(si2+2,soc2.length);sj2++){
+          var _s2=soc2[sj2], _sx2=rightX+(sj2%2)*(halfCW2+8);
+          var sIco2=new Image(); sIco2.crossOrigin='anonymous';
+          (function(img,x,y,k){ img.onload=function(){try{ctx.drawImage(img,x,y,18,18);}catch(e){};}; try{img.src=SOC_ICONS[k];}catch(e){} })(sIco2,_sx2,ry2-14,_s2.icon);
+          ctx.fillText(fitText(_s2.txt,halfCW2-24,'19px sans-serif'),_sx2+22,ry2);
+        }
+        ry2+=26;
+      }
     }
   }
 
   /* Footer */
-  var fY=H-132;
   ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(0,fY,W,132);
   ctx.fillStyle=pal.accent; ctx.fillRect(0,fY,W,2);
-  ctx.font='bold 28px sans-serif'; ctx.fillStyle='#fff'; ctx.fillText('\uD83D\uDCF1 Download DeenLocator \u2014 Free App',50,fY+44);
-  ctx.font='24px sans-serif'; ctx.fillStyle=pal.accent; ctx.fillText('mi2now.github.io/deenlocator',50,fY+76);
-  ctx.font='20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.fillText('Free Eid & Jumuah locator for Abuja',50,fY+104);
+  ctx.font='bold 28px sans-serif'; ctx.fillStyle='#fff'; ctx.textAlign='left';
+  ctx.fillText('\uD83D\uDCF1 Download DeenLocator \u2014 Free App',50,fY+44);
+  ctx.font='24px sans-serif'; ctx.fillStyle=pal.accent;
+  ctx.fillText('mi2now.github.io/deenlocator',50,fY+76);
+  ctx.font='20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.35)';
+  ctx.fillText('Free Eid & Jumuah locator for Abuja',50,fY+104);
 
   function doShare(){
     cv.toBlob(function(blob){
@@ -1564,22 +1685,14 @@ function openEventShare(locId, evIdx){
       }
     },'image/png');
   }
+  /* Original working timing pattern — preserved exactly */
   _li.complete&&_li.naturalWidth>0 ? setTimeout(doShare,300) : setTimeout(doShare,800);
 }
 
 
-
-
-/* Auto-fix imgur URLs: convert page URL to direct image URL */
 function fixImgurUrl(url){
   if(!url) return url;
   url = url.trim();
-  /* Strip BBCode tags: [img]URL[/img] → URL */
-  url = url.replace(/^\[img\]/i,'').replace(/\[\/img\]$/i,'').trim();
-  /* Strip markdown link format: [text](URL) → URL */
-  var mdM = url.match(/^\[.*?\]\((.+?)\)$/);
-  if(mdM) url = mdM[1].trim();
-
   /* Strip BBCode tags: [img]URL[/img] → URL */
   url = url.replace(/^\[img\]/i,'').replace(/\[\/img\]$/i,'').trim();
   /* Strip markdown link format: [text](URL) → URL */
@@ -1598,117 +1711,127 @@ function fixImgurUrl(url){
 
 /* ═══ SHARE MY MOSQUE PRAYER TIMES CARD ═══ */
 function shareMosqueTimeCard(){
-  var mosqueName = '';
-  try{ mosqueName = localStorage.getItem('dl_my_mosque_name')||''; }catch(e){}
-  if(!mosqueName) mosqueName = 'My Mosque';
+  var mosqueName='', userName='';
+  try{ mosqueName=localStorage.getItem('dl_my_mosque_name')||''; }catch(e){}
+  try{ userName=localStorage.getItem('dl_my_prayer_name')||''; }catch(e){}
+  if(!mosqueName) mosqueName='My Mosque';
 
-  var W=1080, H=1350;
-  var cv = document.createElement('canvas');
+  var cfg=typeof APP_CONFIG!=='undefined'?APP_CONFIG:{};
+  var contactPhone=cfg.contactPhone||cfg.whatsappNumber||'+2348065900110';
+  var contactEmail=cfg.adminEmail||'mustytunau@gmail.com';
+  var appUrl=cfg.appUrl||'mi2now.github.io/deenlocator';
+
+  var W=1080, H=1440;
+  var cv=document.createElement('canvas');
   cv.width=W; cv.height=H;
-  var ctx = cv.getContext('2d');
+  var ctx=cv.getContext('2d');
 
   /* Background */
-  var grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,'#0f5c42'); grad.addColorStop(1,'#040e09');
+  var grad=ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'#0f5c42'); grad.addColorStop(1,'#020d07');
   ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
   /* Dot pattern */
-  ctx.fillStyle='rgba(255,255,255,0.025)';
-  for(var r=0;r<12;r++) for(var c=0;c<9;c++){ctx.beginPath();ctx.arc(60+c*120,60+r*120,12,0,Math.PI*2);ctx.fill();}
+  ctx.fillStyle='rgba(255,255,255,0.022)';
+  for(var rr=0;rr<13;rr++) for(var cc=0;cc<9;cc++){ctx.beginPath();ctx.arc(60+cc*120,60+rr*115,11,0,Math.PI*2);ctx.fill();}
 
   /* Header band */
-  ctx.fillStyle='rgba(255,255,255,0.05)'; ctx.fillRect(0,0,W,160);
-  ctx.fillStyle='#22c98a'; ctx.fillRect(0,157,W,3);
+  var hH=170;
+  ctx.fillStyle='rgba(255,255,255,0.05)'; ctx.fillRect(0,0,W,hH);
+  ctx.fillStyle='#22c98a'; ctx.fillRect(0,hH-3,W,3);
 
-  /* Logo + DeenLocator */
+  /* Logo + brand */
   var _li=new Image();
   function drawBrand(){
-    ctx.font='bold 44px sans-serif'; ctx.fillStyle='#22c98a';
-    ctx.fillText('Deen',148,84);
+    ctx.font='bold 42px sans-serif'; ctx.fillStyle='#22c98a';
+    ctx.fillText('Deen',148,80);
     ctx.fillStyle='rgba(255,255,255,0.92)';
-    ctx.fillText('Locator',148+ctx.measureText('Deen').width+4,84);
-    ctx.font='22px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)';
-    ctx.fillText('by 2now Technology',148,112);
+    ctx.fillText('Locator',148+ctx.measureText('Deen').width+4,80);
+    ctx.font='21px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)';
+    ctx.fillText('by 2now Technology',148,108);
+    ctx.font='19px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.3)';
+    ctx.fillText(contactPhone+' \u00B7 '+contactEmail,148,132);
   }
-  _li.onload=function(){ try{ctx.drawImage(_li,50,28,80,80);}catch(e){} drawBrand(); };
+  _li.onload=function(){ try{ctx.drawImage(_li,50,26,80,80);}catch(e){} drawBrand(); };
   _li.onerror=drawBrand; _li.src=LOGO; drawBrand();
 
-  /* Mosque name */
-  var curY=200;
-  ctx.font='bold 72px sans-serif'; ctx.fillStyle='#ffffff';
-  /* Word-wrap mosque name */
+  /* Mosque name — well below the header line */
+  var curY=hH+56;
+  ctx.font='bold 70px sans-serif'; ctx.fillStyle='#ffffff';
   var words=mosqueName.split(' '),line='',mLines=[];
   words.forEach(function(w){ var t=line?line+' '+w:w; if(ctx.measureText(t).width>W-100){mLines.push(line);line=w;}else line=t; });
   if(line) mLines.push(line);
-  mLines.slice(0,2).forEach(function(ml){ ctx.fillText(ml,50,curY); curY+=82; });
-  curY+=10;
+  mLines.slice(0,2).forEach(function(ml){ ctx.fillText(ml,50,curY); curY+=80; });
 
-  /* Date + Hijri */
+  /* User name */
+  if(userName){
+    ctx.font='italic 32px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.55)';
+    ctx.fillText('by '+userName,50,curY); curY+=46;
+  }
+  curY+=12;
+
+  /* Gregorian + Hijri date */
   var now=new Date();
-  var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  ctx.font='28px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.5)';
-  ctx.fillText(days[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear(),50,curY);
-  curY+=46;
+  var dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var monNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var hijriMons=['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Awwal','Jumada al-Thani','Rajab','Shaban','Ramadan','Shawwal','Dhul Qidah','Dhul Hijjah'];
+  ctx.font='26px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.45)';
+  ctx.fillText(dayNames[now.getDay()]+', '+now.getDate()+' '+monNames[now.getMonth()]+' '+now.getFullYear(),50,curY);
+  curY+=36;
   try{
     var hd=gregorianToHijri(now.getFullYear(),now.getMonth()+1,now.getDate());
-    var hm=['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Awwal','Jumada al-Thani','Rajab','Shaban','Ramadan','Shawwal','Dhul Qidah','Dhul Hijjah'];
-    ctx.fillText(hd.day+' '+hm[hd.month-1]+' '+hd.year+' AH',50,curY);
+    ctx.fillText(hd.day+' '+hijriMons[hd.month-1]+' '+hd.year+' AH',50,curY);
   }catch(e){}
-  curY+=20;
+  curY+=30;
 
   /* Divider */
   ctx.fillStyle='rgba(255,255,255,0.1)'; ctx.fillRect(50,curY,W-100,1); curY+=32;
 
-  /* Prayer time rows */
+  /* Prayer time rows — no Jumuah */
   PRAYERS.forEach(function(pr){
     var timeStr=fmtTime(pr.h,pr.m);
-    /* Row background */
     ctx.fillStyle='rgba(255,255,255,0.06)';
-    roundRect(ctx,50,curY,W-100,88,14); ctx.fill();
-    /* Icon */
-    ctx.font='38px sans-serif'; ctx.fillText(pr.icon,80,curY+58);
-    /* Name */
+    roundRect(ctx,50,curY,W-100,90,14); ctx.fill();
+    ctx.font='36px sans-serif'; ctx.fillText(pr.icon,80,curY+60);
     ctx.font='bold 34px sans-serif'; ctx.fillStyle='#ffffff';
-    ctx.fillText(pr.name,140,curY+42);
+    ctx.fillText(pr.name,140,curY+44);
     ctx.font='22px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)';
-    ctx.fillText(pr.arabic,140,curY+70);
-    /* Time */
+    ctx.fillText(pr.arabic,140,curY+72);
     ctx.font='bold 40px sans-serif'; ctx.fillStyle='#22c98a';
-    ctx.fillText(timeStr,W-50-ctx.measureText(timeStr).width,curY+58);
-    curY+=100;
+    ctx.fillText(timeStr,W-50-ctx.measureText(timeStr).width,curY+60);
+    curY+=102;
   });
+  curY+=10;
 
-  /* Jumuah row */
-  curY+=8;
-  ctx.fillStyle='rgba(34,201,138,0.12)'; roundRect(ctx,50,curY,W-100,88,14); ctx.fill();
-  ctx.strokeStyle='rgba(34,201,138,0.3)'; ctx.lineWidth=1; roundRect(ctx,50,curY,W-100,88,14); ctx.stroke();
-  ctx.font='bold 30px sans-serif'; ctx.fillStyle='#22c98a';
-  ctx.fillText('🕌 Jumuah Prayer',80,curY+38);
-  ctx.font='24px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.55)';
-  ctx.fillText('Every Friday · Adhan ~12:30 PM · Khutbah follows',80,curY+68);
-  curY+=100;
+  /* Contact block */
+  ctx.fillStyle='rgba(255,255,255,0.06)'; roundRect(ctx,50,curY,W-100,90,14); ctx.fill();
+  ctx.font='bold 24px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)';
+  ctx.fillText('2NOW TECHNOLOGY',80,curY+30);
+  ctx.font='26px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.7)';
+  ctx.fillText(contactPhone,80,curY+58);
+  ctx.font='24px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.5)';
+  ctx.fillText(contactEmail,80+ctx.measureText(contactPhone).width+30,curY+58);
+  curY+=110;
 
   /* Footer */
   var fY=H-130;
   ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.fillRect(0,fY,W,130);
   ctx.fillStyle='#22c98a'; ctx.fillRect(0,fY,W,2);
   ctx.font='bold 26px sans-serif'; ctx.fillStyle='#ffffff';
-  ctx.fillText('📱 Download DeenLocator — Free App',50,fY+44);
+  ctx.fillText('\uD83D\uDCF1 Download DeenLocator \u2014 Free App',50,fY+44);
   ctx.font='22px sans-serif'; ctx.fillStyle='#22c98a';
-  ctx.fillText('mi2now.github.io/deenlocator',50,fY+74);
+  ctx.fillText(appUrl,50,fY+78);
   ctx.font='18px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.35)';
-  ctx.fillText('Find Eid & Jumuah prayer locations in Abuja',50,fY+100);
+  ctx.fillText('Find Eid & Jumuah prayer locations in Abuja \u2014 instantly',50,fY+108);
 
-  /* Share */
   function doShare(){
     cv.toBlob(function(blob){
       var fname='deenlocator-prayer-times-'+mosqueName.replace(/[^a-z0-9]/gi,'_').toLowerCase()+'.png';
       var file=new File([blob],fname,{type:'image/png'});
       if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-        navigator.share({files:[file],title:mosqueName+' Prayer Times',text:'Prayer times shared via DeenLocator'});
+        navigator.share({files:[file],title:mosqueName+' Prayer Times',text:'Prayer times via DeenLocator'});
       } else {
         triggerDownload(cv,fname);
-        showToast('✅ Prayer card saved — share from your gallery!');
+        showToast('\u2705 Prayer card saved \u2014 share from your gallery!');
       }
     },'image/png');
   }
@@ -1989,12 +2112,44 @@ function timeDisp(l){
   var p=[];if(l.jumuahTime)p.push('Fri '+l.jumuahTime);if(l.eidTime)p.push('Eid '+l.eidTime);return p.length?'🕐 '+p.join(' · '):'';
 }
 
+
+/* ── Social Media Platform Icons (inline SVGs) ── */
+var SOC_ICONS = {
+  fb:  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='4' fill='%231877F2'/%3E%3Cpath d='M16 8h-2a1 1 0 0 0-1 1v2h3l-.5 3H13v7h-3v-7H8v-3h2V9a4 4 0 0 1 4-4h2v3z' fill='%23fff'/%3E%3C/svg%3E",
+  ig:  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='ig' x1='0%25' y1='100%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23f09433'/%3E%3Cstop offset='25%25' stop-color='%23e6683c'/%3E%3Cstop offset='50%25' stop-color='%23dc2743'/%3E%3Cstop offset='75%25' stop-color='%23cc2366'/%3E%3Cstop offset='100%25' stop-color='%23bc1888'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='24' height='24' rx='5' fill='url(%23ig)'/%3E%3Crect x='7' y='7' width='10' height='10' rx='3' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Ccircle cx='12' cy='12' r='2.5' stroke='%23fff' stroke-width='1.5' fill='none'/%3E%3Ccircle cx='16.5' cy='7.5' r='1' fill='%23fff'/%3E%3C/svg%3E",
+  wa:  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='4' fill='%2325D366'/%3E%3Cpath d='M12 4a8 8 0 0 0-6.93 11.97L4 20l4.16-1.06A8 8 0 1 0 12 4zm4.19 10.85c-.18.5-1.04.96-1.43 1.01-.36.05-.82.07-1.32-.08-.3-.09-.7-.22-1.2-.44-2.1-.9-3.47-3-3.58-3.14-.1-.14-.84-1.12-.84-2.13 0-1 .52-1.5.71-1.7.18-.2.4-.25.53-.25h.38c.12 0 .28-.05.44.33.17.4.57 1.38.62 1.48.05.1.08.22.02.35-.07.13-.1.21-.2.32-.1.1-.21.23-.3.31-.1.09-.2.18-.09.36.12.17.52.86 1.12 1.39.77.69 1.42.9 1.62.99.2.1.32.08.44-.05.12-.12.5-.58.63-.78.13-.2.26-.17.44-.1.18.07 1.13.53 1.32.63.2.1.33.14.38.22.05.08.05.46-.13.96z' fill='%23fff'/%3E%3C/svg%3E",
+  x:   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='4' fill='%23000'/%3E%3Cpath d='M17.5 4h2.5l-5.5 6.3L21 20h-4.7l-3.5-4.6L8.5 20H6l5.8-6.6L3 4h4.8l3.2 4.2L17.5 4zm-.9 14.4h1.4L7.5 5.4H6l10.6 13z' fill='%23fff'/%3E%3C/svg%3E"
+};
+
+/* ── Word-wrap for Canvas API ── */
+function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+  var words = text.split(' ');
+  var line = '';
+  var lines = [];
+  for(var n=0; n<words.length; n++){
+    var testLine = line + words[n] + ' ';
+    var metrics = ctx.measureText(testLine);
+    if(metrics.width > maxWidth && n > 0){
+      lines.push(line.trim());
+      line = words[n] + ' ';
+    } else {
+      line = testLine;
+    }
+  }
+  if(line.trim()) lines.push(line.trim());
+  lines.forEach(function(l, i){
+    ctx.fillText(l, x, y + i * lineHeight);
+  });
+  return y + lines.length * lineHeight;
+}
+
 function renderCards(){
   var list=getList();
   var el=document.getElementById('cardsList'),empty=document.getElementById('emptyState');
   document.getElementById('locationCount').textContent=list.length+' location'+(list.length!==1?'s':'');
   if(!list.length){el.innerHTML='';empty.classList.add('show');return;}
   empty.classList.remove('show');
+  var _openId; try{_openId=sessionStorage.getItem('dl_open_card');}catch(e){}
   el.innerHTML=list.map(function(loc,i){
     var dist=loc._dist!==null?'<span class="card-distance">📍 '+fmtDist(loc._dist)+'</span>':'';
     var time=timeDisp(loc);
@@ -2013,7 +2168,7 @@ function renderCards(){
       +'<div class="card-expanded">'
         +'<div class="exp-row"><div class="exp-label">Address</div><div class="exp-address">'+(loc.address||loc.area+', Abuja')+'</div></div>'
         +'<div class="exp-divider"></div>'
-        +'<div class="exp-row"><div class="exp-label">Imam</div><div class="exp-value'+(!loc.imam||loc.imam==="To be announced"?' muted':'')+'">'+( loc.imam||'To be announced')+'</div></div>'
+        +'<div class="exp-row"><div class="exp-label">'+(loc.imamRole||'Imam')+'</div><div class="exp-value'+(!loc.imam||loc.imam==="To be announced"?' muted':'')+'">'+( loc.imam||'To be announced')+'</div></div>'
         +'<div class="exp-divider"></div>'
         +'<div class="exp-row"><div class="exp-label">Contact</div><div class="exp-contact-row">'+cb+wb+'</div></div>'
         +'<div class="exp-divider"></div>'
@@ -2021,7 +2176,18 @@ function renderCards(){
         +(loc.khutbaUrl?'<a class="exp-media-btn" href="'+loc.khutbaUrl+'" target="_blank"><span>📋</span><span>Khutbah</span></a>':'<div class="exp-media-btn dim"><span>📋</span><span>Khutbah</span></div>')
         +(loc.youtube?'<a class="exp-media-btn youtube" href="'+loc.youtube+'" target="_blank"><span>▶</span><span>Live Stream</span></a>':'<div class="exp-media-btn dim"><span>▶</span><span>Live Stream</span></div>')
         +'</div>'
-        +(loc.eventNote?'<div class="exp-event" style="white-space:pre-line;line-height:1.8;font-size:13px">'+loc.eventNote.split('\n').map(function(ln){ln=ln.trim();if(!ln)return'';if(ln.charAt(0)==='*'||ln.charAt(0)==='.'||ln.charAt(0)==='-'||ln.charAt(0)==='•')ln='• '+ln.replace(/^[*\.\-•]\s*/,'');return ln;}).filter(Boolean).join('\n')+'</div>':'')
+        +(loc.eventNote?(function(){
+          var _fs = loc.eventNoteSize || 13;
+          var _lines = loc.eventNote.split('\n').map(function(ln){
+            ln=ln.trim();
+            if(!ln) return '';
+            if(ln.charAt(0)==='*'||ln.charAt(0)==='.'||ln.charAt(0)==='-'||ln.charAt(0)==='•') ln='• '+ln.replace(/^[*\.\-•]\s*/,'');
+            return ln;
+          }).filter(Boolean);
+          return '<div class="exp-notice-pill" style="font-size:'+_fs+'px">'
+            +_lines.map(function(l){ return '<div class="exp-notice-line">'+l+'</div>'; }).join('')
+            +'</div>';
+        })():'')
         +renderMosqueEvents(loc)
         +'<button class="btn-navigate" onclick="navById('+loc.id+')">🗺 Get Directions</button>'
         +'<div class="exp-bottom-row">'
@@ -2037,7 +2203,7 @@ function renderCards(){
     card.querySelector('.card-collapsed').addEventListener('click',function(){
       var open=card.classList.contains('open');
       el.querySelectorAll('.card.open').forEach(function(c){c.classList.remove('open');});
-      if(!open) card.classList.add('open');
+      if(!open){ card.classList.add('open'); try{sessionStorage.setItem('dl_open_card',card.dataset.id||'');}catch(e){} } else { try{sessionStorage.removeItem('dl_open_card');}catch(e){} }
     });
   });
 }
@@ -3760,6 +3926,8 @@ function setPrayerMode(mode){
     /* Load saved mosque name */
     var nameEl=document.getElementById('myMosqueName');
     if(nameEl){ try{nameEl.value=localStorage.getItem('dl_my_mosque_name')||'';}catch(e){} }
+    var nameEl2=document.getElementById('myPrayerName');
+    if(nameEl2){ try{nameEl2.value=localStorage.getItem('dl_my_prayer_name')||'';}catch(e){} }
     if(statusEl){  statusEl.textContent = '✏️ Using your custom times'; }
     /* Use saved manual times */
     PRAYERS = loadPrayers();
@@ -4022,6 +4190,16 @@ if(isIOS){var sb=document.getElementById('installSub');if(sb)sb.textContent='Tap
 function doInstall(){if(!_deferredPrompt)return;_deferredPrompt.prompt();_deferredPrompt.userChoice.then(function(c){if(c.outcome==='accepted')showToast('DeenLocator installed! Find it on your home screen.');_deferredPrompt=null;dismissInstall();});}
 function dismissInstall(){var b=document.getElementById('installBanner');if(b)b.classList.remove('show');try{localStorage.setItem('dl_install_dismissed','1');}catch(e){}}
 window.addEventListener('appinstalled',function(){dismissInstall();});
+
+function toggleFaq(row){
+  var answer = row.querySelector('.faq-answer');
+  var chevron = row.querySelector('.settings-row-right');
+  if(!answer) return;
+  var isOpen = answer.style.display !== 'none';
+  document.querySelectorAll('.faq-answer').forEach(function(a){ a.style.display='none'; });
+  document.querySelectorAll('.settings-row-right').forEach(function(c){ c.textContent='›'; });
+  if(!isOpen){ answer.style.display='block'; if(chevron) chevron.textContent='⌄'; }
+}
 </script>
 
 <!-- PWA Install Banner -->
@@ -4035,15 +4213,5 @@ window.addEventListener('appinstalled',function(){dismissInstall();});
   <button class="install-banner-close" onclick="dismissInstall()" title="Close">×</button>
 </div>
 
-function toggleFaq(row){
-  var answer = row.querySelector('.faq-answer');
-  var chevron = row.querySelector('.settings-row-right');
-  if(!answer) return;
-  var isOpen = answer.style.display !== 'none';
-  document.querySelectorAll('.faq-answer').forEach(function(a){ a.style.display='none'; });
-  document.querySelectorAll('.settings-row-right').forEach(function(c){ c.textContent='›'; });
-  if(!isOpen){ answer.style.display='block'; if(chevron) chevron.textContent='⌄'; }
-}
-</script>
 </body>
 </html>
