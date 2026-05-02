@@ -472,12 +472,13 @@ function buildJS(){
     if(l.eidTime)out+=", eidTime: "+JSON.stringify(l.eidTime);
     if(l.jumuahTime)out+=", jumuahTime: "+JSON.stringify(l.jumuahTime);
     out+=",\n";
-    out+="    imam: "+JSON.stringify(l.imam||"To be announced")+", phone: "+(l.phone?JSON.stringify(l.phone):"null")+", whatsapp: "+(l.whatsapp?JSON.stringify(l.whatsapp):"null")+",\n";
+    out+="    imamRole: "+JSON.stringify(l.imamRole||"Imam")+", imam: "+JSON.stringify(l.imam||"To be announced")+", phone: "+(l.phone?JSON.stringify(l.phone):"null")+", whatsapp: "+(l.whatsapp?JSON.stringify(l.whatsapp):"null")+",\n";
     var extraFields="";
     if(l.youtube)extraFields+=", youtube: "+JSON.stringify(l.youtube);
     if(l.khutbaUrl)extraFields+=", khutbaUrl: "+JSON.stringify(l.khutbaUrl);
     if(l.mapsUrl)extraFields+=", mapsUrl: "+JSON.stringify(l.mapsUrl);
     if(l.eventNote)extraFields+=", eventNote: "+JSON.stringify(l.eventNote);
+    if(l.eventNoteSize)extraFields+=", eventNoteSize: "+l.eventNoteSize;
     if(l.events&&l.events.length){var evFixed=JSON.parse(JSON.stringify(l.events));evFixed.forEach(function(ev){if(ev.bannerUrl)ev.bannerUrl=ev.bannerUrl.replace(/^https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)(?:\.\w+)?$/,'https://i.imgur.com/$1.png');if(ev.bannerUrl2)ev.bannerUrl2=ev.bannerUrl2.replace(/^https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)(?:\.\w+)?$/,'https://i.imgur.com/$1.png');if(ev.bannerUrl3)ev.bannerUrl3=ev.bannerUrl3.replace(/^https?:\/\/(?:www\.)?imgur\.com\/([a-zA-Z0-9]+)(?:\.\w+)?$/,'https://i.imgur.com/$1.png');});extraFields+=", events: "+JSON.stringify(evFixed);}
     out+="    lat: "+l.lat+", lng: "+l.lng+", verified: "+(l.verified?"true":"false")+", featured: "+(l.featured?"true":"false")+extraFields+"\n";
     out+="  }"+(i<DATA.length-1?",":"")+"\n";
@@ -742,7 +743,7 @@ function renderEventsEditor(){
       +lbl('Date & Time','(fill time if event has a specific time)')
       +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px">'
       +inp('Time e.g. 10:00AM - 1:00PM or Weekly Fridays',ev.time,'time',';width:100%')
-      +'<input type="date" value="'+(ev.endDate||'')+'" oninput="_currentEvents['+i+'].endDate=this.value;_currentEvents['+i+'].expiryDays=0" '
+      +'<input type="date" value="'+(ev.endDate||'')+'" oninput="_currentEvents['+i+'].endDate=this.value;if(!this.value)_currentEvents['+i+'].expiryDays=30;" '
       +'title="Card auto-disappears after event date" style="height:38px;border-radius:8px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:13px"/>'
       +'</div>'
       +'<div style="background:rgba(255,193,7,0.08);border:1px solid rgba(255,193,7,0.25);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--ts)">'
