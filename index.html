@@ -21,670 +21,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-  <script>
-/* ============================================================
-   DeenLocator — Master Locations Database
-   Sources: CFII PDFs (1445-1447 AH) + CEMA website (1447 AH)
-   Total: 63 verified locations across Abuja FCT
-   Last updated: April 2026 | 1447 AH
-   Powered by 2now Technology
-   ============================================================
-
-   TO EDIT: Use admin.html → Export → upload this file to GitHub
-   ============================================================ */
-
-var LOCATIONS = [
-
-  {
-    id: 1,
-    name: "National Eid Ground",
-    address: "Along Airport Road, After City Gate, Abuja",
-    area: "Airport Road", city: "Abuja",
-    type: "eid", eidTime: "9:00 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0097, lng: 7.4553, verified: true, featured: true
-  },
-
-  {
-    id: 2,
-    name: "Gwarimpa Eid Prayer Ground",
-    address: "Gwarimpa Estate, Abuja",
-    area: "Gwarimpa", city: "Abuja",
-    type: "eid", eidTime: "8:30 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1167, lng: 7.4167, verified: true, featured: false
-  },
-
-  {
-    id: 3,
-    name: "Citec Estate Eid Ground",
-    address: "Citec Estate, After Salbas Filling Station, Before Idu-Junction, Mbora District, Abuja",
-    area: "Mbora", city: "Abuja",
-    type: "eid", eidTime: "8:30 AM",
-    imam: "To be announced", phone: "08036241247", whatsapp: null,
-    lat: 9.095, lng: 7.52, verified: true, featured: true
-  },
-
-  {
-    id: 4,
-    name: "Kubwa Muslim Community Eid Ground",
-    address: "Phase 3 Junction, Kubwa, Abuja",
-    area: "Kubwa", city: "Abuja",
-    type: "eid", eidTime: "8:30 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.15, lng: 7.3167, verified: true, featured: false
-  },
-
-  {
-    id: 5,
-    name: "JIBWIS Prayer Ground Gbazango",
-    address: "NYSC Junction by the Expressway, Gbazango, Kubwa, Abuja",
-    area: "Kubwa", city: "Abuja",
-    type: "eid", eidTime: "8:30 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1453, lng: 7.3231, verified: true, featured: false
-  },
-
-  {
-    id: 6,
-    name: "Old Berger Yard Eid Ground",
-    address: "Old Berger Yard, Airport Road, Lugbe, Abuja",
-    area: "Lugbe", city: "Abuja",
-    type: "eid", eidTime: "8:15 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0167, lng: 7.4, verified: true, featured: false
-  },
-
-  {
-    id: 7,
-    name: "Mambilla Barracks Eid Ground",
-    address: "Guards Brigade Garrison Parade Ground, Mambilla Barracks, Asokoro, Abuja",
-    area: "Asokoro", city: "Abuja",
-    type: "eid", eidTime: "8:00 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0417, lng: 7.5167, verified: true, featured: false
-  },
-
-  {
-    id: 8,
-    name: "Abacha Barracks Eid Ground",
-    address: "Mugadishu Cantonment, Abacha Barracks Parade Ground, Asokoro, Abuja",
-    area: "Asokoro", city: "Abuja",
-    type: "eid", eidTime: "8:00 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.06, lng: 7.495, verified: true, featured: false
-  },
-
-  {
-    id: 9,
-    name: "Pegi Muslim Community Eid Ground",
-    address: "Pegi Muslim Community Eid Praying Ground, Pegi, Kuje, Abuja",
-    area: "Kuje", city: "Abuja",
-    type: "eid", eidTime: "8:00 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.88, lng: 7.23, verified: true, featured: false
-  },
-
-  {
-    id: 10,
-    name: "Kuduru Muslim Community (KMC)",
-    address: "GSS Kuduru Premises, Bwari, Abuja",
-    area: "Bwari", city: "Abuja",
-    type: "eid", eidTime: "8:00 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.21, lng: 7.3833, verified: true, featured: false
-  },
-
-  {
-    id: 11,
-    name: "Esteem Boys College Eid Ground",
-    address: "Esteem Boys",
-    area: "Lokogoma", city: "Abuja",
-    type: "eid", eidTime: "8:30 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.95, lng: 7.38, verified: true, featured: false
-  },
-
-  {
-    id: 12,
-    name: "Dutse Baumpa Eid Ground",
-    address: "By Shafa Energy, Tipper Garage, Bmuko Junction, Along Dutse-Bwari Road, Abuja",
-    area: "Dutse", city: "Abuja",
-    type: "eid", eidTime: "9:00 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1833, lng: 7.35, verified: true, featured: false
-  },
-
-  {
-    id: 13,
-    name: "Gbazango West Muslim Community",
-    address: "Near Train Station and Behind Police Station, Gbazango West, Kubwa, Abuja",
-    area: "Kubwa", city: "Abuja",
-    type: "eid", eidTime: "9:00 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.148, lng: 7.321, verified: true, featured: false
-  },
-
-  {
-    id: 14,
-    name: "Brick City Eid Ground",
-    address: "Brick City Estate, Abuja",
-    area: "Bwari", city: "Abuja",
-    type: "eid", eidTime: "8:00 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0733, lng: 7.465, verified: true, featured: false
-  },
-
-  {
-    id: 15,
-    name: "Bmuko Muslim Community",
-    address: "Off Tipper Garage, Dutse, Off Bwari Expressway, Abuja",
-    area: "Dutse", city: "Abuja",
-    type: "eid", eidTime: "8:00 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.19, lng: 7.345, verified: true, featured: false
-  },
-
-  {
-    id: 16,
-    name: "NDA Prayer Ground",
-    address: "NDA Officers Mess Ground, Asokoro, Abuja",
-    area: "Asokoro", city: "Abuja",
-    type: "eid", eidTime: "8:30 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.045, lng: 7.52, verified: true, featured: false
-  },
-
-  {
-    id: 17,
-    name: "National Assembly Central Mosque",
-    address: "National Assembly Complex, Three Arms Zone, Abuja",
-    area: "Central Area", city: "Abuja",
-    type: "eid", eidTime: "8:00 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.06, lng: 7.498, verified: true, featured: false
-  },
-
-  {
-    id: 18,
-    name: "Kubwa FO1 Eid Ground",
-    address: "FO1 Eid Ground, Kubwa, Abuja",
-    area: "Kubwa", city: "Abuja",
-    type: "eid", eidTime: "8:00 AM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1633, lng: 7.3383, verified: true, featured: false
-  },
-
-  {
-    id: 19,
-    name: "Al-Noor Masjid (ICICE Centre)",
-    address: "Al-Noor Masjid, ICICE Centre, Wuse 2, Abuja",
-    area: "Wuse", city: "Abuja",
-    type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0556, lng: 7.4892, verified: true, featured: true
-  },
-
-  {
-    id: 20,
-    name: "APO Legislative Quarters Mosque",
-    address: "Central Mosque, APO Legislative Quarters, Zone E, Abuja",
-    area: "Apo", city: "Abuja",
-    type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0128, lng: 7.5433, verified: true, featured: false
-  },
-
-  {
-    id: 21,
-    name: "JIBWIS Headquarters Mosque",
-    address: "JIBWIS Headquarters, Utako Berger, Utako, Abuja",
-    area: "Utako", city: "Abuja",
-    type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0667, lng: 7.45, verified: true, featured: false
-  },
-
-  {
-    id: 22,
-    name: "Nurul Yaqeen Mosque",
-    address: "Plot 268, Kafe, Life Camp, Opp. Godab Estate, Abuja",
-    area: "Life Camp", city: "Abuja",
-    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: "08039584612", whatsapp: null,
-    lat: 9.0833, lng: 7.4333, verified: true, featured: false
-  },
-
-  {
-    id: 23,
-    name: "Uthman Bin Affan Masjid (Banex Plaza)",
-    address: "FOMWAN International School, Adjacent Banex Plaza, Wuse 2, Abuja",
-    area: "Wuse", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.06, lng: 7.485, verified: true, featured: false
-  },
-
-  {
-    id: 24,
-    name: "Ibrahim Maimunat Foundation (IMF) Masjid",
-    address: "No 4 IMF Close, FO1 Kubwa, FCT Abuja",
-    area: "Kubwa", city: "Abuja",
-    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1633, lng: 7.3333, verified: true, featured: false
-  },
-
-  {
-    id: 25,
-    name: "Al-Habibiyyah Mosque",
-    address: "Plot 753, Babagana Kingibe Street, Guzape, Asokoro District, Abuja",
-    area: "Guzape", city: "Abuja",
-    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0383, lng: 7.5117, verified: true, featured: true
-  },
-
-  {
-    id: 26,
-    name: "Muslim Community Central Mosque Kubwa",
-    address: "Shelter Farm, Kubwa, Abuja",
-    area: "Kubwa", city: "Abuja",
-    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1667, lng: 7.325, verified: true, featured: false
-  },
-
-  {
-    id: 27,
-    name: "FOMWAN Headquarters Jumuah Masjid",
-    address: "FOMWAN Headquarters Central Mosque, Utako, Abuja",
-    area: "Utako", city: "Abuja",
-    type: "both", eidTime: "8:45 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.07, lng: 7.448, verified: true, featured: false
-  },
-
-  {
-    id: 28,
-    name: "Al-Huda Masjid",
-    address: "Uwadia-Resorts, Millionaires Quarters, Byazhin-Kubwa, Abuja",
-    area: "Byazhin", city: "Abuja",
-    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1383, lng: 7.3067, verified: true, featured: false
-  },
-
-  {
-    id: 29,
-    name: "Al-Ikhlas Masjid",
-    address: "FCDA Owner Occupier Estate, Kubwa, Abuja",
-    area: "Kubwa", city: "Abuja",
-    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1583, lng: 7.3167, verified: true, featured: false
-  },
-
-  {
-    id: 30,
-    name: "JIBWIS Islamic Centre Guzape",
-    address: "Adamu Aliero Crescent, Guzape, Abuja",
-    area: "Guzape", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.035, lng: 7.5083, verified: true, featured: false
-  },
-
-  {
-    id: 31,
-    name: "Masjid Shaikh Ja",
-    address: "Along Kaduna-Lokoja Expressway, Zuba, Abuja",
-    area: "Zuba", city: "Abuja",
-    type: "both", eidTime: "9:30 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.125, lng: 7.2083, verified: true, featured: false
-  },
-
-  {
-    id: 32,
-    name: "Area 8 Jumu",
-    address: "Area 8 Masjid, Section 1, Sheda Close, Garki, Abuja",
-    area: "Garki", city: "Abuja",
-    type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.045, lng: 7.4783, verified: true, featured: false
-  },
-
-  {
-    id: 33,
-    name: "Sun City Estate Mosque (SEMRA)",
-    address: "Sun City Estate, Jumu",
-    area: "Lugbe", city: "Abuja",
-    type: "both", eidTime: "8:30 AM", jumuahTime: "1:15 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.01, lng: 7.4133, verified: true, featured: false
-  },
-
-  {
-    id: 34,
-    name: "Dambatta Masjid",
-    address: "No 23 Kaltungo Street, Garki II, Abuja",
-    area: "Garki", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0517, lng: 7.4967, verified: true, featured: false
-  },
-
-  {
-    id: 35,
-    name: "Jedo Estate Islamic Centre",
-    address: "Jumu",
-    area: "Lugbe", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.005, lng: 7.4083, verified: true, featured: false
-  },
-
-  {
-    id: 36,
-    name: "Cyclic Energy Jumu",
-    address: "Cyclic Energy Limited, Airport Road, Abuja",
-    area: "Airport Road", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0183, lng: 7.45, verified: true, featured: false
-  },
-
-  {
-    id: 37,
-    name: "Masjid Abubakar Siddique",
-    address: "Wuse Zone 6, Abuja",
-    area: "Wuse", city: "Abuja",
-    type: "both", eidTime: "8:45 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.06, lng: 7.475, verified: true, featured: false
-  },
-
-  {
-    id: 38,
-    name: "Chika Jumu",
-    address: "Along Airport Road, Opposite ECOWAS, Chika, Abuja",
-    area: "Chika", city: "Abuja",
-    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0017, lng: 7.425, verified: true, featured: false
-  },
-
-  {
-    id: 39,
-    name: "OTM Islamic Centre",
-    address: "Cluster 5, Promenade/Kwankwaso Estate, Lokogoma, FCT Abuja",
-    area: "Lokogoma", city: "Abuja",
-    type: "both", eidTime: "8:15 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.9617, lng: 7.395, verified: true, featured: false
-  },
-
-  {
-    id: 40,
-    name: "Ansar-ud-Deen Mosque Wuse 2",
-    address: "No 80 Aguiyi Ironsi Street, Wuse 2, Abuja",
-    area: "Wuse", city: "Abuja",
-    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0583, lng: 7.4917, verified: true, featured: false
-  },
-
-  {
-    id: 41,
-    name: "Maitama Central Mosque",
-    address: "No 120 Nile Street, Maitama, Abuja",
-    area: "Maitama", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.08, lng: 7.4933, verified: true, featured: false
-  },
-
-  {
-    id: 42,
-    name: "Shehu Shagari Central Mosque",
-    address: "Mosque Premises, Section 2, Area 1, Garki, Abuja",
-    area: "Garki", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0517, lng: 7.4767, verified: true, featured: false
-  },
-
-  {
-    id: 43,
-    name: "NASFAT Islamic Centre Utako",
-    address: "Plot 313 Augustus Alkhomu Way, Utako District, Abuja",
-    area: "Utako", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.07, lng: 7.455, verified: true, featured: false
-  },
-
-  {
-    id: 44,
-    name: "Ansar-ud-Deen Central Mosque Kubwa",
-    address: "Off Arab Road by Mango Tree, Kubwa, Abuja",
-    area: "Kubwa", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1583, lng: 7.3117, verified: true, featured: false
-  },
-
-  {
-    id: 45,
-    name: "Wuye Central Masjid",
-    address: "Wuye District, FCT Abuja",
-    area: "Wuye", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0833, lng: 7.4667, verified: true, featured: false
-  },
-
-  {
-    id: 46,
-    name: "Anoor Islamic Centre Masjid",
-    address: "Plot 107, Cadastral C20, Behind Nizamiye Turkish Hospital, Mbora District, Abuja",
-    area: "Mbora", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0917, lng: 7.5183, verified: true, featured: false
-  },
-
-  {
-    id: 47,
-    name: "Federal Housing Authority Mosque Asokoro",
-    address: "Federal Housing Authority Mosque, Asokoro, Abuja",
-    area: "Asokoro", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0383, lng: 7.5233, verified: true, featured: false
-  },
-
-  {
-    id: 48,
-    name: "Sanusi Dantata Jumu",
-    address: "Sanusi Dantata Memorial Mosque, Central Area, Abuja",
-    area: "Central Area", city: "Abuja",
-    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.06, lng: 7.4833, verified: true, featured: false
-  },
-
-  {
-    id: 49,
-    name: "AYA Central Mosque Asokoro",
-    address: "AYA Central Mosque, Asokoro, Abuja",
-    area: "Asokoro", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.045, lng: 7.5167, verified: true, featured: false
-  },
-
-  {
-    id: 50,
-    name: "Anas Ibn Malik Islamic Centre (AMSSCO)",
-    address: "Anas Ibn Malik Islamic Centre, AMSSCO Estate, Galadimawa, Abuja",
-    area: "Galadimawa", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0133, lng: 7.4317, verified: true, featured: false
-  },
-
-  {
-    id: 51,
-    name: "Airport Masjid",
-    address: "Praying Ground, Area B, Abuja Airport, Abuja",
-    area: "Airport Road", city: "Abuja",
-    type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0067, lng: 7.4633, verified: true, featured: false
-  },
-
-  {
-    id: 52,
-    name: "Sunnyvale Homes Masjid",
-    address: "Sunnyvale Homes Sports Complex (Near Old Gate), Dakwo District, Abuja",
-    area: "Dakwo", city: "Abuja",
-    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0033, lng: 7.51, verified: true, featured: false
-  },
-
-  {
-    id: 53,
-    name: "JIBWIS Dawaki",
-    address: "JIBWIS FCT, Dawaki Extension, News Engineering, Abuja",
-    area: "Dawaki", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.08, lng: 7.505, verified: true, featured: false
-  },
-
-  {
-    id: 54,
-    name: "Dape Village Masjid",
-    address: "Dape Village, Off Julius Berger Camp Road, Abuja",
-    area: "Dape", city: "Abuja",
-    type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1033, lng: 7.4117, verified: true, featured: false
-  },
-
-  {
-    id: 55,
-    name: "Hayatul Islam Karu",
-    address: "Karu Hayatul Islam Jumu",
-    area: "Karu", city: "Abuja",
-    type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.9983, lng: 7.5883, verified: true, featured: false
-  },
-
-  {
-    id: 56,
-    name: "Anwaru-L-Huda (AHLON)",
-    address: "Anwaru-L-Huda League of Nigeria, Area 1, Section 1, Garki, Abuja",
-    area: "Garki", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0533, lng: 7.48, verified: true, featured: false
-  },
-
-  {
-    id: 57,
-    name: "Nile University Central Masjid",
-    address: "Nile University of Nigeria, Jabi Airport Road Bypass, Abuja",
-    area: "Jabi", city: "Abuja",
-    type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0617, lng: 7.4367, verified: true, featured: false
-  },
-
-  {
-    id: 58,
-    name: "Abdullateef Adegbite Masjid (MSS)",
-    address: "1st Avenue (14 Road), Gwarimpa Estate, Abuja",
-    area: "Gwarimpa", city: "Abuja",
-    type: "jumuah", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.12, lng: 7.415, verified: true, featured: false
-  },
-
-  {
-    id: 59,
-    name: "7th Avenue Islamic Center",
-    address: "7th Avenue Islamic Center Juma",
-    area: "Gwarimpa", city: "Abuja",
-    type: "jumuah", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1217, lng: 7.4183, verified: true, featured: false
-  },
-
-  {
-    id: 60,
-    name: "Ansar-Deen Mosque Gwarimpa",
-    address: "Ansar-Deen Mosque, Gwarimpa, Abuja",
-    area: "Gwarimpa", city: "Abuja",
-    type: "jumuah", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1183, lng: 7.4133, verified: true, featured: false
-  },
-
-  {
-    id: 61,
-    name: "Suncity Estate Jumu",
-    address: "Suncity Estate Juma",
-    area: "Galadimawa", city: "Abuja",
-    type: "jumuah", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0117, lng: 7.43, verified: true, featured: false
-  },
-
-  {
-    id: 62,
-    name: "Esteem Learning Centre Masjid",
-    address: "Esteem Learning Centre, Lokogoma, Abuja",
-    area: "Lokogoma", city: "Abuja",
-    type: "jumuah", jumuahTime: "1:30 PM",
-    imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.9533, lng: 7.3817, verified: true, featured: false
-  },
-
-  {
-    id: 63,
-    name: "Kabusa Garden Estate Mosque",
-    address: "Kabusa Garden Estate, Kabusa, Abuja FCT",
-    area: "Kabusa",
-    city: "Abuja",
-    type: "both",
-    eidTime: "8:00 AM",
-    jumuahTime: "1:15 PM",
-    imam: "Sheikh Abdulrahman Kabusa",
-    imamRole: "Imam",
-    phone: "+2348012345678",
-    whatsapp: "+2348012345678",
-    lat: 9.0200,
-    lng: 7.4700,
-    verified: true,
-    featured: true,
-    youtube: "https://www.youtube.com/watch?v=bgBi_eWQDbs",
-    khutbaUrl: "https://drive.google.com/file/d/1ea98UR2_GUxG3kiKziX3lHVnCGG39lEh/view?usp=drive_link",
-    eventNote: "Jumuah begins at 1:15 PM sharp. Please arrive early.\nParking available inside the estate gate.\nSisters section is available upstairs.",
-    eventNoteSize: 13,
-    events: [{"title":"Weekly Tafsir \u2014 Understanding the Quran","category":"lecture","organiser":"Sheikh Abdulrahman Kabusa & Sheikh Ibrahim Musa","time":"After Asr (approx 6:00 PM) - 7:30 PM","endDate":"2026-07-31","expiryDays":30,"phone":"+2348012345678","accountNumber":"","accountName":"","bankName":"","extraInfo":"Every Saturday evening after Asr prayer\nOpen to brothers and sisters\nChildren welcome\nLight refreshments provided","thumbnailUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl2":"https://i.imgur.com/6ov0ZRA.png","sponsors":[{"name":"2now Technology","logoUrl":"https://i.imgur.com/sHdEgdO.png"},{"name":"Kabusa Garden Estate","logoUrl":""}],"titleFontSize":84,"organiserFontSize":32,"timeFontSize":28,"donationFontSize":26,"extraInfoFontSize":30,"sponsorFontSize":22,"sponsorLogoSize":40,"facebook":"@kabusagardenmasjid","instagram":"@kabusagardenmasjid","whatsappSocial":"+2348012345678","twitterX":"@kabusagardenmasjid"},{"title":"Friday Feeding Programme","category":"feeding","organiser":"Kabusa Garden Welfare Committee","time":"After Jumuah \u2014 2:00 PM - 4:00 PM","endDate":"2026-06-27","expiryDays":30,"phone":"+2348087654321","accountNumber":"1234567890","accountName":"Kabusa Garden Mosque Welfare","bankName":"First Bank Nigeria","extraInfo":"Free food for all community members\nRice, Beans, Chicken and Drinks\nDonate to support this cause\nJazakAllah Khairan for your support","thumbnailUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl2":"","sponsors":[{"name":"Eastpath Global Investment","logoUrl":"https://i.imgur.com/6ov0ZRA.png"},{"name":"2now Technology","logoUrl":"https://i.imgur.com/sHdEgdO.png"}],"titleFontSize":84,"organiserFontSize":32,"timeFontSize":28,"donationFontSize":26,"extraInfoFontSize":30,"sponsorFontSize":22,"sponsorLogoSize":36,"facebook":"@kabusagardenmasjid","instagram":"","whatsappSocial":"+2348087654321","twitterX":""},{"title":"Eid al-Adha 2026 \u2014 Ground Registration","category":"eid","organiser":"Kabusa Garden Estate Management","time":"Eid Salah: 8:00 AM | Registration opens 7:00 AM","endDate":"2026-06-27","expiryDays":30,"phone":"+2348012345678","accountNumber":"","accountName":"","bankName":"","extraInfo":"All residents must register before June 20\nBring your estate ID card\nAnimal slaughter arranged on request\nContact estate management for details","thumbnailUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl2":"https://i.imgur.com/6ov0ZRA.png","sponsors":[{"name":"Kabusa Garden Estate Mgmt","logoUrl":""}],"titleFontSize":84,"organiserFontSize":32,"timeFontSize":28,"donationFontSize":26,"extraInfoFontSize":30,"sponsorFontSize":22,"sponsorLogoSize":32,"facebook":"@kabusagardenmasjid","instagram":"@kabusagardenmasjid","whatsappSocial":"+2348012345678","twitterX":"@kabusagardenmasjid"},{"title":"Masjid Building Project \u2014 Phase 2","category":"project","organiser":"Kabusa Garden Mosque Committee","time":"Ongoing \u2014 Donations accepted anytime","endDate":"2026-12-31","expiryDays":30,"phone":"+2348012345678","accountNumber":"9876543210","accountName":"Kabusa Garden Mosque Project","bankName":"Zenith Bank","extraInfo":"Phase 2 target: N50,000,000\nExpansion of sisters section\nInstallation of proper AC and sound system\nJazakAllah Khairan for every contribution","thumbnailUrl":"https://i.imgur.com/6ov0ZRA.png","bannerUrl":"https://i.imgur.com/6ov0ZRA.png","bannerUrl2":"https://i.imgur.com/sHdEgdO.png","sponsors":[{"name":"Eastpath Global","logoUrl":"https://i.imgur.com/6ov0ZRA.png"},{"name":"2now Technology","logoUrl":"https://i.imgur.com/sHdEgdO.png"},{"name":"Estate Residents","logoUrl":""}],"titleFontSize":84,"organiserFontSize":32,"timeFontSize":28,"donationFontSize":26,"extraInfoFontSize":30,"sponsorFontSize":22,"sponsorLogoSize":40,"facebook":"@kabusagardenmasjid","instagram":"@kabusagardenmasjid","whatsappSocial":"+2348012345678","twitterX":"@kabusagardenmasjid"}],
-    socialFacebook: "@kabusagardenmasjid",
-    socialInstagram: "@kabusagardenmasjid",
-    socialWhatsapp: "+2348012345678",
-    socialTwitter: "@kabusagardenmasjid"
-  }
-
-];
-</script>
+  <script src="locations.js"></script>
   <script src="config.js"></script>
 
   <!-- Google Analytics GA4 — replace G-XXXXXXXXXX with your real Measurement ID -->
@@ -1707,12 +1044,8 @@ function cdStr(h,m){
 
 function updateBanner(){
   var r=getNext();
-  var now=new Date(), nm=now.getHours()*60+now.getMinutes();
-  /* If all prayers passed for today, next is tomorrow */
-  var allPassed = PRAYERS.every(function(p){ return p.h*60+p.m <= nm; });
-  var dayLabel = allPassed ? 'Tomorrow · ' : 'Today · ';
   document.getElementById('nextPrayerName').textContent=r.p.name;
-  document.getElementById('nextPrayerTime').textContent=dayLabel+fmtTime(r.p.h,r.p.m);
+  document.getElementById('nextPrayerTime').textContent='Today · '+fmtTime(r.p.h,r.p.m);
   document.getElementById('countdown').textContent=cdStr(r.p.h,r.p.m);
 }
 setInterval(updateBanner,1000); updateBanner();
@@ -1910,7 +1243,25 @@ function renderMosqueEvents(loc){
       html+='<div style="display:inline-block;background:rgba(34,201,138,0.1);border:1px solid rgba(34,201,138,0.25);border-radius:12px;padding:2px 8px;font-size:11px;font-weight:600;color:var(--gm);clear:both">📅 '+_dn[_d.getDay()]+' '+_d.getDate()+' '+_dm[_d.getMonth()]+' '+_d.getFullYear()+'</div>';
     }
     /* Social icons — 2 per row, real icons, no prefix — COLLAPSED */
-    Tap for details ›</div>';
+    if(_activeSocCollapsed.length){
+      var _scHtml='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;clear:both">';
+      for(var _sci=0;_sci<_activeSocCollapsed.length;_sci+=2){
+        _scHtml+='<div style="display:flex;gap:4px;flex:1">';
+        for(var _scj=_sci;_scj<Math.min(_sci+2,_activeSocCollapsed.length);_scj++){
+          var _sd=_activeSocCollapsed[_scj];
+          var _surl={fb:'https://facebook.com/',ig:'https://instagram.com/',wa:'https://wa.me/',x:'https://x.com/'}[_sd.icon]+(_sd.v||'').replace(/^@/,'');
+          _scHtml+='<a href="'+_surl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" '
+            +'style="display:flex;align-items:center;gap:3px;text-decoration:none;background:rgba(0,0,0,0.05);border-radius:16px;padding:3px 7px;flex:1;min-width:0">'
+            +'<img src="'+SOC_ICONS[_sd.icon]+'" style="width:13px;height:13px;border-radius:2px;flex-shrink:0" onerror="this.style.display=\'none\'">'
+            +'<span style="font-size:10px;color:var(--tp);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(_sd.v||'')+'</span>'
+            +'</a>';
+        }
+        _scHtml+='</div>';
+      }
+      _scHtml+='</div>';
+      html+=_scHtml;
+    }
+    html+='<div style="font-size:10px;color:var(--tm);margin-top:6px;clear:both">Tap for details ›</div>';
 
     /* ── EXPANDED: full details ── */
     html+='<div class="event-extra" style="clear:both">';
@@ -1920,8 +1271,9 @@ function renderMosqueEvents(loc){
       html+='<div class="event-actions"><button class="event-btn call" onclick="event.stopPropagation();window.open(\'tel:'+(ev.phone||'')+'\')">📞 Call</button></div>';
     }
     /* Social handles */
-    if(_activeSocCollapsed.length){
+    if(sL.length){
       var _socHtml = '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">';
+      /* Use _activeSocCollapsed (already built) for expanded card social too */
       var _activeSoc = _activeSocCollapsed;
       var _socMap = {facebook:{icon:'fb',url:'https://facebook.com/'},instagram:{icon:'ig',url:'https://instagram.com/'},whatsappSocial:{icon:'wa',url:'https://wa.me/'},twitterX:{icon:'x',url:'https://x.com/'}};
       for(var _si=0; _si<_activeSoc.length; _si+=2){
@@ -1950,7 +1302,7 @@ function renderMosqueEvents(loc){
         +'<div style="font-size:16px;font-weight:700;color:#856404;letter-spacing:.04em">'+ev.accountNumber+'</div>'
         +'<div style="font-size:10px;color:var(--ts)">'+(ev.bankName||'')+'</div>'
         +'<button class="event-btn copy-acc" style="margin-top:6px" '
-        +'onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'✅ '+(ev.accountNumber||'')+' copied!\')">📋 Copy Account Number</button>'
+        +'onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">📋 Copy Account Number</button>'
         +'</div>';
     }
     if(!isProj&&ev.accountNumber){
@@ -1998,11 +1350,10 @@ function renderMosqueEvents(loc){
     active.forEach(function(_,i){ html+='<div class="events-dot'+(i===0?' active':'')+'\"></div>'; });
     html+='</div>';
     html+='<script>setTimeout(function(){var sc=document.getElementById("'+uid+'");if(!sc)return;'
-      +'var cw=sc.offsetWidth||260;'
       +'sc.addEventListener("scroll",function(){'
-      +'var si=Math.round(sc.scrollLeft/cw);if(si<0)si=0;if(si>='+(active.length)+')si='+(active.length-1)+';'
+      +'var si=Math.round(sc.scrollLeft/(sc.scrollWidth/'+active.length+'));'
       +'sc.parentNode.querySelectorAll(".events-dot").forEach(function(d,i){d.classList.toggle("active",i===si)});'
-      +'},false);},200);<\/script>';
+      +'},false);},100);<\/script>';
   }
   html+='</div>';
   return html;
@@ -2218,8 +1569,7 @@ function openEventShare(locId, evIdx){
   }
 
   /* ══ BOTTOM TWO-COLUMN LAYOUT ══ */
-  var bottomY=Math.max(curY+40,fY-380);
-  if(bottomY+260>fY-10) bottomY=fY-270;
+  var bottomY=H-310;
   var colW=(W-120)/2, leftX=50, rightX=50+colW+20;
   ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.fillRect(50,bottomY-14,W-100,1);
 
@@ -2274,7 +1624,7 @@ function openEventShare(locId, evIdx){
         var sLogo=typeof s==='object'&&s.logoUrl?s.logoUrl:'';
         if(sLogo){
           var lImg=new Image(); lImg.crossOrigin='anonymous';
-          (function(img,x,y,sz){ img.onload=function(){try{ctx.save();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x+sz/2,y-sz/2,sz/2,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(x+sz/2,y-sz/2,sz/2,0,Math.PI*2);ctx.clip();var _iw=img.naturalWidth,_ih=img.naturalHeight,_s2=sz*0.8,_sc=Math.min(_s2/_iw,_s2/_ih),_dw=_iw*_sc,_dh=_ih*_sc;ctx.drawImage(img,x+(sz-_dw)/2,y-sz+(sz-_dh)/2,_dw,_dh);ctx.restore();}catch(e){}}; try{img.src=sLogo;}catch(e){} })(lImg,leftX,sy,sponsorLogoSz);
+          (function(img,x,y,sz){ img.onload=function(){try{ctx.save();ctx.beginPath();ctx.arc(x+sz/2,y-sz/2,sz/2,0,Math.PI*2);ctx.clip();ctx.drawImage(img,x,y-sz,sz,sz);ctx.restore();}catch(e){}}; try{img.src=sLogo;}catch(e){} })(lImg,leftX,sy,sponsorLogoSz);
           ctx.font=sponsorFs+'px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.85)';
           ctx.fillText(fitText(sName,colMaxW-(sponsorLogoSz+8),sponsorFs+'px sans-serif'),leftX+sponsorLogoSz+8,sy); sy+=Math.max(30,sponsorLogoSz+4);
         } else {
@@ -2302,32 +1652,24 @@ function openEventShare(locId, evIdx){
   }
 
   /* Footer */
-  ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.fillRect(0,fY,W,132);
+  var fY=H-132;
+  ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(0,fY,W,132);
   ctx.fillStyle=pal.accent; ctx.fillRect(0,fY,W,2);
-  ctx.font='bold 25px sans-serif'; ctx.fillStyle='#fff'; ctx.textAlign='left';
-  ctx.fillText('\uD83D\uDCF1 Download DeenLocator \u2014 Free App',50,fY+38);
-  var _appUrl=(typeof APP_CONFIG!=='undefined'&&APP_CONFIG.appUrl)||'mi2now.github.io/deenlocator';
-  ctx.font='21px sans-serif'; ctx.fillStyle=pal.accent;
-  ctx.fillText(_appUrl,50,fY+64);
-  ctx.font='17px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)';
-  ctx.fillText('Free Eid & Jumuah locator \u2022 Abuja FCT',50,fY+90);
-  var _fPhone=(typeof APP_CONFIG!=='undefined'&&APP_CONFIG.contactPhone)||'+234 806 590 0110';
-  ctx.font='bold 21px sans-serif'; ctx.fillStyle='#22c98a'; ctx.textAlign='right';
-  ctx.fillText('\uD83D\uDCDE '+_fPhone,W-50,fY+38);
-  var _fSocArr=[];
-  if(typeof APP_CONFIG!=='undefined'){
-    if(APP_CONFIG.footerFacebook) _fSocArr.push('fb: '+APP_CONFIG.footerFacebook);
-    if(APP_CONFIG.footerInstagram) _fSocArr.push('ig: '+APP_CONFIG.footerInstagram);
-    if(APP_CONFIG.footerWhatsapp) _fSocArr.push('wa: '+APP_CONFIG.footerWhatsapp);
-    if(APP_CONFIG.footerTwitter) _fSocArr.push('x: '+APP_CONFIG.footerTwitter);
-  }
-  if(_fSocArr.length){
-    ctx.font='17px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.55)'; ctx.textAlign='right';
-    for(var _fi=0;_fi<_fSocArr.length;_fi+=2){
-      ctx.fillText(_fSocArr.slice(_fi,_fi+2).join('   '),W-50,fY+60+Math.floor(_fi/2)*22);
-    }
-  }
+  ctx.font='bold 28px sans-serif'; ctx.fillStyle='#fff'; ctx.fillText('\uD83D\uDCF1 Download DeenLocator \u2014 Free App',50,fY+44);
+  ctx.font='24px sans-serif'; ctx.fillStyle=pal.accent; ctx.fillText('mi2now.github.io/deenlocator',50,fY+76);
+  ctx.font='20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.fillText('Free Eid & Jumuah locator for Abuja',50,fY+104);
 
+  function doShare(){
+    cv.toBlob(function(blob){
+      var fname='deenlocator-event-'+(ev.title||'event').replace(/[^a-z0-9]/gi,'_').toLowerCase()+'.png';
+      var file=new File([blob],fname,{type:'image/png'});
+      if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+        navigator.share({files:[file],title:ev.title||'Event',text:'DeenLocator \u2014 '+loc.name});
+      } else {
+        triggerDownload(cv,fname); showToast('\u2705 Event card saved!');
+      }
+    },'image/png');
+  }
   _li.complete&&_li.naturalWidth>0 ? setTimeout(doShare,300) : setTimeout(doShare,800);
 }
 
@@ -2577,18 +1919,8 @@ function initGPS(){
   if(!navigator.geolocation) return;
   navigator.geolocation.getCurrentPosition(function(pos){
     userLat=pos.coords.latitude; userLng=pos.coords.longitude;
-    /* Save open card before refresh */
-    var _prevOpen = null;
-    try{ _prevOpen = sessionStorage.getItem('dl_open_card'); }catch(e){}
     showNearest(); renderCards(); refreshMapNearest(); buildMapList(mapFilter);
     if(leafMap) addUserPin();
-    /* Restore open card after refresh */
-    if(_prevOpen){
-      setTimeout(function(){
-        var card = document.querySelector('.card[data-id="'+_prevOpen+'"]');
-        if(card && !card.classList.contains('open')) card.classList.add('open');
-      }, 50);
-    }
   }, function(){
     /* GPS denied or failed — silent */
   }, {enableHighAccuracy:true, timeout:10000});
@@ -2746,9 +2078,6 @@ function updateCardDetailUI(){
 var activeFilter='all',activeArea='',activeSort='nearest',searchQuery='';
 
 function getList(){
-  if(typeof LOCATIONS === 'undefined' || !LOCATIONS || !LOCATIONS.length){
-    return [];
-  }
   var list=LOCATIONS.slice();
   if(activeFilter!=='all') list=list.filter(function(l){return l.type===activeFilter||l.type==='both';});
   if(activeArea) list=list.filter(function(l){return l.area===activeArea;});
@@ -2805,23 +2134,7 @@ function renderCards(){
   var list=getList();
   var el=document.getElementById('cardsList'),empty=document.getElementById('emptyState');
   document.getElementById('locationCount').textContent=list.length+' location'+(list.length!==1?'s':'');
-  if(!list.length){
-    el.innerHTML='';
-    /* Check if locations.js failed to load vs just filtered out */
-    if(typeof LOCATIONS==='undefined'||!LOCATIONS||!LOCATIONS.length){
-      el.innerHTML='<div style="padding:40px 20px;text-align:center;color:var(--ts)">'
-        +'<div style="font-size:40px;margin-bottom:12px">📂</div>'
-        +'<div style="font-size:16px;font-weight:700;margin-bottom:8px">Locations not loaded</div>'
-        +'<div style="font-size:13px;color:var(--tm);line-height:1.6">'
-        +'Make sure <strong>locations.js</strong> is in the same folder as index.html<br>'
-        +'or upload both files to GitHub Pages.'
-        +'</div></div>';
-      if(empty) empty.classList.remove('show');
-    } else {
-      empty.classList.add('show');
-    }
-    return;
-  }
+  if(!list.length){el.innerHTML='';empty.classList.add('show');return;}
   empty.classList.remove('show');
   var _openId; try{_openId=sessionStorage.getItem('dl_open_card');}catch(e){}
   el.innerHTML=list.map(function(loc,i){
@@ -2927,7 +2240,7 @@ function buildShareText(loc){
 
   /* Imam — only if known */
   if(loc.imam && loc.imam !== 'To be announced'){
-    lines.push('👤 *'+(loc.imamRole||'Imam')+':* ' + loc.imam);
+    lines.push('👤 *Imam:* ' + loc.imam);
   }
 
   /* Contact — only if available */
@@ -2999,7 +2312,7 @@ function openShare(id){
     timesEl.innerHTML += '<div class="share-card-time-pill"><span>Eid Prayer</span>' + loc.eidTime + '</div>';
   }
   if(loc.imam && loc.imam !== 'To be announced'){
-    timesEl.innerHTML += '<div class="share-card-time-pill"><span>'+(loc.imamRole||'Imam')+'</span>' + loc.imam + '</div>';
+    timesEl.innerHTML += '<div class="share-card-time-pill"><span>Imam</span>' + loc.imam + '</div>';
   }
 
   /* Text preview */
@@ -4516,16 +3829,7 @@ function updateEidBanner(){
   }
 
   /* Re-render cards to float Eid grounds to top */
-  /* Restore open card after re-render */
-  var _pOp = null;
-  try{ _pOp = sessionStorage.getItem('dl_open_card'); }catch(e){}
   renderCards();
-  if(_pOp){
-    setTimeout(function(){
-      var c = document.querySelector('.card[data-id="'+_pOp+'"]');
-      if(c && !c.classList.contains('open')) c.classList.add('open');
-    }, 50);
-  }
 }
 
 function onEidBannerTap(){
@@ -4833,7 +4137,7 @@ function updateFooterContact(){
 window.addEventListener('DOMContentLoaded', function(){
 
   var el = document.getElementById('settingsLocCount');
-  var _vc2=(typeof LOCATIONS!=='undefined'&&LOCATIONS)?LOCATIONS.filter(function(l){return l.verified;}).length:0; if(el) el.textContent=_vc2+' verified locations · Abuja FCT';
+  var _vc2=LOCATIONS.filter(function(l){return l.verified;}).length; if(el) el.textContent=_vc2+' verified locations · Abuja FCT';
   buildAreaDropdown();
   renderCards();
   setHijriDate();
