@@ -1044,8 +1044,11 @@ function cdStr(h,m){
 
 function updateBanner(){
   var r=getNext();
+  var now=new Date(),nm=now.getHours()*60+now.getMinutes();
+  var allPassed=PRAYERS.every(function(p){return p.h*60+p.m<=nm;});
+  var dayLabel=allPassed?'Tomorrow · ':'Today · ';
   document.getElementById('nextPrayerName').textContent=r.p.name;
-  document.getElementById('nextPrayerTime').textContent='Today · '+fmtTime(r.p.h,r.p.m);
+  document.getElementById('nextPrayerTime').textContent=dayLabel+fmtTime(r.p.h,r.p.m);
   document.getElementById('countdown').textContent=cdStr(r.p.h,r.p.m);
 }
 setInterval(updateBanner,1000); updateBanner();
@@ -1271,7 +1274,7 @@ function renderMosqueEvents(loc){
       html+='<div class="event-actions"><button class="event-btn call" onclick="event.stopPropagation();window.open(\'tel:'+(ev.phone||'')+'\')">📞 Call</button></div>';
     }
     /* Social handles */
-    if(sL.length){
+    if(_activeSocCollapsed.length){
       var _socHtml = '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">';
       /* Use _activeSocCollapsed (already built) for expanded card social too */
       var _activeSoc = _activeSocCollapsed;
@@ -1349,12 +1352,7 @@ function renderMosqueEvents(loc){
     html+='<div class="events-dots">';
     active.forEach(function(_,i){ html+='<div class="events-dot'+(i===0?' active':'')+'\"></div>'; });
     html+='</div>';
-    html+='<script>setTimeout(function(){var sc=document.getElementById("'+uid+'");if(!sc)return;'
-      +'sc.addEventListener("scroll",function(){'
-      +'var si=Math.round(sc.scrollLeft/(sc.scrollWidth/'+active.length+'));'
-      +'sc.parentNode.querySelectorAll(".events-dot").forEach(function(d,i){d.classList.toggle("active",i===si)});'
-      +'},false);},100);<\/script>';
-  }
+    html+='<script>setTimeout(function(){var sc=document.getElementById("'+uid+'");if(!sc)return;var cw=sc.offsetWidth||260;sc.addEventListener("scroll",function(){var si=Math.round(sc.scrollLeft/cw);si=Math.max(0,Math.min(si,'+active.length+'-1));sc.parentNode.querySelectorAll(".events-dot").forEach(function(d,i){d.classList.toggle("active",i===si)});},false);},200);<\/script>'; }
   html+='</div>';
   return html;
 }
@@ -1530,7 +1528,7 @@ function openEventShare(locId, evIdx){
         ctx.fillStyle='rgba(255,255,255,0.05)'; roundRect(ctx,bx,by,hw,imgH2,12); ctx.fill();
         var bi=new Image(); bi.crossOrigin='anonymous';
         (function(img,x,y,w,h){
-          img.onload=function(){try{ctx.save();roundRect(ctx,x,y,w,h,12);ctx.clip();ctx.fillStyle='#ffffff';ctx.fillRect(x,y,w,h);var iw=img.naturalWidth,ih=img.naturalHeight,scale=Math.min(w/iw,h/ih),dw=iw*scale,dh=ih*scale;ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);ctx.restore();}catch(e){}};
+          img.onload=function(){try{ctx.save();ctx.fillStyle='#fff';roundRect(ctx,x,y,w,h,12);ctx.fill();roundRect(ctx,x,y,w,h,12);ctx.clip();var iw=img.naturalWidth,ih=img.naturalHeight,ps=0.85,sw=w*ps,sh=h*ps,scale=Math.min(sw/iw,sh/ih),dw=iw*scale,dh=ih*scale;ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);ctx.restore();}catch(e){}};
           try{img.src=fixImgurUrl(banners[k]);}catch(e){}
         })(bi,bx,by,hw,imgH2);
       });
@@ -1569,7 +1567,8 @@ function openEventShare(locId, evIdx){
   }
 
   /* ══ BOTTOM TWO-COLUMN LAYOUT ══ */
-  var bottomY=H-310;
+  var bottomY=Math.max(curY+40,fY-380);
+  if(bottomY+260>fY-10) bottomY=fY-270;
   var colW=(W-120)/2, leftX=50, rightX=50+colW+20;
   ctx.fillStyle='rgba(255,255,255,0.08)'; ctx.fillRect(50,bottomY-14,W-100,1);
 
@@ -1873,7 +1872,9 @@ function _doSetNotify(name){
       });
     }catch(e){}
   }
+  var _pOp=null;try{_pOp=sessionStorage.getItem('dl_open_card');}catch(e){}
   renderCards();
+  if(_pOp){setTimeout(function(){var c=document.querySelector('.card[data-id="'+_pOp+'"]');if(c&&!c.classList.contains('open'))c.classList.add('open');},50);}
 }
 function isMosqueNotified(name){
   try{ return localStorage.getItem('dl_notify_'+name.replace(/[^a-z0-9]/gi,'_').toLowerCase())==='1'; }catch(e){ return false; }
@@ -1919,8 +1920,10 @@ function initGPS(){
   if(!navigator.geolocation) return;
   navigator.geolocation.getCurrentPosition(function(pos){
     userLat=pos.coords.latitude; userLng=pos.coords.longitude;
+    var _prevOpen=null; try{_prevOpen=sessionStorage.getItem('dl_open_card');}catch(e){}
     showNearest(); renderCards(); refreshMapNearest(); buildMapList(mapFilter);
     if(leafMap) addUserPin();
+    if(_prevOpen){setTimeout(function(){var c=document.querySelector('.card[data-id="'+_prevOpen+'"]');if(c&&!c.classList.contains('open'))c.classList.add('open');},50);}
   }, function(){
     /* GPS denied or failed — silent */
   }, {enableHighAccuracy:true, timeout:10000});
@@ -2078,6 +2081,7 @@ function updateCardDetailUI(){
 var activeFilter='all',activeArea='',activeSort='nearest',searchQuery='';
 
 function getList(){
+  if(typeof LOCATIONS==='undefined'||!LOCATIONS||!LOCATIONS.length) return [];
   var list=LOCATIONS.slice();
   if(activeFilter!=='all') list=list.filter(function(l){return l.type===activeFilter||l.type==='both';});
   if(activeArea) list=list.filter(function(l){return l.area===activeArea;});
@@ -2134,7 +2138,20 @@ function renderCards(){
   var list=getList();
   var el=document.getElementById('cardsList'),empty=document.getElementById('emptyState');
   document.getElementById('locationCount').textContent=list.length+' location'+(list.length!==1?'s':'');
-  if(!list.length){el.innerHTML='';empty.classList.add('show');return;}
+  if(!list.length){
+    el.innerHTML='';
+    if(typeof LOCATIONS==='undefined'||!LOCATIONS||!LOCATIONS.length){
+      el.innerHTML='<div style="padding:40px 20px;text-align:center;color:var(--ts)">'
+        +'<div style="font-size:40px;margin-bottom:12px">📂</div>'
+        +'<div style="font-size:16px;font-weight:700;margin-bottom:8px">Locations not loaded</div>'
+        +'<div style="font-size:13px;color:var(--tm);line-height:1.6">'
+        +'Make sure <strong>locations.js</strong> is in the same folder.<br>'
+        +'On GitHub Pages both files must be uploaded.'
+        +'</div></div>';
+      if(empty) empty.classList.remove('show');
+    } else { empty.classList.add('show'); }
+    return;
+  }
   empty.classList.remove('show');
   var _openId; try{_openId=sessionStorage.getItem('dl_open_card');}catch(e){}
   el.innerHTML=list.map(function(loc,i){
@@ -2312,7 +2329,7 @@ function openShare(id){
     timesEl.innerHTML += '<div class="share-card-time-pill"><span>Eid Prayer</span>' + loc.eidTime + '</div>';
   }
   if(loc.imam && loc.imam !== 'To be announced'){
-    timesEl.innerHTML += '<div class="share-card-time-pill"><span>Imam</span>' + loc.imam + '</div>';
+    timesEl.innerHTML += '<div class="share-card-time-pill"><span>'+(loc.imamRole||'Imam')+'</span>' + loc.imam + '</div>';
   }
 
   /* Text preview */
@@ -4137,7 +4154,7 @@ function updateFooterContact(){
 window.addEventListener('DOMContentLoaded', function(){
 
   var el = document.getElementById('settingsLocCount');
-  var _vc2=LOCATIONS.filter(function(l){return l.verified;}).length; if(el) el.textContent=_vc2+' verified locations · Abuja FCT';
+  var _vc2=(typeof LOCATIONS!=='undefined'&&LOCATIONS)?LOCATIONS.filter(function(l){return l.verified;}).length:0; if(el) el.textContent=_vc2+' verified locations · Abuja FCT';
   buildAreaDropdown();
   renderCards();
   setHijriDate();
