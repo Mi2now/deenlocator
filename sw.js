@@ -4,11 +4,14 @@
  * Enables offline support and faster loading
  */
 
-var CACHE = 'deenlocator-v5';
+var CACHE = 'deenlocator-v7';
 
 var FILES = [
   '/deenlocator/',
   '/deenlocator/index.html',
+  '/deenlocator/app.js',
+  '/deenlocator/share-card.js',
+  '/deenlocator/styles.css',
   '/deenlocator/locations.js',
   '/deenlocator/config.js'
 ];
@@ -34,6 +37,11 @@ self.addEventListener('activate', function(e) {
     })
   );
   self.clients.claim();
+});
+
+/* Skip waiting message — allows instant activation */
+self.addEventListener('message', function(e){
+  if(e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 /* Fetch — serve from cache, fall back to network */
