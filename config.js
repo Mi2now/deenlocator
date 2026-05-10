@@ -4,10 +4,10 @@
 */
 
 var APP_CONFIG = {
-  "whatsappNumber": "+2348065900110",
-  "contactPhone": "2348065900110",
+  "whatsappNumber": "2348065900110",
+  "contactPhone": "",
   "adminEmail": "mustytunau@gmail.com",
-  "googleFormUrl": "https://forms.gle/WZexZUwfHFUaKaG28",
+  "googleFormUrl": "https://forms.gle/deenlocator",
   "appUrl": "https://mi2now.github.io/deenlocator",
   "appName": "DeenLocator",
   "appTagline": "Eid & Jumuah Locator · Abuja",
@@ -21,10 +21,12 @@ var APP_CONFIG = {
   "donationAccName": "DeenLocator — 2now Technology",
   "donationBank": "First Bank Nigeria",
   "gaId": "G-XXXXXXXXXX",
-  "footerFacebook": "@deenlocator",
-  "footerInstagram": "@deenlocator",
-  "footerWhatsapp": "+2348065900110",
-  "footerTwitter": "@deenlocator",
+  "footerFacebook": "",
+  "footerInstagram": "",
+  "footerWhatsapp": "",
+  "footerTwitter": "",
   "eidAlAdhaDate": "2026-05-27",
-  "hijriOffset": 0
+  "hijriOffset": 0,
+  "shareCardHadith": "Whoever guides others to goodness will have a reward equal to those who do good.",
+  "shareCardHadithRef": "Sahih Muslim 1893"
 };

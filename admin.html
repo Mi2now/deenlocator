@@ -1816,7 +1816,9 @@ var CFG_DEFAULTS = {
   poweredBy: '2now Technology',
   shareCardTagline: 'Find Eid & Jumuah locations in Abuja instantly',
   eidAlAdhaDate: '2026-05-27',
-  hijriOffset: 0
+  hijriOffset: 0,
+  shareCardHadith: 'Whoever guides others to goodness will have a reward equal to those who do good',
+  shareCardHadithRef: '— Sahih Muslim 1893'
 };
 
 function openConfigPanel(){
@@ -1847,6 +1849,8 @@ function loadConfigDefaults(){
   if(document.getElementById('cfg_tagline')) document.getElementById('cfg_tagline').value = c.shareCardTagline||'';
   if(document.getElementById('cfg_eid_adha')) document.getElementById('cfg_eid_adha').value = c.eidAlAdhaDate||'2026-05-27';
   if(document.getElementById('cfg_hijri_offset')) document.getElementById('cfg_hijri_offset').value = (c.hijriOffset||0);
+  if(document.getElementById('cfg_hadith'))     document.getElementById('cfg_hadith').value     = c.shareCardHadith||'';
+  if(document.getElementById('cfg_hadith_ref')) document.getElementById('cfg_hadith_ref').value = c.shareCardHadithRef||'';
 }
 
 function exportConfig(){
@@ -1873,7 +1877,9 @@ function exportConfig(){
     footerWhatsapp:  document.getElementById('cfg_foot_wa') ? document.getElementById('cfg_foot_wa').value.trim() : '',
     footerTwitter:   document.getElementById('cfg_foot_x')  ? document.getElementById('cfg_foot_x').value.trim()  : '',
     eidAlAdhaDate:   document.getElementById('cfg_eid_adha') ? document.getElementById('cfg_eid_adha').value.trim() : '2026-05-27',
-    hijriOffset:     document.getElementById('cfg_hijri_offset') ? parseInt(document.getElementById('cfg_hijri_offset').value)||0 : 0
+    hijriOffset:     document.getElementById('cfg_hijri_offset') ? parseInt(document.getElementById('cfg_hijri_offset').value)||0 : 0,
+    shareCardHadith: document.getElementById('cfg_hadith') ? document.getElementById('cfg_hadith').value.trim() : '',
+    shareCardHadithRef: document.getElementById('cfg_hadith_ref') ? document.getElementById('cfg_hadith_ref').value.trim() : ''
   };
   try{ localStorage.setItem('dl_admin_config', JSON.stringify(c)); }catch(e){}
 
@@ -2305,6 +2311,16 @@ function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.c
       <div>
         <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Share Card Tagline</label>
         <input id="cfg_tagline" placeholder="Find Eid &amp; Jumuah locations in Abuja instantly" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Mosque Prayer Card — Hadith</label>
+        <textarea id="cfg_hadith" rows="3" placeholder="Whoever guides others to goodness will have a reward equal to those who do good" style="width:100%;border-radius:10px;border:1.5px solid var(--cd);padding:10px 12px;font-family:inherit;font-size:14px;resize:vertical"></textarea>
+        <div style="font-size:11px;color:var(--tm);margin-top:3px">Appears on the Share My Mosque Prayer Times card in gold italic. Keep it concise — 1–2 lines.</div>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Hadith Reference</label>
+        <input id="cfg_hadith_ref" placeholder="— Sahih Muslim 1893" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+        <div style="font-size:11px;color:var(--tm);margin-top:3px">e.g. — Sahih Muslim 1893 &nbsp;|&nbsp; — Tirmidhi 2670</div>
       </div>
     </div>
     <div style="font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Share Card Footer — Social Media &amp; Contact</div>
