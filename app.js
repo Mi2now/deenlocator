@@ -191,7 +191,7 @@ function renderPtCards(){
   var now=new Date(),nm=now.getHours()*60+now.getMinutes(),r=getNext();
   var HRS=[],MNS=[];
   for(var hh=1;hh<=12;hh++) HRS.push(hh<10?'0'+hh:''+hh);
-  for(var mm=0;mm<60;mm+=5) MNS.push(mm<10?'0'+mm:''+mm);
+  for(var mm=0;mm<60;mm+=1) MNS.push(mm<10?'0'+mm:''+mm);
   document.getElementById('ptCards').innerHTML=PRAYERS.map(function(pr,i){
     var pmin=pr.h*60+pr.m,cls='pt-card',badge='';
     if(pmin<nm) cls+=' passed';
@@ -199,13 +199,13 @@ function renderPtCards(){
     var timeEl;
     if(ptEditing){
       var h12=pr.h%12||12,hS=h12<10?'0'+h12:''+h12;
-      var mSn=Math.round(pr.m/5)*5; if(mSn>=60)mSn=55;
+      var mSn=pr.m; if(mSn>=60)mSn=59;
       var mS=mSn<10?'0'+mSn:''+mSn;
       var ap=pr.h>=12?'PM':'AM';
       timeEl='<div class="pt-drum-row">'
-        +'<div class="pt-drum" id="drH'+i+'"><div class="pt-drum-hl"></div><div class="pt-drum-inner"></div></div>'
+        +'<div class="pt-drum-col"><div class="pt-drum-col-label">H</div><div class="pt-drum" id="drH'+i+'"><div class="pt-drum-hl"></div><div class="pt-drum-inner"></div></div></div>'
         +'<span class="pt-drum-sep">:</span>'
-        +'<div class="pt-drum" id="drM'+i+'"><div class="pt-drum-hl"></div><div class="pt-drum-inner"></div></div>'
+        +'<div class="pt-drum-col"><div class="pt-drum-col-label">M</div><div class="pt-drum" id="drM'+i+'"><div class="pt-drum-hl"></div><div class="pt-drum-inner"></div></div></div>'
         +'<div class="pt-drum-ampm">'
           +'<button class="pt-drum-ap-btn'+(ap==='AM'?' on':'')+'" id="dap-'+i+'-am" onclick="setDrumAP('+i+',\'AM\')">AM</button>'
           +'<button class="pt-drum-ap-btn'+(ap==='PM'?' on':'')+'" id="dap-'+i+'-pm" onclick="setDrumAP('+i+',\'PM\')">PM</button>'
@@ -218,10 +218,10 @@ function renderPtCards(){
   if(ptEditing){
     var HRS2=[],MNS2=[];
     for(var hh2=1;hh2<=12;hh2++) HRS2.push(hh2<10?'0'+hh2:''+hh2);
-    for(var mm2=0;mm2<60;mm2+=5) MNS2.push(mm2<10?'0'+mm2:''+mm2);
+    for(var mm2=0;mm2<60;mm2+=1) MNS2.push(mm2<10?'0'+mm2:''+mm2);
     PRAYERS.forEach(function(pr,i){
       var h12b=pr.h%12||12,hSb=h12b<10?'0'+h12b:''+h12b;
-      var mSnb=Math.round(pr.m/5)*5; if(mSnb>=60)mSnb=55;
+      var mSnb=pr.m; if(mSnb>=60)mSnb=59;
       var mSb=mSnb<10?'0'+mSnb:''+mSnb;
       _buildDrum(document.getElementById('drH'+i), HRS2, hSb);
       _buildDrum(document.getElementById('drM'+i), MNS2, mSb);
@@ -252,19 +252,25 @@ function updatePrayerScreen(){
 /* Drum-roll picker */
 function _buildDrum(drumEl,values,selVal){
   if(!drumEl)return;
+  /* Pad with one phantom item at each end so first/last real item
+     can reach the centre slot without blank space showing */
+  var padded=[''].concat(values).concat(['']);
   var si=values.indexOf(selVal);if(si<0)si=0;
-  drumEl.dataset.idx=si;drumEl.dataset.len=values.length;
+  si=si+1; /* offset by 1 for leading phantom */
+  drumEl.dataset.idx=si;drumEl.dataset.len=padded.length;
   var inner=drumEl.querySelector('.pt-drum-inner');
-  inner.innerHTML=values.map(function(v,i){return '<div class="pt-drum-item'+(i===si?' sel':'')+'" data-v="'+v+'">'+v+'</div>';}).join('');
-  inner.style.transform='translateY('+((1-si)*36)+'px)';
+  inner.innerHTML=padded.map(function(v,i){
+    return '<div class="pt-drum-item'+(i===si?' sel':'')+(v===''?' phantom':'')+'" data-v="'+v+'">'+v+'</div>';
+  }).join('');
+  inner.style.transform='translateY('+((1-si)*28)+'px)';
 }
 function _snapDrum(el,ni){
   var len=parseInt(el.dataset.len);
-  ni=Math.max(0,Math.min(len-1,ni));
+  ni=Math.max(1,Math.min(len-2,ni));
   el.dataset.idx=ni;
   var inner=el.querySelector('.pt-drum-inner');
   inner.style.transition='transform .12s ease';
-  inner.style.transform='translateY('+((1-ni)*36)+'px)';
+  inner.style.transform='translateY('+((1-ni)*28)+'px)';
   inner.querySelectorAll('.pt-drum-item').forEach(function(it,i){it.classList.toggle('sel',i===ni);});
 }
 function _wireDrum(el){
@@ -272,17 +278,17 @@ function _wireDrum(el){
   function getInner(){return el.querySelector('.pt-drum-inner');}
   el.addEventListener('touchstart',function(e){sy=e.touches[0].clientY;si=parseInt(el.dataset.idx);getInner().style.transition='none';},{passive:true});
   el.addEventListener('touchmove',function(e){
-    var dy=sy-e.touches[0].clientY,ni=Math.round(si+dy/36),len=parseInt(el.dataset.len);
-    ni=Math.max(0,Math.min(len-1,ni));
-    getInner().style.transform='translateY('+((1-ni)*36)+'px)';
+    var dy=sy-e.touches[0].clientY,ni=Math.round(si+dy/28),len=parseInt(el.dataset.len);
+    ni=Math.max(1,Math.min(len-2,ni));
+    getInner().style.transform='translateY('+((1-ni)*28)+'px)';
     getInner().querySelectorAll('.pt-drum-item').forEach(function(it,i){it.classList.toggle('sel',i===ni);});
   },{passive:true});
-  el.addEventListener('touchend',function(e){_snapDrum(el,Math.round(si+(sy-e.changedTouches[0].clientY)/36));});
+  el.addEventListener('touchend',function(e){_snapDrum(el,Math.round(si+(sy-e.changedTouches[0].clientY)/28));});
   el.addEventListener('wheel',function(e){e.preventDefault();_snapDrum(el,parseInt(el.dataset.idx)+(e.deltaY>0?1:-1));},{passive:false});
   el.addEventListener('mousedown',function(e){
     sy=e.clientY;si=parseInt(el.dataset.idx);getInner().style.transition='none';
-    function mm(e2){var dy=sy-e2.clientY,ni=Math.round(si+dy/36),len=parseInt(el.dataset.len);ni=Math.max(0,Math.min(len-1,ni));getInner().style.transform='translateY('+((1-ni)*36)+'px)';getInner().querySelectorAll('.pt-drum-item').forEach(function(it,i){it.classList.toggle('sel',i===ni);});}
-    function mu(e2){_snapDrum(el,Math.round(si+(sy-e2.clientY)/36));document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);}
+    function mm(e2){var dy=sy-e2.clientY,ni=Math.round(si+dy/28),len=parseInt(el.dataset.len);ni=Math.max(1,Math.min(len-2,ni));getInner().style.transform='translateY('+((1-ni)*28)+'px)';getInner().querySelectorAll('.pt-drum-item').forEach(function(it,i){it.classList.toggle('sel',i===ni);});}
+    function mu(e2){_snapDrum(el,Math.round(si+(sy-e2.clientY)/28));document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);}
     document.addEventListener('mousemove',mm);document.addEventListener('mouseup',mu);
   });
 }
@@ -533,9 +539,16 @@ function openDonateSheet(){
 /* fixImgurUrl( — see share-card.js */
 
 function shareMosqueTimeCard(){
-  var mosqueName='', userName='';
+  var mosqueName='', userName='', mosqueAddress='', generatedBy='';
   try{ mosqueName=localStorage.getItem('dl_my_mosque_name')||''; }catch(e){}
   try{ userName=localStorage.getItem('dl_my_prayer_name')||''; }catch(e){}
+  try{ mosqueAddress=localStorage.getItem('dl_my_mosque_address')||''; }catch(e){}
+  try{ generatedBy=localStorage.getItem('dl_my_generated_by')||''; }catch(e){}
+  /* Also pick up live input values */
+  var _mn=document.getElementById('myMosqueName'); if(_mn&&_mn.value.trim()){mosqueName=_mn.value.trim();try{localStorage.setItem('dl_my_mosque_name',mosqueName);}catch(e){}}
+  var _un=document.getElementById('myPrayerName'); if(_un&&_un.value.trim()){userName=_un.value.trim();try{localStorage.setItem('dl_my_prayer_name',userName);}catch(e){}}
+  var _ad=document.getElementById('myMosqueAddress'); if(_ad&&_ad.value.trim()){mosqueAddress=_ad.value.trim();try{localStorage.setItem('dl_my_mosque_address',mosqueAddress);}catch(e){}}
+  var _gb=document.getElementById('myGeneratedBy'); if(_gb&&_gb.value.trim()){generatedBy=_gb.value.trim();try{localStorage.setItem('dl_my_generated_by',generatedBy);}catch(e){}}
   if(!mosqueName) mosqueName='My Mosque';
 
   var cfg=typeof APP_CONFIG!=='undefined'?APP_CONFIG:{};
@@ -584,12 +597,35 @@ function shareMosqueTimeCard(){
   if(line) mLines.push(line);
   mLines.slice(0,2).forEach(function(ml){ ctx.fillText(ml,50,curY); curY+=80; });
 
-  /* User name */
+  /* Mosque address (optional) */
+  if(mosqueAddress){
+    ctx.font='24px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.5)';
+    var _aW=mosqueAddress.split(' '),_aL='',_aLs=[];
+    _aW.forEach(function(w){var t=_aL?_aL+' '+w:w;if(ctx.measureText(t).width>W-100){_aLs.push(_aL);_aL=w;}else _aL=t;});
+    if(_aL)_aLs.push(_aL);
+    _aLs.slice(0,2).forEach(function(al){ctx.fillText('\uD83D\uDCCD '+al,50,curY);curY+=30;});
+    curY+=6;
+  }
+
+  /* Organiser name */
   if(userName){
     ctx.font='italic 32px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.55)';
-    ctx.fillText('by '+userName,50,curY); curY+=46;
+    ctx.fillText('by '+userName,50,curY); curY+=40;
   }
-  curY+=12;
+
+  /* Generated by (optional) */
+  if(generatedBy){
+    ctx.font='20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.35)';
+    ctx.fillText('Generated by: '+generatedBy,50,curY); curY+=28;
+  }
+  curY+=10;
+
+  /* Date generated (auto-filled) */
+  var now=new Date();
+  var dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var monNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  ctx.font='22px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)';
+  ctx.fillText('Date: '+dayNames[now.getDay()]+', '+now.getDate()+' '+monNames[now.getMonth()]+' '+now.getFullYear(),50,curY); curY+=28;
 
   /* Gregorian + Hijri date */
   var now=new Date();
@@ -624,26 +660,51 @@ function shareMosqueTimeCard(){
   });
   curY+=10;
 
-  /* Contact block */
-  ctx.fillStyle='rgba(255,255,255,0.06)'; roundRect(ctx,50,curY,W-100,90,14); ctx.fill();
-  ctx.font='bold 24px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)';
-  ctx.fillText('2NOW TECHNOLOGY',80,curY+30);
-  ctx.font='26px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.7)';
-  ctx.fillText(contactPhone,80,curY+58);
-  ctx.font='24px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.5)';
-  ctx.fillText(contactEmail,80+ctx.measureText(contactPhone).width+30,curY+58);
-  curY+=110;
+  /* ── Hadith block — below prayer times ── */
+  var _hadith = (cfg.shareCardHadith) || 'Whoever guides others to goodness will have a reward equal to those who do good';
+  var _hadithRef = (cfg.shareCardHadithRef) || '\u2014 Sahih Muslim';
+  curY+=14;
+  /* Wrap hadith text */
+  var _hWords=_hadith.split(' '),_hLine='',_hLines=[];
+  ctx.font='italic bold 30px sans-serif';
+  _hWords.forEach(function(w){var t=_hLine?_hLine+' '+w:w;if(ctx.measureText(t).width>W-120){_hLines.push(_hLine);_hLine=w;}else _hLine=t;});
+  if(_hLine)_hLines.push(_hLine);
+  var _hH=(_hLines.length*40)+56;
+  ctx.fillStyle='rgba(240,140,0,0.1)'; roundRect(ctx,50,curY,W-100,_hH,14); ctx.fill();
+  ctx.strokeStyle='rgba(240,140,0,0.35)'; ctx.lineWidth=1.5; roundRect(ctx,50,curY,W-100,_hH,14); ctx.stroke();
+  ctx.fillStyle='rgba(240,140,0,0.6)'; ctx.fillRect(50,curY,5,_hH);
+  var _hY=curY+36;
+  ctx.font='italic bold 30px sans-serif'; ctx.fillStyle='#F0C96A';
+  ctx.fillText('\u201C',72,_hY);
+  _hLines.forEach(function(hl){ctx.fillText(hl,96,_hY);_hY+=40;});
+  _hY-=6;
+  ctx.fillText('\u201D',W-70,_hY);
+  _hY+=36;
+  ctx.font='italic 22px sans-serif'; ctx.fillStyle='rgba(240,180,50,0.7)';
+  ctx.fillText(_hadithRef,96,_hY);
+  curY+=_hH+30;
 
-  /* Footer */
-  var fY=H-130;
-  ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.fillRect(0,fY,W,130);
+  /* Footer — 2 col: Download left, Contact right */
+  var fY=H-160;
+  ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.fillRect(0,fY,W,160);
   ctx.fillStyle='#22c98a'; ctx.fillRect(0,fY,W,2);
-  ctx.font='bold 26px sans-serif'; ctx.fillStyle='#ffffff';
-  ctx.fillText('\uD83D\uDCF1 Download DeenLocator \u2014 Free App',50,fY+44);
-  ctx.font='22px sans-serif'; ctx.fillStyle='#22c98a';
-  ctx.fillText(appUrl,50,fY+78);
-  ctx.font='18px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.35)';
-  ctx.fillText('Find Eid & Jumuah prayer locations in Abuja \u2014 instantly',50,fY+108);
+  /* Left: Download */
+  ctx.textAlign='left';
+  ctx.font='bold 24px sans-serif'; ctx.fillStyle='#ffffff';
+  ctx.fillText('\uD83D\uDCF1 Download DeenLocator \u2014 Free',50,fY+40);
+  ctx.font='20px sans-serif'; ctx.fillStyle='#22c98a';
+  ctx.fillText(appUrl,50,fY+66);
+  ctx.font='15px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)';
+  ctx.fillText('Download, edit & share your mosque prayer times',50,fY+92);
+  /* Right: 2now Technology + phone + email */
+  ctx.textAlign='right';
+  ctx.font='bold 19px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.45)';
+  ctx.fillText('2now Technology',W-50,fY+40);
+  ctx.font='bold 21px sans-serif'; ctx.fillStyle='#22c98a';
+  ctx.fillText('\uD83D\uDCDE '+contactPhone,W-50,fY+66);
+  ctx.font='16px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)';
+  ctx.fillText(contactEmail,W-50,fY+92);
+  ctx.textAlign='left';
 
   function doShare(){
     cv.toBlob(function(blob){
@@ -2667,11 +2728,15 @@ function setPrayerMode(mode){
     if(apiBtn){    apiBtn.classList.remove('active'); }
     if(editBar){   editBar.style.display = 'flex'; }
     var shareRow=document.getElementById('ptShareRow'); if(shareRow) shareRow.style.display='block';
-    /* Load saved mosque name */
+    /* Load saved mosque fields */
     var nameEl=document.getElementById('myMosqueName');
     if(nameEl){ try{nameEl.value=localStorage.getItem('dl_my_mosque_name')||'';}catch(e){} }
     var nameEl2=document.getElementById('myPrayerName');
     if(nameEl2){ try{nameEl2.value=localStorage.getItem('dl_my_prayer_name')||'';}catch(e){} }
+    var addrEl=document.getElementById('myMosqueAddress');
+    if(addrEl){ try{addrEl.value=localStorage.getItem('dl_my_mosque_address')||'';}catch(e){} }
+    var genByEl=document.getElementById('myGeneratedBy');
+    if(genByEl){ try{genByEl.value=localStorage.getItem('dl_my_generated_by')||'';}catch(e){} }
     if(statusEl){  statusEl.textContent = '✏️ Using your custom times'; }
     /* Use saved manual times */
     PRAYERS = loadPrayers();
@@ -2738,16 +2803,23 @@ function initPrayerMode(){
   var editBar   = document.getElementById('ptEditBar');
   var statusEl  = document.getElementById('ptModeStatus');
 
+  var shareRow = document.getElementById('ptShareRow');
   if(prayerMode === 'api'){
     if(apiBtn)    apiBtn.classList.add('active');
     if(manualBtn) manualBtn.classList.remove('active');
     if(editBar)   editBar.style.display = 'none';
+    if(shareRow)  shareRow.style.display = 'none';
     if(statusEl)  statusEl.textContent = '⏳ Fetching today\'s Abuja times...';
     fetchPrayerTimesForMode(statusEl);
   } else {
     if(manualBtn) manualBtn.classList.add('active');
     if(apiBtn)    apiBtn.classList.remove('active');
     if(editBar)   editBar.style.display = 'flex';
+    if(shareRow)  shareRow.style.display = 'block';
+    var _n1=document.getElementById('myMosqueName'); if(_n1){try{_n1.value=localStorage.getItem('dl_my_mosque_name')||'';}catch(e){}}
+    var _n2=document.getElementById('myPrayerName'); if(_n2){try{_n2.value=localStorage.getItem('dl_my_prayer_name')||'';}catch(e){}}
+    var _n3=document.getElementById('myMosqueAddress'); if(_n3){try{_n3.value=localStorage.getItem('dl_my_mosque_address')||'';}catch(e){}}
+    var _n4=document.getElementById('myGeneratedBy'); if(_n4){try{_n4.value=localStorage.getItem('dl_my_generated_by')||'';}catch(e){}}
     if(statusEl)  statusEl.textContent = '✏️ Using your custom times';
   }
 }
