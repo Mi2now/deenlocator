@@ -48,6 +48,17 @@
 
   <!-- LOCATIONS and CONFIG loaded from external files above -->
     <link rel="stylesheet" href="styles.css">
+  <style>
+  /* Toast notification */
+  .toast{
+    position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:rgba(15,92,66,0.96);color:#fff;padding:10px 20px;border-radius:24px;
+    font-size:14px;font-weight:600;z-index:9999;pointer-events:none;
+    opacity:0;transition:opacity .25s,transform .25s;white-space:nowrap;
+    max-width:90vw;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.25);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  </style>
 </head>
 <body>
 <div class="app">
@@ -554,18 +565,26 @@
 
 <div class="toast" id="toast"></div>
 
+<script>
+/* ══ SHOW TOAST ══ */
+function showToast(msg, duration){
+  var t=document.getElementById('toast');
+  if(!t) return;
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(t._tid);
+  t._tid=setTimeout(function(){t.classList.remove('show');},duration||2800);
+}
+</script>
+
   <script src="app.js"></script>
   <script src="share-card.js"></script>
 <script>
-/* ══ KILL OLD SERVICE WORKERS ══ */
+/* ══ SERVICE WORKER ══ */
+/* Register SW so notifications work via serviceWorker.showNotification() */
 if(navigator.serviceWorker){
-  navigator.serviceWorker.getRegistrations().then(function(regs){
-    regs.forEach(function(r){ r.unregister(); console.log('SW unregistered'); });
-  });
-}
-if(window.caches){
-  caches.keys().then(function(keys){
-    keys.forEach(function(k){ caches.delete(k); console.log('Cache cleared:', k); });
+  navigator.serviceWorker.register('/deenlocator/sw.js').catch(function(e){
+    console.log('SW register failed:', e);
   });
 }
 

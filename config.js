@@ -24,5 +24,7 @@ var APP_CONFIG = {
   "footerFacebook": "@deenlocator",
   "footerInstagram": "@deenlocator",
   "footerWhatsapp": "+2348065900110",
-  "footerTwitter": "@deenlocator"
+  "footerTwitter": "@deenlocator",
+  "eidAlAdhaDate": "2026-05-27",
+  "hijriOffset": 0
 };

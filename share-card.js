@@ -97,7 +97,7 @@ function openEventShare(locId, evIdx){
   var timeFs        = ev.timeFontSize      || 26;
   var extraFs       = ev.extraInfoFontSize || 30;
   var sponsorFs     = ev.sponsorFontSize   || 22;
-  var sponsorLogoSz = ev.sponsorLogoSize   || 32;
+  var sponsorLogoSz = ev.sponsorLogoSize   || 40;
 
   var W = 1080;
 
@@ -121,13 +121,21 @@ function openEventShare(locId, evIdx){
   var hH = 170;
   var mY = hH + 110; /* title starts here */
 
-  /* Title lines */
-  mCtx.font = 'bold '+titleFs+'px sans-serif';
-  var _tw = (ev.title||'').split(' '), _tl = '', _tls = [];
-  _tw.forEach(function(w){ var t=_tl?_tl+' '+w:w; if(mCtx.measureText(t).width>W-100){_tls.push(_tl);_tl=w;}else _tl=t; });
-  if(_tl) _tls.push(_tl);
-  mY += _tls.slice(0,3).length * 98 + 8;
-  if(ev.organiser) mY += 52;
+  /* Title lines — same auto-fit logic as Pass 2 */
+  (function(){
+    var _tFs2 = titleFs;
+    mCtx.font = 'bold ' + _tFs2 + 'px sans-serif';
+    var _tw2 = (ev.title||'').split(' ');
+    var _widest2 = _tw2.reduce(function(mx,w){return Math.max(mx,mCtx.measureText(w).width);},0);
+    while(_tFs2 > 28 && _widest2 > W-100){ _tFs2--; mCtx.font='bold '+_tFs2+'px sans-serif'; _widest2=_tw2.reduce(function(mx,w){return Math.max(mx,mCtx.measureText(w).width);},0); }
+    var _tl2='', _tls2=[];
+    _tw2.forEach(function(w){var t=_tl2?_tl2+' '+w:w;if(mCtx.measureText(t).width>W-100){_tls2.push(_tl2);_tl2=w;}else _tl2=t;});
+    if(_tl2) _tls2.push(_tl2);
+    var _lh2 = Math.round(_tFs2*1.15);
+    mY += _tls2.slice(0,3).length * _lh2 + 8;
+    /* Organiser: estimate with orgFs capped */
+    var _oFs2=orgFs; if(ev.organiser){ mCtx.font='italic '+_oFs2+'px sans-serif'; while(_oFs2>14&&mCtx.measureText('by '+ev.organiser).width>W-100){_oFs2--;} mY+=Math.round(_oFs2*1.5)+4; }
+  })();
 
   /* Pills row */
   mY += 10 + 64 + 24;
@@ -167,8 +175,14 @@ function openEventShare(locId, evIdx){
   var _socRows = Math.ceil(_socCount / 2);
   /* phone(30+38) + soc rows(32 each) + label(24) + top gap(40) */
   var _bottomBlockH = 40 + 24 + (ev.phone ? 68 : 0) + (_socRows * 32) + 20;
-  /* left col: donations = label(24)+name(34)+acct(46)+bank(28) = 132; sponsors variable */
-  _bottomBlockH = Math.max(_bottomBlockH, 40 + 140);
+  /* left col: donations(32+32+36+30+10=140) + supported by label(32) + sponsors(30 each) */
+  var _leftH = 0;
+  if(ev.accountNumber) _leftH += 32+32+36+30+10; /* DONATIONS block */
+  if(ev.sponsors){
+    var _spCount=(Array.isArray(ev.sponsors)?ev.sponsors:ev.sponsors.split('\n').filter(Boolean)).length;
+    _leftH += 32 + Math.min(_spCount,5)*32; /* SUPPORTED BY label + rows */
+  }
+  _bottomBlockH = Math.max(_bottomBlockH, 40 + Math.max(_leftH, 60));
 
   var _footerH = 132;
   /* ISSUE 2 FIX: dynamic H = content bottom + bottom block + gap + footer */
@@ -229,13 +243,40 @@ function openEventShare(locId, evIdx){
 
   /* Title */
   var curY=hH+110;
-  ctx.textAlign='left'; ctx.font='bold '+titleFs+'px sans-serif'; ctx.fillStyle='#ffffff';
-  var eWords=(ev.title||'').split(' '),eLine='',eLines=[];
-  eWords.forEach(function(w){var t=eLine?eLine+' '+w:w;if(ctx.measureText(t).width>W-100){eLines.push(eLine);eLine=w;}else eLine=t;});
-  if(eLine) eLines.push(eLine);
-  eLines.slice(0,3).forEach(function(nl){ctx.fillText(nl,50,curY);curY+=98;});
+  /* Auto-fit title: reduce font size if single-word lines are too wide */
+  ctx.textAlign='left';
+  (function(){
+    /* Try requested size; if any word alone exceeds W-100, shrink until it fits */
+    var _tFs = titleFs;
+    var _maxTW = W - 100;
+    ctx.font = 'bold ' + _tFs + 'px sans-serif';
+    var _words = (ev.title||'').split(' ');
+    /* Shrink until the widest single word fits */
+    var _widest = _words.reduce(function(mx,w){ return Math.max(mx, ctx.measureText(w).width); }, 0);
+    while(_tFs > 28 && _widest > _maxTW){
+      _tFs--;
+      ctx.font = 'bold ' + _tFs + 'px sans-serif';
+      _widest = _words.reduce(function(mx,w){ return Math.max(mx, ctx.measureText(w).width); }, 0);
+    }
+    ctx.fillStyle = '#ffffff';
+    var eWords=_words, eLine='', eLines=[];
+    eWords.forEach(function(w){var t=eLine?eLine+' '+w:w;if(ctx.measureText(t).width>_maxTW){eLines.push(eLine);eLine=w;}else eLine=t;});
+    if(eLine) eLines.push(eLine);
+    var _lineH = Math.round(_tFs * 1.15);
+    eLines.slice(0,3).forEach(function(nl){ctx.fillText(nl,50,curY);curY+=_lineH;});
+  })();
   curY+=8;
-  if(ev.organiser){ctx.font='italic '+orgFs+'px sans-serif';ctx.fillStyle='rgba(255,255,255,0.6)';ctx.fillText('by '+ev.organiser,50,curY);curY+=52;}
+  if(ev.organiser){
+    var _orgText = 'by '+ev.organiser;
+    var _oFs = fitFontSizeItalic ? orgFs : orgFs; /* placeholder until helpers available */
+    /* Inline fit since helpers not yet defined at this point */
+    _oFs = orgFs;
+    ctx.font = 'italic ' + _oFs + 'px sans-serif';
+    while(_oFs > 14 && ctx.measureText(_orgText).width > W-100){ _oFs--; ctx.font='italic '+_oFs+'px sans-serif'; }
+    ctx.fillStyle='rgba(255,255,255,0.6)';
+    ctx.fillText(_orgText,50,curY);
+    curY += Math.round(_oFs * 1.5) + 4;
+  }
 
   /* Time + Date pills */
   curY+=10;
@@ -301,8 +342,15 @@ function openEventShare(locId, evIdx){
   if(ev.extraInfo&&ev.extraInfo.trim()){
     curY+=28;
     var infoLines=ev.extraInfo.split('\n').filter(function(l){return l.trim();});
-    var pPad=28, lineH2=Math.round(extraFs*1.4);
-    ctx.font='bold '+extraFs+'px sans-serif';
+    var pPad=28;
+    /* Auto-fit extraFs: shrink if any word alone exceeds available width */
+    var _eFs=extraFs, _eMaxW=W-130-24;
+    ctx.font='bold '+_eFs+'px sans-serif';
+    var _eWords=(ev.extraInfo||'').split(/\s+/);
+    var _eWidest=_eWords.reduce(function(mx,w){return Math.max(mx,ctx.measureText(w).width);},0);
+    while(_eFs>12&&_eWidest>_eMaxW){_eFs--;ctx.font='bold '+_eFs+'px sans-serif';_eWidest=_eWords.reduce(function(mx,w){return Math.max(mx,ctx.measureText(w).width);},0);}
+    var lineH2=Math.round(_eFs*1.4);
+    ctx.font='bold '+_eFs+'px sans-serif';
     var allWrapped=[];
     infoLines.forEach(function(il){
       var clean=il.trim();
@@ -320,7 +368,7 @@ function openEventShare(locId, evIdx){
     ctx.fillStyle='rgba(255,255,255,0.06)'; roundRect(ctx,44,curY-4,W-88,pillH2+8,20); ctx.fill();
     ctx.fillStyle='rgba(255,255,255,0.13)'; roundRect(ctx,50,curY,W-100,pillH2,16); ctx.fill();
     ctx.fillStyle=pal.accent; ctx.fillRect(50,curY,5,pillH2);
-    ctx.textAlign='left'; ctx.font='bold '+extraFs+'px sans-serif'; ctx.fillStyle='#ffffff';
+    ctx.textAlign='left'; ctx.font='bold '+_eFs+'px sans-serif'; ctx.fillStyle='#ffffff';
     var ty2=curY+pPad+30;
     allWrapped.forEach(function(rl){ ctx.fillText(rl,50+24,ty2); ty2+=lineH2; });
     curY+=pillH2+28;
@@ -354,6 +402,44 @@ function openEventShare(locId, evIdx){
 
   var colMaxW = colW-20;
 
+  /* ── AUTO-FIT HELPERS ──
+     fitFontSize: reduces font size until text fits maxWidth.
+     Returns the font size that fits. Never goes below minSize. */
+  function fitFontSize(text, maxW, requestedSize, minSize){
+    var fs = requestedSize;
+    var lo = minSize || Math.max(10, Math.round(requestedSize * 0.4));
+    ctx.font = 'bold ' + fs + 'px sans-serif';
+    while(fs > lo && ctx.measureText(text).width > maxW){
+      fs--;
+      ctx.font = 'bold ' + fs + 'px sans-serif';
+    }
+    return fs;
+  }
+
+  /* fitFontSizeItalic: same but italic */
+  function fitFontSizeItalic(text, maxW, requestedSize, minSize){
+    var fs = requestedSize;
+    var lo = minSize || Math.max(10, Math.round(requestedSize * 0.4));
+    ctx.font = 'italic ' + fs + 'px sans-serif';
+    while(fs > lo && ctx.measureText(text).width > maxW){
+      fs--;
+      ctx.font = 'italic ' + fs + 'px sans-serif';
+    }
+    return fs;
+  }
+
+  /* fitFontSizeNormal: for sponsor names etc */
+  function fitFontSizeNormal(text, maxW, requestedSize, minSize){
+    var fs = requestedSize;
+    var lo = minSize || Math.max(10, Math.round(requestedSize * 0.4));
+    ctx.font = fs + 'px sans-serif';
+    while(fs > lo && ctx.measureText(text).width > maxW){
+      fs--;
+      ctx.font = fs + 'px sans-serif';
+    }
+    return fs;
+  }
+
   /* Social 2×2 grid */
   function drawSocGrid(socItems, startX, startRy, colWidth){
     var hcw = Math.floor((colWidth-8)/2);
@@ -372,73 +458,75 @@ function openEventShare(locId, evIdx){
     return ry;
   }
 
-  if(isProjectOrFeeding){
-    /* LEFT: Donations */
-    ctx.textAlign='left';
-    if(ev.accountNumber){
-      ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.fillText('DONATIONS',leftX,bottomY+20);
-      ctx.font='bold 26px sans-serif'; ctx.fillStyle='#f0c96a';
-      if(ev.accountName) ctx.fillText(fitText(ev.accountName,colMaxW,'bold 26px sans-serif'),leftX,bottomY+52);
-      ctx.font='34px sans-serif'; ctx.fillStyle='#f0c96a'; ctx.fillText(ev.accountNumber,leftX,bottomY+88);
-      ctx.font='20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)';
-      if(ev.bankName) ctx.fillText(ev.bankName,leftX,bottomY+116);
-    }
-    /* RIGHT: Enquiry + Social */
-    var ry=bottomY+20;
-    if(ev.phone){
-      ctx.textAlign='left'; ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.fillText('ENQUIRY',rightX,ry); ry+=30;
-      ctx.font='bold 26px sans-serif'; ctx.fillStyle='#22c98a'; ctx.fillText('\uD83D\uDCDE  '+ev.phone,rightX,ry); ry+=38;
-    }
-    var socItems=[];
-    if(ev.facebook) socItems.push({icon:'fb',lbl:ev.facebook});
-    if(ev.instagram) socItems.push({icon:'ig',lbl:ev.instagram});
-    if(ev.whatsappSocial) socItems.push({icon:'wa',lbl:ev.whatsappSocial});
-    if(ev.twitterX) socItems.push({icon:'x',lbl:ev.twitterX});
-    if(socItems.length) drawSocGrid(socItems, rightX, ry, colW);
-  } else {
-    /* LEFT: Supported by */
-    ctx.textAlign='left';
-    var spArr2=[];
-    if(ev.sponsors){
-      if(Array.isArray(ev.sponsors)) spArr2=ev.sponsors;
-      else{ ev.sponsors.split('\n').forEach(function(s){if(s.trim())spArr2.push({name:s.trim(),logoUrl:''});}); }
-      spArr2=spArr2.filter(function(s){return(typeof s==='string'?s:(s.name||'')).trim();});
-    }
-    if(spArr2.length){
-      ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.fillText('SUPPORTED BY',leftX,bottomY+20);
-      var sy=bottomY+52;
-      spArr2.slice(0,5).forEach(function(s){
-        var sName=typeof s==='string'?s:s.name;
-        var sLogo=typeof s==='object'&&s.logoUrl?s.logoUrl:'';
-        if(sLogo){
-          (function(lx,ly,sz){
-            _loadImg(sLogo,function(img){
-              ctx.save();ctx.beginPath();ctx.arc(lx+sz/2,ly-sz/2,sz/2,0,Math.PI*2);ctx.clip();
-              ctx.drawImage(img,lx,ly-sz,sz,sz);ctx.restore();
-            });
-          })(leftX,sy,sponsorLogoSz);
-          ctx.textAlign='left'; ctx.font=sponsorFs+'px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.85)';
-          ctx.fillText(fitText(sName,colMaxW-(sponsorLogoSz+8),sponsorFs+'px sans-serif'),leftX+sponsorLogoSz+8,sy);
-          sy+=Math.max(30,sponsorLogoSz+4);
-        } else {
-          ctx.textAlign='left'; ctx.font=sponsorFs+'px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.75)';
-          ctx.fillText(fitText('\u2726  '+sName,colMaxW,sponsorFs+'px sans-serif'),leftX,sy); sy+=30;
-        }
-      });
-    }
-    /* RIGHT: Enquiry + Social */
-    var ry2=bottomY+20;
-    if(ev.phone){
-      ctx.textAlign='left'; ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)'; ctx.fillText('ENQUIRY',rightX,ry2); ry2+=30;
-      ctx.font='bold 26px sans-serif'; ctx.fillStyle='#22c98a'; ctx.fillText('\uD83D\uDCDE  '+ev.phone,rightX,ry2); ry2+=38;
-    }
-    var socItems2=[];
-    if(ev.facebook) socItems2.push({icon:'fb',lbl:ev.facebook});
-    if(ev.instagram) socItems2.push({icon:'ig',lbl:ev.instagram});
-    if(ev.whatsappSocial) socItems2.push({icon:'wa',lbl:ev.whatsappSocial});
-    if(ev.twitterX) socItems2.push({icon:'x',lbl:ev.twitterX});
-    if(socItems2.length) drawSocGrid(socItems2, rightX, ry2, colW);
+  /* ── LEFT column: Donations (always first if present), then Supported By ── */
+  ctx.textAlign='left';
+  var _leftY = bottomY + 20;
+
+  /* DONATIONS */
+  if(ev.accountNumber){
+    ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)';
+    ctx.fillText('DONATIONS',leftX,_leftY); _leftY+=32;
+    ctx.font='bold 26px sans-serif'; ctx.fillStyle='#f0c96a';
+    if(ev.accountName){ ctx.fillText(fitText(ev.accountName,colMaxW,'bold 26px sans-serif'),leftX,_leftY); _leftY+=32; }
+    ctx.font='34px sans-serif'; ctx.fillStyle='#f0c96a';
+    ctx.fillText(ev.accountNumber,leftX,_leftY); _leftY+=36;
+    ctx.font='20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)';
+    if(ev.bankName){ ctx.fillText(ev.bankName,leftX,_leftY); _leftY+=30; }
+    _leftY+=10; /* gap before Supported By */
   }
+
+  /* SUPPORTED BY (shown after Donations if both exist, or alone if no account) */
+  var spArr2=[];
+  if(ev.sponsors){
+    if(Array.isArray(ev.sponsors)) spArr2=ev.sponsors;
+    else{ ev.sponsors.split('\n').forEach(function(s){if(s.trim())spArr2.push({name:s.trim(),logoUrl:''});}); }
+    spArr2=spArr2.filter(function(s){return(typeof s==='string'?s:(s.name||'')).trim();});
+  }
+  if(spArr2.length){
+    ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)';
+    ctx.fillText('SUPPORTED BY',leftX,_leftY); _leftY+=44;
+    spArr2.slice(0,5).forEach(function(s){
+      var sName=typeof s==='string'?s:s.name;
+      var sLogo=typeof s==='object'&&s.logoUrl?s.logoUrl:'';
+      if(sLogo){
+        /* Logo: draw downward from current y, name vertically centred beside it */
+        (function(lx,ly,sz){
+          /* circle centre at (lx+sz/2, ly+sz/2) — logo sits BELOW the label */
+          _loadImg(sLogo,function(img){
+            ctx.save();ctx.beginPath();ctx.arc(lx+sz/2,ly+sz/2,sz/2,0,Math.PI*2);ctx.clip();
+            ctx.fillStyle='rgba(255,255,255,0.1)'; ctx.fill();
+            ctx.drawImage(img,lx,ly,sz,sz);ctx.restore();
+          });
+        })(leftX,_leftY,sponsorLogoSz);
+        var _spFs=fitFontSizeNormal(sName,colMaxW-(sponsorLogoSz+8),sponsorFs,12);
+        ctx.font=_spFs+'px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.85)';
+        ctx.fillText(sName,leftX+sponsorLogoSz+10,_leftY+Math.round(sponsorLogoSz*0.62));
+        _leftY+=sponsorLogoSz+8;
+      } else {
+        /* No logo — diamond bullet + name */
+        var _spFs2=fitFontSizeNormal('\u2726  '+sName,colMaxW,sponsorFs,12);
+        ctx.font=_spFs2+'px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.75)';
+        ctx.fillText('\u2726  '+sName,leftX,_leftY+Math.round(_spFs2*0.8));
+        _leftY+=Math.max(30,Math.round(_spFs2*1.4));
+      }
+    });
+  }
+
+  /* ── RIGHT column: Enquiry + Social (same for all categories) ── */
+  var _rightY=bottomY+20;
+  if(ev.phone){
+    ctx.textAlign='left'; ctx.font='bold 20px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.38)';
+    ctx.fillText('ENQUIRY',rightX,_rightY); _rightY+=30;
+    ctx.font='bold 26px sans-serif'; ctx.fillStyle='#22c98a';
+    ctx.fillText('\uD83D\uDCDE  '+ev.phone,rightX,_rightY); _rightY+=38;
+  }
+  var socItemsAll=[];
+  if(ev.facebook) socItemsAll.push({icon:'fb',lbl:ev.facebook});
+  if(ev.instagram) socItemsAll.push({icon:'ig',lbl:ev.instagram});
+  if(ev.whatsappSocial) socItemsAll.push({icon:'wa',lbl:ev.whatsappSocial});
+  if(ev.twitterX) socItemsAll.push({icon:'x',lbl:ev.twitterX});
+  if(socItemsAll.length) drawSocGrid(socItemsAll, rightX, _rightY, colW);
+
 
   /* Footer */
   ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.fillRect(0,fY,W,_footerH);

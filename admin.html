@@ -1812,7 +1812,11 @@ var CFG_DEFAULTS = {
   donationAccount: '0123456789',
   donationAccName: 'DeenLocator — 2now Technology',
   donationBank: 'First Bank Nigeria',
-  gaId: 'G-XXXXXXXXXX'
+  gaId: 'G-XXXXXXXXXX',
+  poweredBy: '2now Technology',
+  shareCardTagline: 'Find Eid & Jumuah locations in Abuja instantly',
+  eidAlAdhaDate: '2026-05-27',
+  hijriOffset: 0
 };
 
 function openConfigPanel(){
@@ -1839,6 +1843,10 @@ function loadConfigDefaults(){
   if(document.getElementById('cfg_foot_ig')) document.getElementById('cfg_foot_ig').value = c.footerInstagram||'';
   if(document.getElementById('cfg_foot_wa')) document.getElementById('cfg_foot_wa').value = c.footerWhatsapp||'';
   if(document.getElementById('cfg_foot_x'))  document.getElementById('cfg_foot_x').value  = c.footerTwitter||'';
+  if(document.getElementById('cfg_powered')) document.getElementById('cfg_powered').value = c.poweredBy||'';
+  if(document.getElementById('cfg_tagline')) document.getElementById('cfg_tagline').value = c.shareCardTagline||'';
+  if(document.getElementById('cfg_eid_adha')) document.getElementById('cfg_eid_adha').value = c.eidAlAdhaDate||'2026-05-27';
+  if(document.getElementById('cfg_hijri_offset')) document.getElementById('cfg_hijri_offset').value = (c.hijriOffset||0);
 }
 
 function exportConfig(){
@@ -1850,11 +1858,11 @@ function exportConfig(){
     appUrl:          document.getElementById('cfg_url').value.trim(),
     appName:         'DeenLocator',
     appTagline:      'Eid & Jumuah Locator · Abuja',
-    poweredBy:       '2now Technology',
+    poweredBy:       document.getElementById('cfg_powered') ? document.getElementById('cfg_powered').value.trim() : '2now Technology',
     jumuahMessage:   document.getElementById('cfg_jumuah').value.trim(),
     suggestHeadline: 'Do you know a Mosque or Eid Ground?',
     suggestSubtext:  'Help us build the most complete prayer directory in Abuja — FREE.',
-    shareCardTagline:'Find Eid & Jumuah locations in Abuja instantly',
+    shareCardTagline: document.getElementById('cfg_tagline') ? document.getElementById('cfg_tagline').value.trim() : 'Find Eid & Jumuah locations in Abuja instantly',
     copyCardIntro:   '🕌 DeenLocator — Abuja Prayer Locations',
     donationAccount: document.getElementById('cfg_don_acc').value.trim(),
     donationAccName: document.getElementById('cfg_don_name').value.trim(),
@@ -1863,7 +1871,9 @@ function exportConfig(){
     footerFacebook:  document.getElementById('cfg_foot_fb') ? document.getElementById('cfg_foot_fb').value.trim() : '',
     footerInstagram: document.getElementById('cfg_foot_ig') ? document.getElementById('cfg_foot_ig').value.trim() : '',
     footerWhatsapp:  document.getElementById('cfg_foot_wa') ? document.getElementById('cfg_foot_wa').value.trim() : '',
-    footerTwitter:   document.getElementById('cfg_foot_x')  ? document.getElementById('cfg_foot_x').value.trim()  : ''
+    footerTwitter:   document.getElementById('cfg_foot_x')  ? document.getElementById('cfg_foot_x').value.trim()  : '',
+    eidAlAdhaDate:   document.getElementById('cfg_eid_adha') ? document.getElementById('cfg_eid_adha').value.trim() : '2026-05-27',
+    hijriOffset:     document.getElementById('cfg_hijri_offset') ? parseInt(document.getElementById('cfg_hijri_offset').value)||0 : 0
   };
   try{ localStorage.setItem('dl_admin_config', JSON.stringify(c)); }catch(e){}
 
@@ -2286,6 +2296,17 @@ function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.c
   </div>
 
   <div style="border-top:1px solid var(--cd);margin-top:16px;padding-top:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Share Card</div>
+    <div style="display:grid;gap:10px;margin-bottom:14px">
+      <div>
+        <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Powered By Company Name</label>
+        <input id="cfg_powered" placeholder="2now Technology" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Share Card Tagline</label>
+        <input id="cfg_tagline" placeholder="Find Eid &amp; Jumuah locations in Abuja instantly" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+      </div>
+    </div>
     <div style="font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">Share Card Footer — Social Media &amp; Contact</div>
     <div style="font-size:11px;color:var(--tm);margin-bottom:10px">These appear on the Share Event Card footer so people can contact the mosque/organiser directly</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -2304,6 +2325,23 @@ function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.c
       <div>
         <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Twitter / X</label>
         <input id="cfg_foot_x" placeholder="@YourHandle" style="width:100%;height:38px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:13px"/>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid var(--cd);margin-top:16px;padding-top:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Islamic Calendar</div>
+    <div style="font-size:11px;color:var(--tm);margin-bottom:12px">Adjust Hijri date if moon sighting differs from calculation. Change Eid al-Adha date if authorities announce a different day.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div>
+        <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Eid al-Adha Date</label>
+        <input id="cfg_eid_adha" type="date" value="2026-05-27" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+        <div style="font-size:11px;color:var(--tm);margin-top:4px">Current: 27 May 2026 (1447 AH)</div>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Hijri Date Offset (days)</label>
+        <input id="cfg_hijri_offset" type="number" min="-2" max="2" value="0" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+        <div style="font-size:11px;color:var(--tm);margin-top:4px">0 = auto · +1 = forward 1 day · -1 = back 1 day</div>
       </div>
     </div>
   </div>

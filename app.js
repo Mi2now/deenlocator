@@ -11,6 +11,8 @@ document.getElementById('footerLogo').src   = LOGO;
 /* Pure-math Gregorian->Hijri — works on ALL browsers/devices */
 function gregorianToHijri(date){
   var d=date||new Date();
+  var _off=(typeof APP_CONFIG!=='undefined'&&APP_CONFIG.hijriOffset)||0;
+  if(_off){d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+_off);}
   var gy=d.getFullYear(),gm=d.getMonth()+1,gd=d.getDate();
   var jd=Math.floor((1461*(gy+4800+Math.floor((gm-14)/12)))/4)
         +Math.floor((367*(gm-2-12*Math.floor((gm-14)/12)))/12)
@@ -289,6 +291,28 @@ function _getDrumVal(id){var el=document.getElementById(id);if(!el)return null;v
 function setDrumAP(i,val){['am','pm'].forEach(function(v){var b=document.getElementById('dap-'+i+'-'+v);if(b)b.classList.toggle('on',v===val.toLowerCase());});}
 
 
+function wireEventDots(container){
+  /* Wire up swipe-dot indicators for all event carousels.
+     Called after innerHTML is set — <script> tags in innerHTML never execute. */
+  (container||document).querySelectorAll('.exp-events-scroll').forEach(function(sc){
+    var dots=sc.parentNode.querySelectorAll('.events-dot');
+    if(!dots.length) return;
+    var n=dots.length;
+    function upd(){
+      var cw=sc.scrollWidth/n;
+      if(!cw) return;
+      var si=Math.min(n-1,Math.max(0,Math.round(sc.scrollLeft/cw)));
+      dots.forEach(function(d,i){d.classList.toggle('active',i===si);});
+    }
+    sc.addEventListener('scroll',upd,{passive:true});
+    /* scrollend fires once when momentum stops — not all browsers support it,
+       so we also debounce the scroll event as a fallback */
+    sc.addEventListener('scrollend',upd,{passive:true});
+    var _t; sc.addEventListener('scroll',function(){clearTimeout(_t);_t=setTimeout(upd,120);},{passive:true});
+    upd();
+  });
+}
+
 function renderMosqueEvents(loc){
   if(!loc.events||!loc.events.length) return '';
   var today=new Date(); today.setHours(0,0,0,0);
@@ -385,12 +409,12 @@ function renderMosqueEvents(loc){
         +'<div style="font-size:16px;font-weight:700;color:#856404;letter-spacing:.04em">'+ev.accountNumber+'</div>'
         +'<div style="font-size:10px;color:var(--ts)">'+(ev.bankName||'')+'</div>'
         +'<button class="event-btn copy-acc" style="margin-top:6px" '
-        +'onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">📋 Copy Account Number</button>'
+        +'onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\',event.currentTarget)">📋 Copy Account Number</button>'
         +'</div>';
     }
     if(!isProj&&ev.accountNumber){
       html+='<div style="margin-top:4px">'
-        +'<button class="event-btn copy-acc" onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\')">📋 Copy Account</button>'
+        +'<button class="event-btn copy-acc" onclick="event.stopPropagation();copyToClipboard(\''+(ev.accountNumber||'')+'\',\'Account copied!\',event.currentTarget)">📋 Copy Account</button>'
         +'<div style="font-size:10px;color:var(--ts);margin-top:2px">'+(ev.accountName||'')+(ev.bankName?' · '+ev.bankName:'')+'</div>'
         +'</div>';
     }
@@ -432,19 +456,44 @@ function renderMosqueEvents(loc){
     html+='<div class="events-dots">';
     active.forEach(function(_,i){ html+='<div class="events-dot'+(i===0?' active':'')+'\"></div>'; });
     html+='</div>';
-    html+='<script>setTimeout(function(){var sc=document.getElementById("'+uid+'");if(!sc)return;var cw=sc.offsetWidth||260;sc.addEventListener("scroll",function(){var si=Math.round(sc.scrollLeft/cw);si=Math.max(0,Math.min(si,'+active.length+'-1));sc.parentNode.querySelectorAll(".events-dot").forEach(function(d,i){d.classList.toggle("active",i===si)});},false);},200);<\/script>'; }
+  }
   html+='</div>';
   return html;
 }
 
 
-function copyToClipboard(text, msg){
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(text).then(function(){ showToast('✅ '+(msg||'Copied!')); });
+function copyToClipboard(text, msg, btnEl){
+  var label=msg||'Copied!';
+  function _flashBtn(){
+    if(!btnEl) return;
+    var orig=btnEl.innerHTML;
+    btnEl.innerHTML='✅ Copied!';
+    btnEl.disabled=true;
+    setTimeout(function(){btnEl.innerHTML=orig;btnEl.disabled=false;},2000);
+  }
+  function _onCopied(){
+    showToast('✅ '+label);
+    _flashBtn();
+  }
+  function _fallback(){
+    try{
+      var ta=document.createElement('textarea');
+      ta.value=text;
+      ta.setAttribute('readonly','');
+      ta.style.cssText='position:fixed;top:-9999px;left:-9999px;opacity:0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.setSelectionRange(0,99999);
+      var ok=document.execCommand('copy');
+      document.body.removeChild(ta);
+      if(ok){_onCopied();}else{showToast('⚠️ Copy failed – please copy manually');}
+    }catch(e){showToast('⚠️ Copy failed – please copy manually');}
+  }
+  /* clipboard API needs HTTPS + user gesture; fall back gracefully */
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(_onCopied).catch(_fallback);
   } else {
-    var ta=document.createElement('textarea');ta.value=text;
-    document.body.appendChild(ta);ta.select();document.execCommand('copy');
-    document.body.removeChild(ta);showToast('✅ '+(msg||'Copied!'));
+    _fallback();
   }
   trackEvent('copy_account', 'engagement', text);
 }
@@ -623,10 +672,14 @@ function notifyMe(name){
   if(Notification.permission === 'default'){
     Notification.requestPermission().then(function(result){
       if(result === 'granted'){
-        showToast('Notifications enabled! Setting reminder for ' + name);
+        showToast('✅ Notifications enabled! Setting reminder…');
+        /* Re-register SW so fireNotif can use it */
+        if(navigator.serviceWorker){
+          navigator.serviceWorker.register('/deenlocator/sw.js').catch(function(){});
+        }
         _doSetNotify(name);
       } else {
-        showToast('Permission denied. Go to browser Settings to allow notifications.');
+        showToast('❌ Permission denied. Enable in browser Settings > Notifications.');
       }
     });
     return;
@@ -651,13 +704,12 @@ function _doSetNotify(name){
     var tn = loc2 && loc2.jumuahTime ? loc2.jumuahTime : '';
     showToast(tn ? 'Jumuah reminder set for '+name+'. You will be notified 10 min before '+tn+' every Friday.' : 'Reminder ON for '+name+'.');
     if(loc2) scheduleJumuahForMosque(name, loc2);
-    try{
-      new Notification('DeenLocator Reminder Set', {
-        body: 'Jumuah reminder saved for ' + name + (loc2&&loc2.jumuahTime?' ('+loc2.jumuahTime+')':''),
-        icon: 'icon-192.png',
-        tag: 'dl-confirm'
-      });
-    }catch(e){}
+    /* Use fireNotif (SW-based) — new Notification() is blocked on Android Chrome */
+    fireNotif(
+      '🕌 Jumuah Reminder Set',
+      'You will be notified before ' + (loc2&&loc2.jumuahTime?loc2.jumuahTime+' ':''+'Jumuah') + ' at ' + name,
+      ''
+    );
   }
   var _pOp=null;try{_pOp=sessionStorage.getItem('dl_open_card');}catch(e){}
   renderCards();
@@ -680,9 +732,15 @@ function scheduleJumuahForMosque(name, loc){
   target.setHours(h, m-10, 0, 0);
   var ms = target - now;
   if(ms > 0 && ms < 7*24*60*60*1000){
+    /* Notify when page is open at alert time */
     setTimeout(function(){
-      fireNotif('Jumuah Reminder - ' + name, 'Prayer starts at ' + loc.jumuahTime + '. JazakAllahu khayran.', '');
+      if(isMosqueNotified(name)){
+        fireNotif('🕌 Jumuah Reminder — ' + name, 'Prayer starts at ' + loc.jumuahTime + '. JazakAllahu khayran.', '');
+      }
     }, ms);
+    console.log('DeenLocator: Jumuah reminder for', name, 'in', Math.round(ms/60000), 'min');
+  } else {
+    console.log('DeenLocator: Jumuah for', name, 'is outside schedulable window (ms='+ms+')');
   }
 }
 
@@ -965,6 +1023,7 @@ function renderCards(){
       +'</div>'
     +'</div>';
   }).join('');
+  wireEventDots(el);
   var cl=document.getElementById('cardsList');if(cl){if(cardDetail==='compact')cl.classList.add('cards-compact');else cl.classList.remove('cards-compact');}
   updateCardDetailUI();
   el.querySelectorAll('.card').forEach(function(card){
@@ -1021,7 +1080,7 @@ function buildShareText(loc){
 
   /* Imam — only if known */
   if(loc.imam && loc.imam !== 'To be announced'){
-    lines.push('👤 *Imam:* ' + loc.imam);
+    lines.push('👤 *'+(loc.imamRole||'Imam')+':* ' + loc.imam);
   }
 
   /* Contact — only if available */
