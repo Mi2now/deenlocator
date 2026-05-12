@@ -1787,12 +1787,24 @@ function renderFaqEditor(){
 function addFaqItem(){ FAQ_DATA.push({q:'',a:''}); renderFaqEditor(); }
 function deleteFaq(i){ FAQ_DATA.splice(i,1); renderFaqEditor(); }
 function saveFaqToLS(){
-  try{ localStorage.setItem('dl_admin_faq',JSON.stringify(FAQ_DATA)); toast('FAQs saved!'); }catch(e){}
-  var fc=document.getElementById('faqCode'), fp=document.getElementById('faqExport');
-  if(fc){ fc.textContent=JSON.stringify(FAQ_DATA,null,2); fp.style.display='block'; }
+  try{ localStorage.setItem('dl_admin_faq',JSON.stringify(FAQ_DATA)); toast('FAQs saved to local!'); }catch(e){}
+}
+function downloadFaqJs(){
+  /* Generates a standalone faq-items.js that app.js reads automatically */
+  var out = '/* DeenLocator FAQ Items\n'
+    + '   Generated from admin.html FAQ Editor\n'
+    + '   Upload to GitHub alongside config.js\n'
+    + '*/\n\n'
+    + 'var FAQ_ITEMS = ' + JSON.stringify(FAQ_DATA, null, 2) + ';\n';
+  var blob = new Blob([out], {type:'text/javascript'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url; a.download = 'faq-items.js';
+  a.click(); URL.revokeObjectURL(url);
+  toast('faq-items.js downloaded! Upload to GitHub to go live.');
 }
 function copyFaqExport(){
-  var t=document.getElementById('faqCode').textContent;
+  var t = JSON.stringify(FAQ_DATA, null, 2);
   if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ toast('Copied!'); });
 }
 function openFaqEditor(){
@@ -1854,20 +1866,26 @@ function loadConfigDefaults(){
 }
 
 function exportConfig(){
+  var _phone = document.getElementById('cfg_phone') ? document.getElementById('cfg_phone').value.trim() : '';
+  var _email = document.getElementById('cfg_email').value.trim();
+  var _powered = document.getElementById('cfg_powered') ? document.getElementById('cfg_powered').value.trim() : '2now Technology';
+  var _tagline = document.getElementById('cfg_tagline') ? document.getElementById('cfg_tagline').value.trim() : 'Find Eid & Jumuah locations in Abuja instantly';
   var c = {
     whatsappNumber:  document.getElementById('cfg_whatsapp').value.trim(),
-    contactPhone:    document.getElementById('cfg_phone').value.trim().replace(/^\+?/,''),
-    adminEmail:      document.getElementById('cfg_email').value.trim(),
+    contactPhone:    _phone || '+234 806 590 0110',
+    contactEmail:    _email,
+    adminEmail:      _email,
     googleFormUrl:   document.getElementById('cfg_form').value.trim(),
-    appUrl:          document.getElementById('cfg_url').value.trim(),
+    appUrl:          document.getElementById('cfg_url').value.trim().replace(/^https?:\/\//, ''),
     appName:         'DeenLocator',
     appTagline:      'Eid & Jumuah Locator · Abuja',
-    poweredBy:       document.getElementById('cfg_powered') ? document.getElementById('cfg_powered').value.trim() : '2now Technology',
+    tagline:         'Find Eid grounds & Friday mosques in Abuja',
+    brandName:       _powered,
+    poweredBy:       _powered,
     jumuahMessage:   document.getElementById('cfg_jumuah').value.trim(),
     suggestHeadline: 'Do you know a Mosque or Eid Ground?',
     suggestSubtext:  'Help us build the most complete prayer directory in Abuja — FREE.',
-    shareCardTagline: document.getElementById('cfg_tagline') ? document.getElementById('cfg_tagline').value.trim() : 'Find Eid & Jumuah locations in Abuja instantly',
-    copyCardIntro:   '🕌 DeenLocator — Abuja Prayer Locations',
+    shareCardTagline: _tagline,
     donationAccount: document.getElementById('cfg_don_acc').value.trim(),
     donationAccName: document.getElementById('cfg_don_name').value.trim(),
     donationBank:    document.getElementById('cfg_don_bank').value.trim(),
@@ -2239,10 +2257,12 @@ function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.c
 
 <!-- FAQ Editor Panel -->
 <div id="faqPanel" style="display:none;padding:20px">
-  <h2 style="color:var(--gd);margin-bottom:16px">FAQ Editor</h2>
+  <h2 style="color:var(--gd);margin-bottom:4px">FAQ Editor</h2>
+  <p style="font-size:13px;color:#666;margin-bottom:16px">Edit questions &amp; answers. Click <b>Download faq-items.js</b> then upload to GitHub alongside config.js.</p>
   <div id="faqItems"></div>
   <button class="faq-add" onclick="addFaqItem()">+ Add FAQ Item</button>
-  <button class="faq-save" onclick="saveFaqToLS()">Save FAQs</button>
+  <button class="faq-save" onclick="saveFaqToLS()" style="margin-left:8px">💾 Save</button>
+  <button class="faq-save" onclick="downloadFaqJs()" style="margin-left:8px;background:#0f5c42">⬇ Download faq-items.js</button>
   <button class="tbtn" onclick="document.getElementById('faqPanel').style.display='none';document.getElementById('mainPanel').style.display='block'" style="margin-left:8px">Back</button>
   <div style="font-size:12px;color:#9a9a9a;margin-top:12px">FAQs are saved locally. Copy the output to update your app's FAQ section.</div>
   <div id="faqExport" style="margin-top:12px;display:none">

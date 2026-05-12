@@ -751,33 +751,92 @@ function notifyMe(name){
 
 function _doSetNotify(name){
   var key = 'dl_notify_' + name.replace(/[^a-z0-9]/gi,'_').toLowerCase();
-  var isOn = false;
-  try{ isOn = localStorage.getItem(key) === '1'; }catch(e){}
   var loc2 = LOCATIONS.find(function(l){ return l.name === name; });
+  openMosqueNotifSheet(name, loc2, key);
+}
+
+/* ── Per-mosque notification timing sheet ── */
+function openMosqueNotifSheet(name, loc, key){
+  var isOn = false;
+  var curMins = 10;
+  try{
+    var stored = localStorage.getItem(key);
+    if(stored){
+      var parsed = JSON.parse(stored);
+      isOn = true;
+      curMins = parsed.mins || 10;
+    }
+  }catch(e){ isOn = false; }
+
+  var hasJumuah = loc && loc.jumuahTime;
+  var opts = hasJumuah ? [10,20,30,45,60,90,120] : [5,10,15,20,30,45,60];
+  var timeLabel = hasJumuah ? (loc.jumuahTime + ' every Friday') : (loc && loc.eidTime ? loc.eidTime + ' Eid' : '');
+
+  var html = '<div class="share-sheet-title">\uD83D\uDD14 Notify Me \u2014 ' + name + '</div>'
+    + '<div style="font-size:13px;color:var(--ts);margin-bottom:10px;line-height:1.6">'
+    + (timeLabel ? 'Prayer time: <strong style="color:var(--tp)">' + timeLabel + '</strong><br>' : '')
+    + 'How early do you want your reminder?</div>'
+    + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">';
+
+  opts.forEach(function(m){
+    var sel = isOn && curMins === m;
+    var lbl = m < 60 ? m + ' min before'
+      : m === 60 ? '1 hour before'
+      : Math.floor(m/60) + ' hrs' + (m%60 ? ' ' + (m%60) + ' min' : '') + ' before';
+    html += '<button onclick="setMosqueAlert(\'' + key + '\',\'' + name.replace(/'/g,"\\'") + '\',' + m + ',' + (loc?loc.id:0) + ')" '
+      + 'style="display:flex;align-items:center;justify-content:space-between;height:48px;border-radius:14px;padding:0 18px;width:100%;'
+      + 'border:' + (sel ? '2px solid var(--gd)' : '1.5px solid var(--cd)')
+      + ';background:' + (sel ? 'var(--gd)' : 'var(--white)')
+      + ';color:' + (sel ? 'var(--white)' : 'var(--tp)')
+      + ';font-family:inherit;font-size:15px;font-weight:' + (sel ? '700' : '500')
+      + ';cursor:pointer;-webkit-tap-highlight-color:transparent">'
+      + '<span>' + lbl + '</span>' + (sel ? '<span>\u2705</span>' : '')
+      + '</button>';
+  });
+
+  html += '</div>';
+
   if(isOn){
-    try{ localStorage.removeItem(key); }catch(e){}
-    showToast('Reminder OFF for ' + name);
-  } else {
-    try{ localStorage.setItem(key,'1'); }catch(e){}
-    var tn = loc2 && loc2.jumuahTime ? loc2.jumuahTime : '';
-    showToast(tn ? 'Jumuah reminder set for '+name+'. You will be notified 10 min before '+tn+' every Friday.' : 'Reminder ON for '+name+'.');
-    if(loc2) scheduleJumuahForMosque(name, loc2);
-    /* Use fireNotif (SW-based) — new Notification() is blocked on Android Chrome */
-    fireNotif(
-      '🕌 Jumuah Reminder Set',
-      'You will be notified before ' + (loc2&&loc2.jumuahTime?loc2.jumuahTime+' ':''+'Jumuah') + ' at ' + name,
-      ''
-    );
+    html += '<button onclick="clearMosqueAlert(\'' + key + '\',\'' + name.replace(/'/g,"\\'") + '\')" '
+      + 'style="width:100%;height:44px;background:transparent;border:1.5px solid #ef4444;border-radius:12px;'
+      + 'color:#ef4444;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:4px">'
+      + '\uD83D\uDD15 Turn off reminder</button>';
   }
-  var _pOp=null;try{_pOp=sessionStorage.getItem('dl_open_card');}catch(e){}
+
+  var el = document.getElementById('notifSheetContent');
+  if(el) el.innerHTML = html;
+  var sheet = document.getElementById('notifSheet');
+  if(sheet) sheet.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function setMosqueAlert(key, name, mins, locId){
+  try{ localStorage.setItem(key, JSON.stringify({mins: mins, locId: locId})); }catch(e){}
+  closeNotifSheet();
+  var loc2 = LOCATIONS.find(function(l){ return l.id === locId; });
+  if(loc2) scheduleJumuahForMosque(name, loc2, mins);
+  showToast('\uD83D\uDD14 Reminder set \u00B7 ' + mins + ' min before ' + name);
   renderCards();
-  if(_pOp){setTimeout(function(){var c=document.querySelector('.card[data-id="'+_pOp+'"]');if(c&&!c.classList.contains('open'))c.classList.add('open');},50);}
+}
+
+function clearMosqueAlert(key, name){
+  try{ localStorage.removeItem(key); }catch(e){}
+  closeNotifSheet();
+  showToast('\uD83D\uDD15 Reminder off for ' + name);
+  renderCards();
 }
 function isMosqueNotified(name){
-  try{ return localStorage.getItem('dl_notify_'+name.replace(/[^a-z0-9]/gi,'_').toLowerCase())==='1'; }catch(e){ return false; }
+  try{
+    var v = localStorage.getItem('dl_notify_'+name.replace(/[^a-z0-9]/gi,'_').toLowerCase());
+    if(!v) return false;
+    /* Support both old '1' format and new JSON format */
+    if(v === '1') return true;
+    return !!JSON.parse(v);
+  }catch(e){ return false; }
 }
-function scheduleJumuahForMosque(name, loc){
+function scheduleJumuahForMosque(name, loc, leadMins){
   if(!loc || !loc.jumuahTime) return;
+  var mins = (typeof leadMins === 'number') ? leadMins : 10;
   var parts = loc.jumuahTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
   if(!parts) return;
   var h=parseInt(parts[1]), m=parseInt(parts[2]), ap=parts[3].toUpperCase();
@@ -787,7 +846,7 @@ function scheduleJumuahForMosque(name, loc){
   var daysUntilFri = (5 - now.getDay() + 7) % 7;
   if(daysUntilFri===0 && (now.getHours()*60+now.getMinutes()) >= h*60+m) daysUntilFri=7;
   target.setDate(now.getDate() + daysUntilFri);
-  target.setHours(h, m-10, 0, 0);
+  target.setHours(h, m - mins, 0, 0);
   var ms = target - now;
   if(ms > 0 && ms < 7*24*60*60*1000){
     /* Notify when page is open at alert time */
@@ -1550,7 +1609,7 @@ function generateBulkCard(filter){
 
 function drawBulkPage(items, pageNum, totalPages, filter){
   var W      = 1080;
-  var ROW    = 110;   /* taller rows — fits 2 time lines for Both */
+  var ROW    = 120;   /* taller rows — fits 2-line address + 2 time lines for Both */
   var HEADER = 268;
   var FOOTER = 200;
   var PAD    = 44;
@@ -1579,20 +1638,22 @@ function drawBulkPage(items, pageNum, totalPages, filter){
   ctx.fillStyle = 'rgba(0,0,0,0.22)';
   ctx.fillRect(0, 0, W, HEADER);
 
-  /* App logo + name */
-  var _logoImg = new Image();
-  _logoImg.src = 'data:image/png;base64,' + LOGO;
-  /* Draw logo — may load async, we use a sync-safe approach */
-  try {
-    if(_logoImg.complete && _logoImg.naturalWidth > 0){
-      ctx.drawImage(_logoImg, PAD, 16, 64, 64);
+  /* App logo + name — use the already-loaded DOM logo image */
+  (function(){
+    var _domLogo = document.querySelector('img[data-logo="1"]');
+    if(_domLogo && _domLogo.complete && _domLogo.naturalWidth > 0){
+      try{ ctx.drawImage(_domLogo, PAD, 14, 68, 68); }catch(e){}
+    } else if(typeof LOGO === 'string' && LOGO.length > 0){
+      var _li = new Image();
+      _li.onload = function(){ try{ ctx.drawImage(_li, PAD, 14, 68, 68); }catch(e){} };
+      _li.src = LOGO;
     }
-  } catch(e){}
+  })();
   ctx.font = 'bold 68px sans-serif';
   ctx.fillStyle = '#22c98a';
-  ctx.fillText('Deen', PAD + 72, 72);
+  ctx.fillText('Deen', PAD + 86, 72);
   ctx.fillStyle = 'rgba(255,255,255,0.95)';
-  ctx.fillText('Locator', PAD + 72 + ctx.measureText('Deen').width, 72);
+  ctx.fillText('Locator', PAD + 86 + ctx.measureText('Deen').width, 72);
 
   /* Subtitle */
   var subtitles = {
@@ -1702,13 +1763,37 @@ function drawBulkPage(items, pageNum, totalPages, filter){
     if(name !== loc.name) name = name.trim()+'…';
     ctx.fillText(name, PAD + 54, y + 38);
 
-    /* Full address */
+    /* Full address — wrap to 2 lines max */
     ctx.font = '22px sans-serif';
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    var addr = loc.address || loc.area+', Abuja';
-    while(ctx.measureText('📍 '+addr).width > 660 && addr.length > 10){ addr = addr.slice(0,-1); }
-    if(addr !== (loc.address||loc.area+', Abuja')) addr = addr.trim()+'…';
-    ctx.fillText('📍 '+addr, PAD + 54, y + 68);
+    var addr = '📍 ' + (loc.address || loc.area + ', Abuja');
+    var addrMaxW = 640;
+    if(ctx.measureText(addr).width <= addrMaxW){
+      ctx.fillText(addr, PAD + 54, y + 70);
+    } else {
+      /* Split into 2 lines */
+      var addrWords = addr.split(' ');
+      var addrLine1 = '', addrLine2 = '';
+      for(var aw = 0; aw < addrWords.length; aw++){
+        var testLine = addrLine1 ? addrLine1 + ' ' + addrWords[aw] : addrWords[aw];
+        if(ctx.measureText(testLine).width > addrMaxW && addrLine1){
+          addrLine2 = addrWords.slice(aw).join(' ');
+          break;
+        }
+        addrLine1 = testLine;
+      }
+      ctx.fillText(addrLine1, PAD + 54, y + 60);
+      if(addrLine2){
+        /* Truncate line 2 if still too long */
+        while(ctx.measureText(addrLine2).width > addrMaxW && addrLine2.length > 8){
+          addrLine2 = addrLine2.slice(0, -1);
+        }
+        if(addrLine2 !== addrWords.slice(addrLine1.split(' ').length - 1 + (addr.startsWith('📍') ? 0 : 0)).join(' ')){
+          addrLine2 = addrLine2.trim() + '…';
+        }
+        ctx.fillText(addrLine2, PAD + 54, y + 86);
+      }
+    }
 
     /* ── TIME COLUMN — driven by FILTER not loc.type ── */
     ctx.textAlign = 'right';
@@ -1717,42 +1802,42 @@ function drawBulkPage(items, pageNum, totalPages, filter){
       /* Friday time only */
       ctx.font = 'bold 28px sans-serif';
       ctx.fillStyle = '#22c98a';
-      ctx.fillText(loc.jumuahTime || '—', W - PAD, y + 46);
+      ctx.fillText(loc.jumuahTime || '—', W - PAD, y + 50);
       ctx.font = '20px sans-serif';
       ctx.fillStyle = 'rgba(34,201,138,0.55)';
-      ctx.fillText('Every Friday', W - PAD, y + 74);
+      ctx.fillText('Every Friday', W - PAD, y + 78);
 
     } else if(filter === 'eid'){
       /* Eid time only */
       ctx.font = 'bold 28px sans-serif';
       ctx.fillStyle = '#f0c96a';
-      ctx.fillText(loc.eidTime || '—', W - PAD, y + 46);
+      ctx.fillText(loc.eidTime || '—', W - PAD, y + 50);
       ctx.font = '20px sans-serif';
       ctx.fillStyle = 'rgba(240,201,106,0.6)';
-      ctx.fillText(nextEidObj.name, W - PAD, y + 74);
+      ctx.fillText(nextEidObj.name, W - PAD, y + 78);
 
     } else {
       /* ALL — show both if available, else whichever exists */
       if(loc.type === 'both'){
         ctx.font = '23px sans-serif';
         ctx.fillStyle = '#f0c96a';
-        ctx.fillText('Eid: '+(loc.eidTime||'—'), W - PAD, y + 38);
+        ctx.fillText('Eid: '+(loc.eidTime||'—'), W - PAD, y + 42);
         ctx.fillStyle = '#22c98a';
-        ctx.fillText('Fri: '+(loc.jumuahTime||'—'), W - PAD, y + 68);
+        ctx.fillText('Fri: '+(loc.jumuahTime||'—'), W - PAD, y + 72);
       } else if(loc.type === 'eid'){
         ctx.font = 'bold 26px sans-serif';
         ctx.fillStyle = '#f0c96a';
-        ctx.fillText(loc.eidTime || '—', W - PAD, y + 46);
+        ctx.fillText(loc.eidTime || '—', W - PAD, y + 50);
         ctx.font = '20px sans-serif';
         ctx.fillStyle = 'rgba(240,201,106,0.6)';
-        ctx.fillText(nextEidObj.name, W - PAD, y + 74);
+        ctx.fillText(nextEidObj.name, W - PAD, y + 78);
       } else {
         ctx.font = 'bold 26px sans-serif';
         ctx.fillStyle = '#22c98a';
-        ctx.fillText(loc.jumuahTime || '—', W - PAD, y + 46);
+        ctx.fillText(loc.jumuahTime || '—', W - PAD, y + 50);
         ctx.font = '20px sans-serif';
         ctx.fillStyle = 'rgba(34,201,138,0.6)';
-        ctx.fillText('Every Friday', W - PAD, y + 74);
+        ctx.fillText('Every Friday', W - PAD, y + 78);
       }
     }
 
@@ -1773,32 +1858,39 @@ function drawBulkPage(items, pageNum, totalPages, filter){
 
   ctx.font = '25px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.65)';
-  ctx.fillText('Find Eid grounds & Friday mosques in Abuja', PAD, footerY + 80);
+  ctx.fillText(_fTagline, PAD, footerY + 80);
 
   ctx.font = 'bold 24px sans-serif';
   ctx.fillStyle = '#22c98a';
-  ctx.fillText('mi2now.github.io/deenlocator', PAD, footerY + 114);
+  ctx.fillText(_fUrl, PAD, footerY + 114);
 
-  /* Right: Icons + contact — clean, no wa.me link */
+  /* Right: Icons + contact — reads from APP_CONFIG so admin can update */
+  var _cfg = (typeof APP_CONFIG !== 'undefined') ? APP_CONFIG : {};
+  var _fPhone = _cfg.contactPhone || '+234 806 590 0110';
+  var _fEmail = _cfg.contactEmail || 'mustytunau@gmail.com';
+  var _fUrl   = _cfg.appUrl       || 'mi2now.github.io/deenlocator';
+  var _fTagline = _cfg.tagline    || 'Find Eid grounds & Friday mosques in Abuja';
+  var _fBrand   = _cfg.brandName  || '2now Technology';
+
   ctx.textAlign = 'right';
   ctx.font = '25px sans-serif';
 
   /* Phone */
   ctx.fillStyle = 'rgba(255,255,255,0.8)';
-  ctx.fillText('📞  +234 806 590 0110', W - PAD, footerY + 46);
+  ctx.fillText('📞  ' + _fPhone, W - PAD, footerY + 46);
 
-  /* WhatsApp — icon + same number, no link */
+  /* WhatsApp */
   ctx.fillStyle = '#25D366';
-  ctx.fillText('💬  +234 806 590 0110', W - PAD, footerY + 80);
+  ctx.fillText('💬  ' + _fPhone, W - PAD, footerY + 80);
 
   /* Email */
   ctx.fillStyle = 'rgba(255,255,255,0.6)';
-  ctx.fillText('✉️  mustytunau@gmail.com', W - PAD, footerY + 114);
+  ctx.fillText('✉️  ' + _fEmail, W - PAD, footerY + 114);
 
   /* Powered by */
   ctx.font = '20px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.3)';
-  ctx.fillText('Powered by 2now Technology', W - PAD, footerY + 152);
+  ctx.fillText('Powered by ' + _fBrand, W - PAD, footerY + 152);
 
   /* Page number — centred */
   ctx.font = 'bold 22px sans-serif';
@@ -2100,12 +2192,16 @@ function drawSuggestCard(){
   }
 
   /* Brand — logo + name */
-  var _sLogo = new Image(); _sLogo.src = 'data:image/png;base64,' + LOGO;
-  try {
-    if(_sLogo.complete && _sLogo.naturalWidth > 0){
-      ctx.drawImage(_sLogo, PAD, 28, 72, 72);
+  (function(){
+    var _domLogo = document.querySelector('img[data-logo="1"]');
+    if(_domLogo && _domLogo.complete && _domLogo.naturalWidth > 0){
+      try{ ctx.drawImage(_domLogo, PAD, 28, 72, 72); }catch(e){}
+    } else if(typeof LOGO === 'string' && LOGO.length > 0){
+      var _li = new Image();
+      _li.onload = function(){ try{ ctx.drawImage(_li, PAD, 28, 72, 72); }catch(e){} };
+      _li.src = LOGO;
     }
-  } catch(e){}
+  })();
   ctx.font = 'bold 72px sans-serif';
   ctx.fillStyle = '#22c98a';
   ctx.fillText('Deen', PAD + 84, 90);
@@ -2182,8 +2278,8 @@ function drawSuggestCard(){
   ctx.textAlign = 'left';
 
   /* Wire buttons */
-  document.getElementById('suggestSaveBtn').onclick = function(){ saveSuggestCard(cv); };
-  document.getElementById('suggestTextBtn').onclick = function(){ shareSuggestText(); };
+  /* Buttons wired via inline onclick in HTML — canvas stored on window for saveSuggestCard() */
+  window._suggestCanvas = cv;
 }
 
 function sgRoundRect(ctx,x,y,w,h,r){
@@ -2199,25 +2295,34 @@ function sgRoundRect(ctx,x,y,w,h,r){
   ctx.closePath();
 }
 
-function saveSuggestCard(cv){
+function saveSuggestCard(){
+  var cv = window._suggestCanvas || document.getElementById('suggestCanvas');
+  if(!cv){ showToast('Card not ready yet — wait a moment'); return; }
   var btn = document.getElementById('suggestSaveBtn');
-  var orig = btn.innerHTML;
-  btn.innerHTML = '\u23f3 Saving...';
-  btn.disabled = true;
+  var orig = btn ? btn.innerHTML : '';
+  if(btn){ btn.innerHTML = '\u23f3 Saving...'; btn.disabled = true; }
   cv.toBlob(function(blob){
     var fname = 'deenlocator-suggest-a-mosque.png';
     var file  = new File([blob], fname, {type:'image/png'});
     if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
-      navigator.share({files:[file], title:'DeenLocator — Suggest a Mosque',
-        text:'Know a mosque in Abuja? Tell us! mustytunau@gmail.com'
-      }).then(function(){ btn.innerHTML=orig; btn.disabled=false; })
-      .catch(function(){ triggerDownload(cv,fname); btn.innerHTML=orig; btn.disabled=false;
-        showToast('\u2705 Card saved \u2014 share from your gallery!'); });
+      navigator.share({files:[file], title:'DeenLocator \u2014 Suggest a Mosque',
+        text:'Know a mosque in Abuja? Tell us! mi2now.github.io/deenlocator'
+      }).then(function(){ if(btn){btn.innerHTML=orig; btn.disabled=false;} })
+      .catch(function(){ triggerDownload(cv,fname); if(btn){btn.innerHTML=orig; btn.disabled=false;}
+        showToast('\u2705 Card saved \u2014 post it on your WhatsApp Status!'); });
     } else {
-      triggerDownload(cv,fname); btn.innerHTML=orig; btn.disabled=false;
-      showToast('\u2705 Card saved \u2014 share from your gallery!');
+      triggerDownload(cv,fname); if(btn){btn.innerHTML=orig; btn.disabled=false;}
+      showToast('\u2705 Card saved \u2014 post it on your WhatsApp Status!');
     }
   },'image/png');
+}
+
+function openSuggestForm(){
+  var formUrl = (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.googleFormUrl)
+    ? APP_CONFIG.googleFormUrl
+    : 'https://forms.gle/deenlocator';
+  window.open(formUrl, '_blank');
+  showToast('\uD83D\uDCCB Opening Google Form...');
 }
 
 function shareSuggestText(){
@@ -2343,19 +2448,20 @@ function savePrayerAlertPref(checked){
 /* ── Prayer alert settings sheet ── */
 function openPrayerAlertSettings(){
   if(Notification.permission !== 'granted'){ requestNotifPermission(); return; }
-  var opts = [5,10,15,20,30];
-  var html = '<div class="share-sheet-title">Prayer Time Alerts</div>'
-    +'<div style="font-size:13px;color:var(--ts);margin-bottom:14px;line-height:1.6">Choose how many minutes before each prayer to receive an alert.</div>'
+  var opts = [5,10,15,20,30,45,60];
+  var html = '<div class="share-sheet-title">🕐 Prayer Time Alerts</div>'
+    +'<div style="font-size:13px;color:var(--ts);margin-bottom:14px;line-height:1.6">Choose how many minutes before each prayer (Fajr, Dhuhr, Asr, Maghrib, Isha) to receive an alert.</div>'
     +'<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">'
     + opts.map(function(m){
         var sel = notifPrefs.prayerLeadMin === m;
+        var lbl = m < 60 ? m+' min before prayer' : '1 hour before prayer';
         return '<button onclick="setPrayerLead('+m+')" style="display:flex;align-items:center;justify-content:space-between;height:52px;border-radius:14px;padding:0 20px;width:100%;'
           +'border:'+(sel?'2px solid var(--gd)':'1.5px solid var(--cd)')
           +';background:'+(sel?'var(--gd)':'var(--white)')
           +';color:'+(sel?'var(--white)':'var(--tp)')
           +';font-family:inherit;font-size:15px;font-weight:'+(sel?'700':'500')
           +';cursor:pointer;-webkit-tap-highlight-color:transparent">'
-          +'<span>'+m+' min before prayer</span>'+(sel?'<span>\u2705</span>':'')
+          +'<span>'+lbl+'</span>'+(sel?'<span>\u2705</span>':'')
           +'</button>';
       }).join('')
     +'</div>';
@@ -2378,17 +2484,20 @@ function setPrayerLead(mins){
 function openJumuahSettings(){
   if(Notification.permission !== 'granted'){ requestNotifPermission(); return; }
   var presets = [
-    {label:'1 hour before',      mins:[60]},
-    {label:'30 min before',      mins:[30]},
-    {label:'1 hour + 30 min',    mins:[60,30]},
-    {label:'15 min before',      mins:[15]},
-    {label:'2 hours before',     mins:[120]},
-    {label:'2 hrs + 30 min',     mins:[120,30]},
+    {label:'10 min before',         mins:[10]},
+    {label:'20 min before',         mins:[20]},
+    {label:'30 min before',         mins:[30]},
+    {label:'45 min before',         mins:[45]},
+    {label:'1 hour before',         mins:[60]},
+    {label:'1 hr + 30 min',         mins:[60,30]},
+    {label:'1 hr + 15 min',         mins:[60,15]},
+    {label:'2 hours before',        mins:[120]},
+    {label:'2 hrs + 30 min',        mins:[120,30]},
+    {label:'2 hrs + 1 hr + 30 min', mins:[120,60,30]},
   ];
-  var curKey = JSON.stringify(notifPrefs.jumuahReminders);
-  var html = '<div class="share-sheet-title">Jumuʼah Reminder</div>'
+  var html = '<div class="share-sheet-title">🕌 Jumuʼah Reminder</div>'
     +'<div style="font-size:13px;color:var(--ts);margin-bottom:14px;line-height:1.6">'
-    +'Choose when to receive your Friday prayer reminder.</div>'
+    +'Choose when to receive your Friday prayer reminder. Multiple times = multiple alerts.</div>'
     +'<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">'
     + presets.map(function(p){
         var sel = JSON.stringify(p.mins.slice().sort(function(a,b){return b-a;})) === JSON.stringify(notifPrefs.jumuahReminders.slice().sort(function(a,b){return b-a;}));
@@ -2830,8 +2939,9 @@ var soundPrefs = (function(){
   }catch(e){}
   return {
     enabled: true,
-    type: 'beep',        /* 'beep' | 'adhan' | 'nasheed' | 'custom' */
-    customUrl: '',       /* URL to uploaded sound from backend */
+    type: 'beep',        /* 'beep' | 'adhan' | 'custom' */
+    customUrl: '',       /* base64 data URL from phone file picker */
+    customName: '',      /* original filename for display */
     volume: 0.7
   };
 })();
@@ -2885,17 +2995,13 @@ function playAlertSound(){
 
   switch(soundPrefs.type){
     case 'adhan':
-      /* Default hosted adhan — replace URL with your backend URL when ready */
-      playRemoteSound('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
-      /* ↑ PLACEHOLDER — replace with your actual adhan MP3 URL from backend */
-      break;
-    case 'nasheed':
-      /* Nasheed from backend — replace with your backend URL */
-      playRemoteSound(soundPrefs.customUrl || '');
+      /* Use a reliable free adhan CDN — swap to your own URL when ready */
+      playRemoteSound('https://cdn.islamic.network/prayer-times/audio/1/ar.alafasy/1.mp3');
       break;
     case 'custom':
+      /* Custom: base64 data URL loaded from phone file picker */
       if(soundPrefs.customUrl) playRemoteSound(soundPrefs.customUrl);
-      else playBeep();
+      else { showToast('No file chosen yet — pick one in Sound Settings'); playBeep(); }
       break;
     default:
       playBeep(); /* Simple tone — always works, no internet needed */
@@ -2905,20 +3011,83 @@ function playAlertSound(){
 /* Sound settings UI */
 function openSoundSettings(){
   var opts = [
-    {v:'beep',    l:'🔔 Simple Beep (default — always works)'},
-    {v:'adhan',   l:'🕌 Adhan Sound (requires internet)'},
-    {v:'nasheed', l:'🎵 Nasheed (requires backend upload)'},
+    {v:'beep',   l:'🔔 Simple Tone',    d:'Built-in · works offline always'},
+    {v:'adhan',  l:'🕌 Adhan (online)',  d:'Requires internet connection'},
+    {v:'custom', l:'🎵 Your own file',   d:'Pick an audio file from your phone'},
   ];
-  var current = soundPrefs.type;
-  var msg = opts.map(function(o){ return (o.v===current?'✅ ':'      ')+o.l; }).join('\n');
+  var cur = soundPrefs.type;
+  var customName = soundPrefs.customName || '';
 
-  /* Simple cycle through options on tap */
-  var idx = opts.findIndex(function(o){ return o.v===current; });
-  var next = opts[(idx+1) % opts.length];
-  soundPrefs.type = next.v;
+  var html = '<div class="share-sheet-title">🎵 Alert Sound</div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">';
+
+  opts.forEach(function(o){
+    var sel = cur === o.v;
+    html += '<button onclick="setSoundType(\''+o.v+'\')" style="display:flex;align-items:center;gap:14px;height:64px;border-radius:14px;padding:0 18px;width:100%;text-align:left;'
+      +'border:'+(sel?'2px solid var(--gd)':'1.5px solid var(--cd)')
+      +';background:'+(sel?'rgba(15,92,66,0.08)':'var(--white)')
+      +';cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:inherit">'
+      +'<div style="flex:1"><div style="font-size:15px;font-weight:'+(sel?'700':'500')+';color:var(--tp)">'+o.l+'</div>'
+      +'<div style="font-size:12px;color:var(--ts);margin-top:2px">'+o.d+'</div></div>'
+      +(sel?'<span style="font-size:18px">\u2705</span>':'')
+      +'</button>';
+  });
+
+  html += '</div>';
+
+  /* Custom file picker — only shown when custom is selected */
+  if(cur === 'custom'){
+    html += '<div style="background:rgba(15,92,66,0.06);border-radius:14px;padding:14px 16px;margin-bottom:12px">'
+      +'<div style="font-size:13px;font-weight:700;color:var(--tp);margin-bottom:8px">📁 Audio file'+(customName?' · <span style="color:var(--gd)">'+customName+'</span>':'')+'</div>'
+      +'<div style="font-size:12px;color:var(--ts);margin-bottom:10px">Pick an MP3, M4A, or WAV from your phone. Stored locally on this device.</div>'
+      +'<label style="display:flex;align-items:center;justify-content:center;height:44px;background:var(--gd);color:#fff;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer">'
+      +'📱 Choose from Phone'
+      +'<input type="file" accept="audio/*" style="display:none" onchange="loadCustomAudio(this)">'
+      +'</label>'
+      +(customName?'<button onclick="playAlertSound()" style="margin-top:8px;width:100%;height:38px;background:transparent;border:1.5px solid var(--gd);border-radius:10px;color:var(--gd);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">▶ Preview Current Sound</button>':'')
+      +'</div>';
+  }
+
+  html += '<button onclick="playAlertSound()" style="width:100%;height:46px;background:var(--white);border:1.5px solid var(--cd);border-radius:12px;color:var(--tp);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:4px">▶ Preview Current Sound</button>';
+
+  var el = document.getElementById('notifSheetContent');
+  if(el) el.innerHTML = html;
+  var sheet = document.getElementById('notifSheet');
+  if(sheet) sheet.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function setSoundType(type){
+  soundPrefs.type = type;
   saveSoundPrefs();
-  showToast('🔔 Sound: '+next.l);
   updateSoundUI();
+  /* Re-render the sheet to show/hide file picker */
+  openSoundSettings();
+  if(type !== 'custom') showToast('🔔 Sound changed · tap Preview to hear it');
+}
+
+function loadCustomAudio(input){
+  var file = input && input.files && input.files[0];
+  if(!file){ return; }
+  var maxMB = 4;
+  if(file.size > maxMB * 1024 * 1024){
+    showToast('❌ File too large — max ' + maxMB + 'MB. Use a shorter clip.');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      soundPrefs.customUrl  = e.target.result; /* base64 data URL */
+      soundPrefs.customName = file.name;
+      soundPrefs.type       = 'custom';
+      saveSoundPrefs();
+      updateSoundUI();
+      openSoundSettings(); /* re-render to show file name */
+      showToast('✅ ' + file.name + ' loaded · tap Preview to hear it');
+    }catch(err){ showToast('❌ Could not save file — try a smaller one'); }
+  };
+  reader.onerror = function(){ showToast('❌ Could not read file'); };
+  reader.readAsDataURL(file);
 }
 
 function toggleSound(on){
@@ -2932,10 +3101,14 @@ function updateSoundUI(){
   var toggle = document.getElementById('soundToggle');
   var sub    = document.getElementById('soundSub');
   var typeSub= document.getElementById('soundTypeSub');
-  var labels = {beep:'Simple Beep', adhan:'Adhan Sound', nasheed:'Nasheed', custom:'Custom Upload'};
+  var labels = {
+    beep:   'Simple Tone',
+    adhan:  'Adhan Sound',
+    custom: soundPrefs.customName ? ('My file · '+soundPrefs.customName) : 'Custom (no file yet)'
+  };
   if(toggle) toggle.checked = soundPrefs.enabled;
-  if(sub)    sub.textContent = soundPrefs.enabled ? 'Sound ON · Tap type row to change' : 'Sound OFF';
-  if(typeSub) typeSub.textContent = labels[soundPrefs.type] || 'Simple Beep';
+  if(sub)    sub.textContent = soundPrefs.enabled ? 'Sound ON · Tap Sound Type to change' : 'Sound OFF';
+  if(typeSub) typeSub.textContent = labels[soundPrefs.type] || 'Simple Tone';
 }
 
 /* ══════════════════════════════════════════════════════
@@ -2945,6 +3118,57 @@ var _origFireNotif = fireNotif;
 function fireNotif(title, body, icon){
   _origFireNotif(title, body, icon);
   playAlertSound();
+}
+
+/* ══ FAQ — editable from admin via config.js FAQ_ITEMS array ══ */
+
+var FAQ_ITEMS_DEFAULT = [
+  {
+    q: 'Are the prayer times accurate?',
+    a: 'Times are approximate for Abuja. Use <b>Auto Abuja</b> mode in Prayer Times for daily accurate times from AlAdhan.com, or set your mosque\'s exact times manually.'
+  },
+  {
+    q: 'How do I install this as an app?',
+    a: 'On <b>Android</b>: Open in Chrome → tap 3 dots menu → "Add to Home Screen". On <b>iPhone</b>: Open in Safari → tap Share button → "Add to Home Screen".'
+  },
+  {
+    q: 'How do I suggest a mosque?',
+    a: 'Tap <b>Suggest a Mosque or Eid Ground</b> in the Contact section above. You can fill our Google Form, send a WhatsApp message, or share the card — we verify and add it within 48 hours.'
+  },
+  {
+    q: 'Why is my nearest mosque wrong?',
+    a: 'Allow location access when the app asks, then tap the \uD83D\uDD04 refresh button on the Locations screen. The app uses two-stage GPS for accuracy — the second reading is more precise.'
+  },
+  {
+    q: 'Is this app free? Who built it?',
+    a: 'Yes — completely free. DeenLocator is built and maintained by <b>2now Technology</b>, Abuja. Launched on Eid al-Fitr, 1 Shawwal 1447 AH (20 March 2026).'
+  },
+  {
+    q: 'How do I get directions to a mosque?',
+    a: 'Tap any mosque card to expand it, then tap <b>\uD83D\uDDFA Get Directions</b>. This opens Google Maps with the mosque location pre-loaded.'
+  }
+];
+
+function renderFaq(){
+  var el = document.getElementById('faqGroup');
+  if(!el) return;
+  /* Use FAQ_ITEMS from config.js if defined, else fall back to defaults */
+  var items = (typeof FAQ_ITEMS !== 'undefined' && Array.isArray(FAQ_ITEMS) && FAQ_ITEMS.length)
+    ? FAQ_ITEMS
+    : FAQ_ITEMS_DEFAULT;
+
+  el.innerHTML = items.map(function(item, i){
+    return '<div class="settings-row" onclick="toggleFaq(this)">'
+      + '<div class="settings-row-icon">\u2753</div>'
+      + '<div class="settings-row-body">'
+        + '<div class="settings-row-title">' + item.q + '</div>'
+        + '<div class="faq-answer" style="display:none;font-size:12px;color:var(--ts);margin-top:6px;line-height:1.6;padding-bottom:4px">'
+          + item.a
+        + '</div>'
+      + '</div>'
+      + '<div class="settings-row-right">\u203A</div>'
+    + '</div>';
+  }).join('');
 }
 
 /* ══ SAFE INIT ══ */
@@ -2974,6 +3198,7 @@ window.addEventListener('DOMContentLoaded', function(){
   if(typeof updateNotifUI   === 'function') updateNotifUI();
   if(typeof updateCardDetailUI === 'function') updateCardDetailUI();
   updateFooterContact();
+  renderFaq();
   if(typeof scheduleAll     === 'function') scheduleAll();
   if(typeof startEidTimer   === 'function') startEidTimer();
 

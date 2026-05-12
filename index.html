@@ -23,6 +23,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script src="locations.js"></script>
   <script src="config.js"></script>
+  <script>/* faq-items.js is optional — loads admin-edited FAQs if uploaded to GitHub */</script>
+  <script src="faq-items.js" onerror="void 0"></script>
 
   <!-- Google Analytics GA4 — replace G-XXXXXXXXXX with your real Measurement ID -->
   <!-- Get yours free at analytics.google.com — takes 5 minutes to set up -->
@@ -362,50 +364,11 @@
       </div>
     </div>
 
-    <!-- FAQ Section -->
+    <!-- FAQ Section — rendered dynamically by app.js from FAQ_ITEMS (editable in admin) -->
     <div class="settings-section">
       <div class="settings-section-title">Frequently Asked Questions</div>
-      <div class="settings-group">
-        <div class="settings-row" onclick="toggleFaq(this)">
-          <div class="settings-row-icon">❓</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">Are the prayer times accurate?</div>
-            <div class="faq-answer" style="display:none;font-size:12px;color:var(--ts);margin-top:6px;line-height:1.6;padding-bottom:4px">Times are approximate for Abuja. Use <b>Auto Abuja</b> mode in Prayer Times for daily accurate times from AlAdhan.com, or set your mosque's exact times manually.</div>
-          </div>
-          <div class="settings-row-right">›</div>
-        </div>
-        <div class="settings-row" onclick="toggleFaq(this)">
-          <div class="settings-row-icon">❓</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">How do I install this as an app?</div>
-            <div class="faq-answer" style="display:none;font-size:12px;color:var(--ts);margin-top:6px;line-height:1.6;padding-bottom:4px">On <b>Android</b>: Open in Chrome → tap 3 dots menu → "Add to Home Screen". On <b>iPhone</b>: Open in Safari → tap Share button → "Add to Home Screen".</div>
-          </div>
-          <div class="settings-row-right">›</div>
-        </div>
-        <div class="settings-row" onclick="toggleFaq(this)">
-          <div class="settings-row-icon">❓</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">How do I suggest a mosque?</div>
-            <div class="faq-answer" style="display:none;font-size:12px;color:var(--ts);margin-top:6px;line-height:1.6;padding-bottom:4px">Tap <b>Suggest a Mosque</b> in the Contact section above. Fill in the email template and send it — we verify and add it within 48 hours.</div>
-          </div>
-          <div class="settings-row-right">›</div>
-        </div>
-        <div class="settings-row" onclick="toggleFaq(this)">
-          <div class="settings-row-icon">❓</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">Why is my nearest mosque wrong?</div>
-            <div class="faq-answer" style="display:none;font-size:12px;color:var(--ts);margin-top:6px;line-height:1.6;padding-bottom:4px">Allow location access when the app asks, then tap the 🔄 refresh button on the Locations screen. The app uses two-stage GPS for accuracy — the second reading is more precise.</div>
-          </div>
-          <div class="settings-row-right">›</div>
-        </div>
-        <div class="settings-row" onclick="toggleFaq(this)">
-          <div class="settings-row-icon">❓</div>
-          <div class="settings-row-body">
-            <div class="settings-row-title">Is this app free? Who built it?</div>
-            <div class="faq-answer" style="display:none;font-size:12px;color:var(--ts);margin-top:6px;line-height:1.6;padding-bottom:4px">Yes — completely free. DeenLocator is built and maintained by <b>2now Technology</b>, Abuja. Launched on Eid al-Fitr, 1 Shawwal 1447 AH (20 March 2026).</div>
-          </div>
-          <div class="settings-row-right">›</div>
-        </div>
+      <div class="settings-group" id="faqGroup">
+        <!-- Populated by renderFaq() in app.js -->
       </div>
     </div>
 
@@ -519,45 +482,41 @@
 <div class="share-overlay" id="suggestOverlay" onclick="closeSuggestOverlay(event)">
   <div class="share-sheet" id="suggestSheet">
     <div class="share-sheet-handle"></div>
-    <div class="share-sheet-title">Share "Suggest a Mosque" Card</div>
-    <div style="border-radius:12px;overflow:hidden;margin-bottom:12px;background:#0a3d2e" id="suggestPreviewWrap">
+    <div class="share-sheet-title">🕌 Suggest a Mosque or Eid Ground</div>
+
+    <!-- Canvas card preview -->
+    <div style="border-radius:12px;overflow:hidden;margin-bottom:10px;background:#0a3d2e" id="suggestPreviewWrap">
       <canvas id="suggestCanvas" style="width:100%;display:block;border-radius:12px"></canvas>
     </div>
-    <div style="font-size:11px;color:var(--tm);text-align:center;margin-bottom:12px;line-height:1.6">
-      Post this card on your WhatsApp Status · Help us find more mosques in Abuja
+
+    <!-- Section label -->
+    <div style="font-size:11px;font-weight:700;color:var(--ts);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Choose how to submit</div>
+
+    <!-- Option 1: Save card + WhatsApp Status -->
+    <button id="suggestSaveBtn" onclick="saveSuggestCard()" style="width:100%;margin-bottom:8px;background:var(--gd);color:#fff;height:52px;border-radius:14px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;-webkit-tap-highlight-color:transparent">
+      📸 Save Card — Post on WhatsApp Status
+    </button>
+
+    <!-- Option 2: WhatsApp text message -->
+    <button id="suggestTextBtn" onclick="shareSuggestText()" style="width:100%;margin-bottom:8px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;height:52px;border-radius:14px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;-webkit-tap-highlight-color:transparent">
+      💬 Send via WhatsApp Message
+    </button>
+
+    <!-- Option 3: Google Form -->
+    <button id="suggestFormBtn" onclick="openSuggestForm()" style="width:100%;margin-bottom:12px;background:var(--white);color:var(--tp);height:52px;border-radius:14px;border:1.5px solid var(--cd);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;-webkit-tap-highlight-color:transparent">
+      📋 Fill Google Form (Recommended)
+    </button>
+
+    <div style="font-size:11px;color:var(--ts);text-align:center;margin-bottom:12px;line-height:1.7">
+      Google Form is easiest — takes 2 minutes &amp; sends details directly to us.<br>
+      WhatsApp card is great for your Status to invite others.
     </div>
-    <button class="share-btn" id="suggestSaveBtn" style="width:100%;margin-bottom:8px;background:var(--gd);color:var(--white);height:48px;border-radius:12px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-      📸 Save Card + Share on WhatsApp
-    </button>
-    <button class="share-btn share-whatsapp" id="suggestTextBtn" style="width:100%;margin-bottom:8px">
-      💬 Share Text on WhatsApp
-    </button>
+
     <button class="share-close" onclick="closeSuggestSheet()">Close</button>
   </div>
 </div>
 
-<!-- SUGGEST MOSQUE OVERLAY -->
-<div class="share-overlay" id="suggestOverlay" onclick="closeSuggestOverlay(event)">
-  <div class="share-sheet" id="suggestSheet">
-    <div class="share-sheet-handle"></div>
-    <div class="share-sheet-title">Suggest a Mosque or Eid Ground</div>
 
-    <!-- Shareable card preview -->
-    <div style="border-radius:12px;overflow:hidden;margin-bottom:10px;background:#0a3d2e" id="suggestCardWrap">
-      <canvas id="suggestCanvas" style="width:100%;display:block;border-radius:12px"></canvas>
-    </div>
-
-    <div style="font-size:11px;color:var(--tm);text-align:center;margin-bottom:12px;line-height:1.6">
-      Share this card on WhatsApp Status to invite others to suggest their mosque
-    </div>
-
-    <button class="share-btn" id="suggestShareCardBtn" style="width:100%;margin-bottom:8px;background:var(--gd);color:var(--white);height:48px;border-radius:12px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-      📸 Save Card — Share on WhatsApp Status
-    </button>
-
-    <button class="share-close" onclick="closeSuggestSheet()">Close</button>
-  </div>
-</div>
 
 <!-- NOTIFICATION SETTINGS SHEET -->
 <div class="share-overlay" id="notifSheet" onclick="closeNotifSheet(event)">
