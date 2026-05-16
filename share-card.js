@@ -598,14 +598,16 @@ function openShare(id){
   document.getElementById('scArea').textContent = '📍 ' + loc.area + ', Abuja';
   document.getElementById('scAddress').textContent = loc.address || loc.area + ', Abuja, FCT';
 
-  /* Time pills */
+  /* Time pills — respect per-mosque hidden flags */
   var timesEl = document.getElementById('scTimes');
   timesEl.innerHTML = '';
   if(loc.jumuahTime){
-    timesEl.innerHTML += '<div class="share-card-time-pill"><span>Jumuah</span>' + loc.jumuahTime + ' Fri</div>';
+    var jDisplay = loc.jumuahTimeHidden ? 'TBC' : loc.jumuahTime;
+    timesEl.innerHTML += '<div class="share-card-time-pill"><span>Jumuah</span>' + jDisplay + ' Fri</div>';
   }
   if(loc.eidTime){
-    timesEl.innerHTML += '<div class="share-card-time-pill"><span>Eid Prayer</span>' + loc.eidTime + '</div>';
+    var eDisplay = loc.eidTimeHidden ? 'TBC' : loc.eidTime;
+    timesEl.innerHTML += '<div class="share-card-time-pill"><span>Eid Prayer</span>' + eDisplay + '</div>';
   }
   if(loc.imam && loc.imam !== 'To be announced'){
     timesEl.innerHTML += '<div class="share-card-time-pill"><span>'+(loc.imamRole||'Imam')+'</span>' + loc.imam + '</div>';

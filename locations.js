@@ -1,5 +1,5 @@
 /* DeenLocator Locations
-   Updated: 03/05/2026
+   Updated: 16/05/2026
    Total: 63 locations
 */
 
@@ -11,7 +11,7 @@ var LOCATIONS = [
     area: "Airport Road", city: "Abuja",
     type: "eid", eidTime: "9:00 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0097, lng: 7.4553, verified: true, featured: true
+    lat: 9.0097, lng: 7.4553, verified: true, eidTimeHidden: true
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ var LOCATIONS = [
     area: "Gwarimpa", city: "Abuja",
     type: "eid", eidTime: "8:30 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1167, lng: 7.4167, verified: true, featured: false
+    lat: 9.1167, lng: 7.4167, verified: true, eidTimeHidden: true
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ var LOCATIONS = [
     area: "Mbora", city: "Abuja",
     type: "eid", eidTime: "8:30 AM",
     imamRole: "Imam", imam: "To be announced", phone: "08036241247", whatsapp: null,
-    lat: 9.095, lng: 7.52, verified: true, featured: true
+    lat: 9.095, lng: 7.52, verified: true, eidTimeHidden: true
   },
   {
     id: 4,
@@ -38,7 +38,7 @@ var LOCATIONS = [
     area: "Kubwa", city: "Abuja",
     type: "eid", eidTime: "8:30 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.15, lng: 7.3167, verified: true, featured: false
+    lat: 9.15, lng: 7.3167, verified: true, eidTimeHidden: true
   },
   {
     id: 5,
@@ -47,7 +47,7 @@ var LOCATIONS = [
     area: "Kubwa", city: "Abuja",
     type: "eid", eidTime: "8:30 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1453, lng: 7.3231, verified: true, featured: false
+    lat: 9.1453, lng: 7.3231, verified: true, eidTimeHidden: true
   },
   {
     id: 6,
@@ -56,7 +56,7 @@ var LOCATIONS = [
     area: "Lugbe", city: "Abuja",
     type: "eid", eidTime: "8:15 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0167, lng: 7.4, verified: true, featured: false
+    lat: 9.0167, lng: 7.4, verified: true, eidTimeHidden: true
   },
   {
     id: 7,
@@ -65,7 +65,7 @@ var LOCATIONS = [
     area: "Asokoro", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0417, lng: 7.5167, verified: true, featured: false
+    lat: 9.0417, lng: 7.5167, verified: true, eidTimeHidden: true
   },
   {
     id: 8,
@@ -74,7 +74,7 @@ var LOCATIONS = [
     area: "Asokoro", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.06, lng: 7.495, verified: true, featured: false
+    lat: 9.06, lng: 7.495, verified: true, eidTimeHidden: true
   },
   {
     id: 9,
@@ -83,7 +83,7 @@ var LOCATIONS = [
     area: "Kuje", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.88, lng: 7.23, verified: true, featured: false
+    lat: 8.88, lng: 7.23, verified: true, eidTimeHidden: true
   },
   {
     id: 10,
@@ -92,7 +92,7 @@ var LOCATIONS = [
     area: "Bwari", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.21, lng: 7.3833, verified: true, featured: false
+    lat: 9.21, lng: 7.3833, verified: true, eidTimeHidden: true
   },
   {
     id: 11,
@@ -101,7 +101,7 @@ var LOCATIONS = [
     area: "Lokogoma", city: "Abuja",
     type: "eid", eidTime: "8:30 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.95, lng: 7.38, verified: true, featured: false
+    lat: 8.95, lng: 7.38, verified: true, eidTimeHidden: true
   },
   {
     id: 12,
@@ -110,7 +110,7 @@ var LOCATIONS = [
     area: "Dutse", city: "Abuja",
     type: "eid", eidTime: "9:00 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1833, lng: 7.35, verified: true, featured: false
+    lat: 9.1833, lng: 7.35, verified: true, eidTimeHidden: true
   },
   {
     id: 13,
@@ -119,7 +119,7 @@ var LOCATIONS = [
     area: "Kubwa", city: "Abuja",
     type: "eid", eidTime: "9:00 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.148, lng: 7.321, verified: true, featured: false
+    lat: 9.148, lng: 7.321, verified: true, eidTimeHidden: true
   },
   {
     id: 14,
@@ -128,7 +128,7 @@ var LOCATIONS = [
     area: "Bwari", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0733, lng: 7.465, verified: true, featured: false
+    lat: 9.0733, lng: 7.465, verified: true, eidTimeHidden: true
   },
   {
     id: 15,
@@ -137,7 +137,7 @@ var LOCATIONS = [
     area: "Dutse", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.19, lng: 7.345, verified: true, featured: false
+    lat: 9.19, lng: 7.345, verified: true, eidTimeHidden: true
   },
   {
     id: 16,
@@ -146,7 +146,7 @@ var LOCATIONS = [
     area: "Asokoro", city: "Abuja",
     type: "eid", eidTime: "8:30 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.045, lng: 7.52, verified: true, featured: false
+    lat: 9.045, lng: 7.52, verified: true, eidTimeHidden: true
   },
   {
     id: 17,
@@ -155,7 +155,7 @@ var LOCATIONS = [
     area: "Central Area", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.06, lng: 7.498, verified: true, featured: false
+    lat: 9.06, lng: 7.498, verified: true, eidTimeHidden: true
   },
   {
     id: 18,
@@ -164,7 +164,7 @@ var LOCATIONS = [
     area: "Kubwa", city: "Abuja",
     type: "eid", eidTime: "8:00 AM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1633, lng: 7.3383, verified: true, featured: false
+    lat: 9.1633, lng: 7.3383, verified: true, eidTimeHidden: true
   },
   {
     id: 19,
@@ -173,7 +173,7 @@ var LOCATIONS = [
     area: "Wuse", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0556, lng: 7.4892, verified: true, featured: true
+    lat: 9.0556, lng: 7.4892, verified: true, eidTimeHidden: true
   },
   {
     id: 20,
@@ -182,7 +182,7 @@ var LOCATIONS = [
     area: "Apo", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0128, lng: 7.5433, verified: true, featured: false
+    lat: 9.0128, lng: 7.5433, verified: true, eidTimeHidden: true
   },
   {
     id: 21,
@@ -191,7 +191,7 @@ var LOCATIONS = [
     area: "Utako", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0667, lng: 7.45, verified: true, featured: false
+    lat: 9.0667, lng: 7.45, verified: true, eidTimeHidden: true
   },
   {
     id: 22,
@@ -200,7 +200,7 @@ var LOCATIONS = [
     area: "Life Camp", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: "08039584612", whatsapp: null,
-    lat: 9.0833, lng: 7.4333, verified: true, featured: false
+    lat: 9.0833, lng: 7.4333, verified: true, eidTimeHidden: true
   },
   {
     id: 23,
@@ -209,7 +209,7 @@ var LOCATIONS = [
     area: "Wuse", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.06, lng: 7.485, verified: true, featured: false
+    lat: 9.06, lng: 7.485, verified: true, eidTimeHidden: true
   },
   {
     id: 24,
@@ -218,7 +218,7 @@ var LOCATIONS = [
     area: "Kubwa", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1633, lng: 7.3333, verified: true, featured: false
+    lat: 9.1633, lng: 7.3333, verified: true, eidTimeHidden: true
   },
   {
     id: 25,
@@ -227,7 +227,7 @@ var LOCATIONS = [
     area: "Guzape", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0383, lng: 7.5117, verified: true, featured: true
+    lat: 9.0383, lng: 7.5117, verified: true, eidTimeHidden: true
   },
   {
     id: 26,
@@ -236,7 +236,7 @@ var LOCATIONS = [
     area: "Kubwa", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1667, lng: 7.325, verified: true, featured: false
+    lat: 9.1667, lng: 7.325, verified: true, eidTimeHidden: true
   },
   {
     id: 27,
@@ -245,7 +245,7 @@ var LOCATIONS = [
     area: "Utako", city: "Abuja",
     type: "both", eidTime: "8:45 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.07, lng: 7.448, verified: true, featured: false
+    lat: 9.07, lng: 7.448, verified: true, eidTimeHidden: true
   },
   {
     id: 28,
@@ -254,7 +254,7 @@ var LOCATIONS = [
     area: "Byazhin", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1383, lng: 7.3067, verified: true, featured: false
+    lat: 9.1383, lng: 7.3067, verified: true, eidTimeHidden: true
   },
   {
     id: 29,
@@ -263,7 +263,7 @@ var LOCATIONS = [
     area: "Kubwa", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1583, lng: 7.3167, verified: true, featured: false
+    lat: 9.1583, lng: 7.3167, verified: true, eidTimeHidden: true
   },
   {
     id: 30,
@@ -272,7 +272,7 @@ var LOCATIONS = [
     area: "Guzape", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.035, lng: 7.5083, verified: true, featured: false
+    lat: 9.035, lng: 7.5083, verified: true, eidTimeHidden: true
   },
   {
     id: 31,
@@ -281,7 +281,7 @@ var LOCATIONS = [
     area: "Zuba", city: "Abuja",
     type: "both", eidTime: "9:30 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.125, lng: 7.2083, verified: true, featured: false
+    lat: 9.125, lng: 7.2083, verified: true, eidTimeHidden: true
   },
   {
     id: 32,
@@ -290,7 +290,7 @@ var LOCATIONS = [
     area: "Garki", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.045, lng: 7.4783, verified: true, featured: false
+    lat: 9.045, lng: 7.4783, verified: true, eidTimeHidden: true
   },
   {
     id: 33,
@@ -299,7 +299,7 @@ var LOCATIONS = [
     area: "Lugbe", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:15 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.01, lng: 7.4133, verified: true, featured: false
+    lat: 9.01, lng: 7.4133, verified: true, eidTimeHidden: true
   },
   {
     id: 34,
@@ -308,7 +308,7 @@ var LOCATIONS = [
     area: "Garki", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0517, lng: 7.4967, verified: true, featured: false
+    lat: 9.0517, lng: 7.4967, verified: true, eidTimeHidden: true
   },
   {
     id: 35,
@@ -317,7 +317,7 @@ var LOCATIONS = [
     area: "Lugbe", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.005, lng: 7.4083, verified: true, featured: false
+    lat: 9.005, lng: 7.4083, verified: true, eidTimeHidden: true
   },
   {
     id: 36,
@@ -326,7 +326,7 @@ var LOCATIONS = [
     area: "Airport Road", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0183, lng: 7.45, verified: true, featured: false
+    lat: 9.0183, lng: 7.45, verified: true, eidTimeHidden: true
   },
   {
     id: 37,
@@ -335,7 +335,7 @@ var LOCATIONS = [
     area: "Wuse", city: "Abuja",
     type: "both", eidTime: "8:45 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.06, lng: 7.475, verified: true, featured: false
+    lat: 9.06, lng: 7.475, verified: true, eidTimeHidden: true
   },
   {
     id: 38,
@@ -344,7 +344,7 @@ var LOCATIONS = [
     area: "Chika", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0017, lng: 7.425, verified: true, featured: false
+    lat: 9.0017, lng: 7.425, verified: true, eidTimeHidden: true
   },
   {
     id: 39,
@@ -353,7 +353,7 @@ var LOCATIONS = [
     area: "Lokogoma", city: "Abuja",
     type: "both", eidTime: "8:15 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.9617, lng: 7.395, verified: true, featured: false
+    lat: 8.9617, lng: 7.395, verified: true, eidTimeHidden: true
   },
   {
     id: 40,
@@ -362,7 +362,7 @@ var LOCATIONS = [
     area: "Wuse", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0583, lng: 7.4917, verified: true, featured: false
+    lat: 9.0583, lng: 7.4917, verified: true, eidTimeHidden: true
   },
   {
     id: 41,
@@ -371,7 +371,7 @@ var LOCATIONS = [
     area: "Maitama", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.08, lng: 7.4933, verified: true, featured: false
+    lat: 9.08, lng: 7.4933, verified: true, eidTimeHidden: true
   },
   {
     id: 42,
@@ -380,7 +380,7 @@ var LOCATIONS = [
     area: "Garki", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0517, lng: 7.4767, verified: true, featured: false
+    lat: 9.0517, lng: 7.4767, verified: true, eidTimeHidden: true
   },
   {
     id: 43,
@@ -389,7 +389,7 @@ var LOCATIONS = [
     area: "Utako", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.07, lng: 7.455, verified: true, featured: false
+    lat: 9.07, lng: 7.455, verified: true, eidTimeHidden: true
   },
   {
     id: 44,
@@ -398,7 +398,7 @@ var LOCATIONS = [
     area: "Kubwa", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1583, lng: 7.3117, verified: true, featured: false
+    lat: 9.1583, lng: 7.3117, verified: true, eidTimeHidden: true
   },
   {
     id: 45,
@@ -407,7 +407,7 @@ var LOCATIONS = [
     area: "Wuye", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0833, lng: 7.4667, verified: true, featured: false
+    lat: 9.0833, lng: 7.4667, verified: true, eidTimeHidden: true
   },
   {
     id: 46,
@@ -416,7 +416,7 @@ var LOCATIONS = [
     area: "Mbora", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0917, lng: 7.5183, verified: true, featured: false
+    lat: 9.0917, lng: 7.5183, verified: true, eidTimeHidden: true
   },
   {
     id: 47,
@@ -425,7 +425,7 @@ var LOCATIONS = [
     area: "Asokoro", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0383, lng: 7.5233, verified: true, featured: false
+    lat: 9.0383, lng: 7.5233, verified: true, eidTimeHidden: true
   },
   {
     id: 48,
@@ -434,7 +434,7 @@ var LOCATIONS = [
     area: "Central Area", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.06, lng: 7.4833, verified: true, featured: false
+    lat: 9.06, lng: 7.4833, verified: true, eidTimeHidden: true
   },
   {
     id: 49,
@@ -443,7 +443,7 @@ var LOCATIONS = [
     area: "Asokoro", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.045, lng: 7.5167, verified: true, featured: false
+    lat: 9.045, lng: 7.5167, verified: true, eidTimeHidden: true
   },
   {
     id: 50,
@@ -452,7 +452,7 @@ var LOCATIONS = [
     area: "Galadimawa", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0133, lng: 7.4317, verified: true, featured: false
+    lat: 9.0133, lng: 7.4317, verified: true, eidTimeHidden: true
   },
   {
     id: 51,
@@ -461,7 +461,7 @@ var LOCATIONS = [
     area: "Airport Road", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0067, lng: 7.4633, verified: true, featured: false
+    lat: 9.0067, lng: 7.4633, verified: true, eidTimeHidden: true
   },
   {
     id: 52,
@@ -470,7 +470,7 @@ var LOCATIONS = [
     area: "Dakwo", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0033, lng: 7.51, verified: true, featured: false
+    lat: 9.0033, lng: 7.51, verified: true, eidTimeHidden: true
   },
   {
     id: 53,
@@ -479,7 +479,7 @@ var LOCATIONS = [
     area: "Dawaki", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.08, lng: 7.505, verified: true, featured: false
+    lat: 9.08, lng: 7.505, verified: true, eidTimeHidden: true
   },
   {
     id: 54,
@@ -488,7 +488,7 @@ var LOCATIONS = [
     area: "Dape", city: "Abuja",
     type: "both", eidTime: "9:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1033, lng: 7.4117, verified: true, featured: false
+    lat: 9.1033, lng: 7.4117, verified: true, eidTimeHidden: true
   },
   {
     id: 55,
@@ -497,7 +497,7 @@ var LOCATIONS = [
     area: "Karu", city: "Abuja",
     type: "both", eidTime: "8:30 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.9983, lng: 7.5883, verified: true, featured: false
+    lat: 8.9983, lng: 7.5883, verified: true, eidTimeHidden: true
   },
   {
     id: 56,
@@ -506,7 +506,7 @@ var LOCATIONS = [
     area: "Garki", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0533, lng: 7.48, verified: true, featured: false
+    lat: 9.0533, lng: 7.48, verified: true, eidTimeHidden: true
   },
   {
     id: 57,
@@ -515,7 +515,7 @@ var LOCATIONS = [
     area: "Jabi", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0617, lng: 7.4367, verified: true, featured: false
+    lat: 9.0617, lng: 7.4367, verified: true, eidTimeHidden: true
   },
   {
     id: 58,
@@ -524,7 +524,7 @@ var LOCATIONS = [
     area: "Gwarimpa", city: "Abuja",
     type: "jumuah", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.12, lng: 7.415, verified: true, featured: false
+    lat: 9.12, lng: 7.415, verified: true, eidTimeHidden: true
   },
   {
     id: 59,
@@ -533,7 +533,7 @@ var LOCATIONS = [
     area: "Gwarimpa", city: "Abuja",
     type: "jumuah", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1217, lng: 7.4183, verified: true, featured: false
+    lat: 9.1217, lng: 7.4183, verified: true, eidTimeHidden: true
   },
   {
     id: 60,
@@ -542,7 +542,7 @@ var LOCATIONS = [
     area: "Gwarimpa", city: "Abuja",
     type: "jumuah", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.1183, lng: 7.4133, verified: true, featured: false
+    lat: 9.1183, lng: 7.4133, verified: true, eidTimeHidden: true
   },
   {
     id: 61,
@@ -551,7 +551,7 @@ var LOCATIONS = [
     area: "Galadimawa", city: "Abuja",
     type: "jumuah", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 9.0117, lng: 7.43, verified: true, featured: false
+    lat: 9.0117, lng: 7.43, verified: true, eidTimeHidden: true
   },
   {
     id: 62,
@@ -560,7 +560,7 @@ var LOCATIONS = [
     area: "Lokogoma", city: "Abuja",
     type: "jumuah", jumuahTime: "1:30 PM",
     imamRole: "Imam", imam: "To be announced", phone: null, whatsapp: null,
-    lat: 8.9533, lng: 7.3817, verified: true, featured: false
+    lat: 8.9533, lng: 7.3817, verified: true, eidTimeHidden: true
   },
   {
     id: 63,
@@ -568,7 +568,7 @@ var LOCATIONS = [
     address: "Kabusa Garden Estate, Kabusa, Abuja FCT",
     area: "Kabusa", city: "Abuja",
     type: "both", eidTime: "8:00 AM", jumuahTime: "1:15 PM",
-    imamRole: "Mu'azzin", imam: "Sheikh Abdulrahman Kabusa", phone: "+2348012345678", whatsapp: "+2348012345678",
-    lat: 9.02, lng: 7.47, verified: true, featured: true, youtube: "https://www.youtube.com/watch?v=bgBi_eWQDbs", khutbaUrl: "https://drive.google.com/file/d/1ea98UR2_GUxG3kiKziX3lHVnCGG39lEh/view?usp=drive_link", eventNote: "Jumuah begins at 1:15 PM sharp. Please arrive early.\nParking available inside the estate gate.\nSisters section is available upstairs.", eventNoteSize: 13, events: [{"title":"","category":"lecture","organiser":"Sheikh Abdulrahman Kabusa & Sheikh Ibrahim Musa","time":"After Asr (approx 6:00 PM) - 7:30 PM","endDate":"2026-07-31","expiryDays":30,"phone":"+2348012345678","accountNumber":"","accountName":"","bankName":"","extraInfo":"Every Saturday evening after Asr prayer\nOpen to brothers and sisters\nChildren welcome\nLight refreshments provided","thumbnailUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl2":"https://i.imgur.com/6ov0ZRA.png","sponsors":[{"name":"2now Technology","logoUrl":"https://i.imgur.com/sHdEgdO.png"},{"name":"Kabusa Garden Estate","logoUrl":""}],"titleFontSize":84,"organiserFontSize":32,"timeFontSize":28,"donationFontSize":26,"extraInfoFontSize":30,"sponsorFontSize":22,"sponsorLogoSize":40,"facebook":"@kabusagardenmasjid","instagram":"@kabusagardenmasjid","whatsappSocial":"+2348012345678","twitterX":"@kabusagardenmasjid"},{"title":"Friday Feeding Programme","category":"feeding","organiser":"Kabusa Garden Welfare Committee","time":"After Jumuah — 2:00 PM - 4:00 PM","endDate":"2026-06-27","expiryDays":30,"phone":"+2348087654321","accountNumber":"1234567890","accountName":"Kabusa Garden Mosque Welfare","bankName":"First Bank Nigeria","extraInfo":"Free food for all community members\nRice, Beans, Chicken and Drinks\nDonate to support this cause\nJazakAllah Khairan for your support","thumbnailUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl2":"","sponsors":[{"name":"Eastpath Global Investment","logoUrl":"https://i.imgur.com/6ov0ZRA.png"},{"name":"2now Technology","logoUrl":"https://i.imgur.com/sHdEgdO.png"}],"titleFontSize":84,"organiserFontSize":32,"timeFontSize":28,"donationFontSize":26,"extraInfoFontSize":30,"sponsorFontSize":22,"sponsorLogoSize":36,"facebook":"@kabusagardenmasjid","instagram":"","whatsappSocial":"+2348087654321","twitterX":""},{"title":"Eid al-Adha 2026 — Ground Registration","category":"eid","organiser":"Kabusa Garden Estate Management","time":"Eid Salah: 8:00 AM | Registration opens 7:00 AM","endDate":"2026-06-27","expiryDays":30,"phone":"+2348012345678","accountNumber":"","accountName":"","bankName":"","extraInfo":"All residents must register before June 20\nBring your estate ID card\nAnimal slaughter arranged on request\nContact estate management for details","thumbnailUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl2":"https://i.imgur.com/6ov0ZRA.png","sponsors":[{"name":"Kabusa Garden Estate Mgmt","logoUrl":""}],"titleFontSize":84,"organiserFontSize":32,"timeFontSize":28,"donationFontSize":26,"extraInfoFontSize":30,"sponsorFontSize":22,"sponsorLogoSize":32,"facebook":"@kabusagardenmasjid","instagram":"@kabusagardenmasjid","whatsappSocial":"+2348012345678","twitterX":"@kabusagardenmasjid"},{"title":"Masjid Building Project — Phase 2","category":"project","organiser":"Kabusa Garden Mosque Committee","time":"Ongoing — Donations accepted anytime","endDate":"2026-12-31","expiryDays":30,"phone":"+2348012345678","accountNumber":"9876543210","accountName":"Kabusa Garden Mosque Project","bankName":"Zenith Bank","extraInfo":"Phase 2 target: N50,000,000\nExpansion of sisters section\nInstallation of proper AC and sound system\nJazakAllah Khairan for every contribution","thumbnailUrl":"https://i.imgur.com/6ov0ZRA.png","bannerUrl":"https://i.imgur.com/6ov0ZRA.png","bannerUrl2":"https://i.imgur.com/sHdEgdO.png","sponsors":[{"name":"Eastpath Global","logoUrl":"https://i.imgur.com/6ov0ZRA.png"},{"name":"2now Technology","logoUrl":"https://i.imgur.com/sHdEgdO.png"},{"name":"Estate Residents","logoUrl":""}],"titleFontSize":84,"organiserFontSize":32,"timeFontSize":28,"donationFontSize":26,"extraInfoFontSize":30,"sponsorFontSize":22,"sponsorLogoSize":40,"facebook":"@kabusagardenmasjid","instagram":"@kabusagardenmasjid","whatsappSocial":"+2348012345678","twitterX":"@kabusagardenmasjid"}]
+    imamRole: "Imam", imam: "Sheikh Abdulrahman Kabusa", phone: "+2348012345678", whatsapp: "+2348012345678",
+    lat: 9.02, lng: 7.47, verified: true, eidTimeHidden: true, youtube: "https://www.youtube.com/watch?v=bgBi_eWQDbs", khutbaUrl: "https://drive.google.com/file/d/1ea98UR2_GUxG3kiKziX3lHVnCGG39lEh/view?usp=drive_link", eventNote: "Jumuah begins at 1:15 PM sharp. Please arrive early.\nParking available inside the estate gate.\nSisters section is available upstairs.", eventNoteSize: 13, events: [{"title":"Weekly Tafsir — Understanding the Quran","category":"lecture","organiser":"Sheikh Abdulrahman Kabusa & Sheikh Ibrahim Musa","time":"After Asr (approx 6:00 PM) - 7:30 PM","endDate":"2026-07-31","expiryDays":30,"phone":"+2348012345678","accountNumber":"","accountName":"","bankName":"","extraInfo":"Every Saturday evening after Asr prayer\nOpen to brothers and sisters\nChildren welcome\nLight refreshments provided","thumbnailUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl2":"https://i.imgur.com/6ov0ZRA.png","sponsors":[{"name":"2now Technology","logoUrl":"https://i.imgur.com/sHdEgdO.png"},{"name":"Kabusa Garden Estate","logoUrl":""}],"titleFontSize":84,"organiserFontSize":32,"timeFontSize":28,"donationFontSize":26,"extraInfoFontSize":30,"sponsorFontSize":22,"sponsorLogoSize":40,"facebook":"@kabusagardenmasjid","instagram":"@kabusagardenmasjid","whatsappSocial":"+2348012345678","twitterX":"@kabusagardenmasjid"},{"title":"Friday Feeding Programme","category":"feeding","organiser":"Kabusa Garden Welfare Committee","time":"After Jumuah — 2:00 PM - 4:00 PM","endDate":"2026-06-27","expiryDays":30,"phone":"+2348087654321","accountNumber":"1234567890","accountName":"Kabusa Garden Mosque Welfare","bankName":"First Bank Nigeria","extraInfo":"Free food for all community members\nRice, Beans, Chicken and Drinks\nDonate to support this cause\nJazakAllah Khairan for your support","thumbnailUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl2":"","sponsors":[{"name":"Eastpath Global Investment","logoUrl":"https://i.imgur.com/6ov0ZRA.png"},{"name":"2now Technology","logoUrl":"https://i.imgur.com/sHdEgdO.png"}],"titleFontSize":84,"organiserFontSize":32,"timeFontSize":28,"donationFontSize":26,"extraInfoFontSize":30,"sponsorFontSize":22,"sponsorLogoSize":36,"facebook":"@kabusagardenmasjid","instagram":"","whatsappSocial":"+2348087654321","twitterX":""},{"title":"Eid al-Adha 2026 — Ground Registration","category":"eid","organiser":"Kabusa Garden Estate Management","time":"Eid Salah: 8:00 AM | Registration opens 7:00 AM","endDate":"2026-06-27","expiryDays":30,"phone":"+2348012345678","accountNumber":"","accountName":"","bankName":"","extraInfo":"All residents must register before June 20\nBring your estate ID card\nAnimal slaughter arranged on request\nContact estate management for details","thumbnailUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl":"https://i.imgur.com/sHdEgdO.png","bannerUrl2":"https://i.imgur.com/6ov0ZRA.png","sponsors":[{"name":"Kabusa Garden Estate Mgmt","logoUrl":""}],"titleFontSize":84,"organiserFontSize":32,"timeFontSize":28,"donationFontSize":26,"extraInfoFontSize":30,"sponsorFontSize":22,"sponsorLogoSize":32,"facebook":"@kabusagardenmasjid","instagram":"@kabusagardenmasjid","whatsappSocial":"+2348012345678","twitterX":"@kabusagardenmasjid"},{"title":"Masjid Building Project — Phase 2","category":"project","organiser":"Kabusa Garden Mosque Committee","time":"Ongoing — Donations accepted anytime","endDate":"2026-12-31","expiryDays":30,"phone":"+2348012345678","accountNumber":"9876543210","accountName":"Kabusa Garden Mosque Project","bankName":"Zenith Bank","extraInfo":"Phase 2 target: N50,000,000\nExpansion of sisters section\nInstallation of proper AC and sound system\nJazakAllah Khairan for every contribution","thumbnailUrl":"https://i.imgur.com/6ov0ZRA.png","bannerUrl":"https://i.imgur.com/6ov0ZRA.png","bannerUrl2":"https://i.imgur.com/sHdEgdO.png","sponsors":[{"name":"Eastpath Global","logoUrl":"https://i.imgur.com/6ov0ZRA.png"},{"name":"2now Technology","logoUrl":"https://i.imgur.com/sHdEgdO.png"},{"name":"Estate Residents","logoUrl":""}],"titleFontSize":84,"organiserFontSize":32,"timeFontSize":28,"donationFontSize":26,"extraInfoFontSize":30,"sponsorFontSize":22,"sponsorLogoSize":40,"facebook":"@kabusagardenmasjid","instagram":"@kabusagardenmasjid","whatsappSocial":"+2348012345678","twitterX":"@kabusagardenmasjid"}]
   }
 ];

@@ -4,7 +4,7 @@
  * Enables offline support and faster loading
  */
 
-var CACHE = 'deenlocator-v7';
+var CACHE = 'deenlocator-v8';
 
 var FILES = [
   '/deenlocator/',

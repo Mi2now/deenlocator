@@ -8,7 +8,7 @@ var APP_CONFIG = {
   "contactPhone": "+234 806 590 0110",
   "contactEmail": "mustytunau@gmail.com",
   "adminEmail": "mustytunau@gmail.com",
-  "googleFormUrl": "https://forms.gle/deenlocator",
+  "googleFormUrl": "https://forms.gle/XMic26Ernr1QDD7y8",
   "appUrl": "mi2now.github.io/deenlocator",
   "appName": "DeenLocator",
   "appTagline": "Eid & Jumuah Locator · Abuja",
@@ -29,6 +29,6 @@ var APP_CONFIG = {
   "footerTwitter": "",
   "eidAlAdhaDate": "2026-05-27",
   "hijriOffset": 0,
-  "shareCardHadith": "Whoever guides others to goodness will have a reward equal to those who do good.",
-  "shareCardHadithRef": "Sahih Muslim 1893"
+  "shareCardHadith": "Whoever guides others to goodness will have a reward equal to those who do good",
+  "shareCardHadithRef": "— Sahih Muslim 1893"
 };
