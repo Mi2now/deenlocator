@@ -531,7 +531,7 @@ function openEventShare(locId, evIdx){
   /* Footer */
   ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.fillRect(0,fY,W,_footerH);
   ctx.fillStyle=pal.accent; ctx.fillRect(0,fY,W,2);
-  var _appUrl=(typeof APP_CONFIG!=='undefined'&&APP_CONFIG.appUrl)||'mi2now.github.io/deenlocator';
+  var _appUrl='https://'+((typeof APP_CONFIG!=='undefined'&&APP_CONFIG.appUrl)||'deenlocator.ng').replace(/^https?:\/\//,'');
   ctx.textAlign='left'; ctx.font='bold 25px sans-serif'; ctx.fillStyle='#fff';
   ctx.fillText('\uD83D\uDCF1 Download DeenLocator \u2014 Free App',50,fY+38);
   ctx.font='21px sans-serif'; ctx.fillStyle=pal.accent;
