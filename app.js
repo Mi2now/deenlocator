@@ -15,6 +15,71 @@ function getAppDomain(){
   return (cfg.appUrl || 'deenlocator.ng').replace(/^https?:\/\//,'');
 }
 
+/* ── Smart type-priority sort ──────────────────────────────────────────────
+   Returns 0/1/2 priority for a location based on time of day and Eid date.
+   Lower number = sorted higher in list.
+   
+   Mode logic (all configurable in APP_CONFIG):
+   • Normal days       → Jumuah(0) Both(1) Eid(2)
+   • Eid day 4:30AM–   → Eid(0)    Both(1) Jumuah(2)
+   • Eid-Friday 10:30+ → Jumuah(0) Both(1) Eid(2)  [switches back for Jumuah]
+   • sortMode:'jumuah' → always Jumuah first (manual override)
+   • sortMode:'eid'    → always Eid first (manual override)
+────────────────────────────────────────────────────────────────────────── */
+function getEidSortMode(){
+  var cfg = (typeof APP_CONFIG !== 'undefined') ? APP_CONFIG : {};
+
+  /* Manual override */
+  var manual = cfg.sortMode || 'auto';
+  if(manual === 'jumuah') return 'jumuah';
+  if(manual === 'eid')    return 'eid';
+
+  /* Auto mode — check date/time */
+  var eidStr = cfg.eidAlAdhaDate || '2026-05-27';
+  var eidDate = new Date(eidStr + 'T00:00:00');
+  var now = new Date();
+
+  var eidY = eidDate.getFullYear(), eidM = eidDate.getMonth(), eidD = eidDate.getDate();
+  var nowY = now.getFullYear(), nowM = now.getMonth(), nowD = now.getDate();
+  var isEidDay = (nowY===eidY && nowM===eidM && nowD===eidD);
+
+  if(!isEidDay) return 'jumuah'; /* Normal day — Jumuah priority */
+
+  /* It IS Eid day */
+  var startH = (cfg.eidStartHour  !== undefined) ? cfg.eidStartHour  : 4;
+  var startM = (cfg.eidStartMinute!== undefined) ? cfg.eidStartMinute: 30;
+  var cutH   = (cfg.eidCutoffHour !== undefined) ? cfg.eidCutoffHour : 10;
+  var cutM   = (cfg.eidCutoffMinute!==undefined) ? cfg.eidCutoffMinute: 30;
+
+  var nowMins  = now.getHours()*60 + now.getMinutes();
+  var startMins= startH*60 + startM;  /* 4:30 AM = 270 */
+  var cutMins  = cutH*60   + cutM;    /* 10:30 AM = 630 */
+
+  /* Before 4:30 AM on Eid day → still Jumuah (people sleeping) */
+  if(nowMins < startMins) return 'jumuah';
+
+  /* 4:30 AM → 10:30 AM on Eid day → Eid priority */
+  var isEidFriday = (eidDate.getDay() === 5); /* 5 = Friday */
+  if(!isEidFriday || nowMins < cutMins) return 'eid';
+
+  /* Eid falls on Friday AND it's past 10:30 AM → switch back to Jumuah */
+  return 'jumuah';
+}
+
+function getSmartPriority(locType){
+  var mode = getEidSortMode();
+  if(mode === 'eid'){
+    if(locType==='eid')    return 0;
+    if(locType==='both')   return 1;
+    if(locType==='jumuah') return 2;
+  } else {
+    if(locType==='jumuah') return 0;
+    if(locType==='both')   return 1;
+    if(locType==='eid')    return 2;
+  }
+  return 1;
+}
+
 /* ── Draw brand name with .ng badge on canvas ──
    Usage: drawBrand(ctx, x, y, fontSize)
    Draws 'Deen' (green) + 'Locator' (white) + '.ng' (gold) */
@@ -901,9 +966,14 @@ function fmtDist(km){return km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km';}
 function getBest(filter){
   if(userLat===null) return null;
   var list=filter==='all'?getVisibleLocations():getVisibleLocations().filter(function(l){return l.type===filter||l.type==='both';});
-  var best=null,bd=Infinity;
-  list.forEach(function(l){var d=calcDist(userLat,userLng,l.lat,l.lng);if(d<bd){bd=d;best=Object.assign({},l,{_dist:d});}});
-  return best;
+  /* Apply smart priority — best = nearest in highest priority group */
+  list=list.map(function(l){return Object.assign({},l,{_dist:calcDist(userLat,userLng,l.lat,l.lng)});});
+  list.sort(function(a,b){
+    var pa=getSmartPriority(a.type),pb=getSmartPriority(b.type);
+    if(pa!==pb) return pa-pb;
+    return a._dist-b._dist;
+  });
+  return list.length ? list[0] : null;
 }
 
 function initGPS(){
@@ -1015,8 +1085,13 @@ function refreshMapNearest(){
 function buildMapList(filter){
   var list=filter==='all'?getVisibleLocations():getVisibleLocations().filter(function(l){return l.type===filter||l.type==='both';});
   list.forEach(function(l){l._dist=userLat!==null?calcDist(userLat,userLng,l.lat,l.lng):null;});
-  if(userLat!==null) list.sort(function(a,b){return a._dist-b._dist;});
-  else list.sort(function(a,b){return a.name.localeCompare(b.name);});
+  if(userLat!==null){
+    list.sort(function(a,b){
+      var pa=getSmartPriority(a.type), pb=getSmartPriority(b.type);
+      if(pa!==pb) return pa-pb;
+      return (a._dist||9999)-(b._dist||9999);
+    });
+  } else list.sort(function(a,b){return a.name.localeCompare(b.name);});
   var dotCls=function(t){return t==='eid'?'dot-gold':t==='both'?'dot-both':'dot-green';};
   document.getElementById('mapList').innerHTML=list.map(function(loc){
     var dist=loc._dist!==null?'<span class="map-list-dist">'+fmtDist(loc._dist)+'</span>':'';
@@ -1079,7 +1154,13 @@ function getList(){
   if(activeArea) list=list.filter(function(l){return l.area===activeArea;});
   if(searchQuery){var q=searchQuery.toLowerCase();list=list.filter(function(l){return l.name.toLowerCase().includes(q)||l.area.toLowerCase().includes(q)||(l.address||'').toLowerCase().includes(q);});}
   list.forEach(function(l){l._dist=userLat!==null?calcDist(userLat,userLng,l.lat,l.lng):null;});
-  if(activeSort==='nearest') list.sort(function(a,b){return(a._dist||9999)-(b._dist||9999);});
+  if(activeSort==='nearest'){
+    list.sort(function(a,b){
+      var pa=getSmartPriority(a.type), pb=getSmartPriority(b.type);
+      if(pa!==pb) return pa-pb;           /* different priority group */
+      return (a._dist||9999)-(b._dist||9999); /* same group → nearest first */
+    });
+  }
   else if(activeSort==='az') list.sort(function(a,b){return a.name.localeCompare(b.name);});
   else if(activeSort==='za') list.sort(function(a,b){return b.name.localeCompare(a.name);});
   else if(activeSort==='jumuahTime') list.sort(function(a,b){return(a.jumuahTime||'ZZ').localeCompare(b.jumuahTime||'ZZ');});

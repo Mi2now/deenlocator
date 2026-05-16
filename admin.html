@@ -2017,6 +2017,11 @@ function loadConfigDefaults(){
   if(document.getElementById('cfg_tagline')) document.getElementById('cfg_tagline').value = c.shareCardTagline||'';
   if(document.getElementById('cfg_eid_adha')) document.getElementById('cfg_eid_adha').value = c.eidAlAdhaDate||'2026-05-27';
   if(document.getElementById('cfg_hijri_offset')) document.getElementById('cfg_hijri_offset').value = (c.hijriOffset||0);
+  if(document.getElementById('cfg_sort_mode'))   document.getElementById('cfg_sort_mode').value   = c.sortMode||'auto';
+  if(document.getElementById('cfg_eid_start_h')) document.getElementById('cfg_eid_start_h').value = (c.eidStartHour!==undefined?c.eidStartHour:4);
+  if(document.getElementById('cfg_eid_start_m')) document.getElementById('cfg_eid_start_m').value = (c.eidStartMinute!==undefined?c.eidStartMinute:30);
+  if(document.getElementById('cfg_eid_cut_h'))   document.getElementById('cfg_eid_cut_h').value   = (c.eidCutoffHour!==undefined?c.eidCutoffHour:10);
+  if(document.getElementById('cfg_eid_cut_m'))   document.getElementById('cfg_eid_cut_m').value   = (c.eidCutoffMinute!==undefined?c.eidCutoffMinute:30);
   if(document.getElementById('cfg_hadith'))     document.getElementById('cfg_hadith').value     = c.shareCardHadith||'';
   if(document.getElementById('cfg_hadith_ref')) document.getElementById('cfg_hadith_ref').value = c.shareCardHadithRef||'';
 }
@@ -2052,6 +2057,11 @@ function exportConfig(){
     footerTwitter:   document.getElementById('cfg_foot_x')  ? document.getElementById('cfg_foot_x').value.trim()  : '',
     eidAlAdhaDate:   document.getElementById('cfg_eid_adha') ? document.getElementById('cfg_eid_adha').value.trim() : '2026-05-27',
     hijriOffset:     document.getElementById('cfg_hijri_offset') ? parseInt(document.getElementById('cfg_hijri_offset').value)||0 : 0,
+    sortMode:        document.getElementById('cfg_sort_mode')   ? document.getElementById('cfg_sort_mode').value : 'auto',
+    eidStartHour:    document.getElementById('cfg_eid_start_h') ? parseInt(document.getElementById('cfg_eid_start_h').value)||4  : 4,
+    eidStartMinute:  document.getElementById('cfg_eid_start_m') ? parseInt(document.getElementById('cfg_eid_start_m').value)||30 : 30,
+    eidCutoffHour:   document.getElementById('cfg_eid_cut_h')   ? parseInt(document.getElementById('cfg_eid_cut_h').value)||10  : 10,
+    eidCutoffMinute: document.getElementById('cfg_eid_cut_m')   ? parseInt(document.getElementById('cfg_eid_cut_m').value)||30  : 30,
     shareCardHadith: document.getElementById('cfg_hadith') ? document.getElementById('cfg_hadith').value.trim() : '',
     shareCardHadithRef: document.getElementById('cfg_hadith_ref') ? document.getElementById('cfg_hadith_ref').value.trim() : ''
   };
@@ -2789,6 +2799,42 @@ function closeCSVPanel(){
         <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Hijri Date Offset (days)</label>
         <input id="cfg_hijri_offset" type="number" min="-2" max="2" value="0" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
         <div style="font-size:11px;color:var(--tm);margin-top:4px">0 = auto · +1 = forward 1 day · -1 = back 1 day</div>
+      </div>
+    </div>
+
+    <!-- Smart Sort Settings -->
+    <div style="background:#f0fdf4;border:1.5px solid #6ee7b7;border-radius:14px;padding:16px;margin-top:16px">
+      <div style="font-weight:700;font-size:14px;color:#065f46;margin-bottom:4px">🔀 Location Sort Priority</div>
+      <div style="font-size:12px;color:#047857;margin-bottom:12px;line-height:1.6">
+        <b>Auto</b> = Jumuah first normally. Switches to Eid grounds on Eid morning (4:30 AM). If Eid is Friday, switches back to Jumuah at 10:30 AM.
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div>
+          <label style="font-size:12px;font-weight:600;color:var(--ts);display:block;margin-bottom:6px">Sort Mode</label>
+          <select id="cfg_sort_mode" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:13px">
+            <option value="auto">🔀 Auto (recommended)</option>
+            <option value="jumuah">🕐 Always Jumuah first</option>
+            <option value="eid">🌙 Always Eid first</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:var(--ts);display:block;margin-bottom:6px">Eid Priority Starts</label>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input id="cfg_eid_start_h" type="number" min="0" max="23" value="4" style="width:58px;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:14px;text-align:center"/>
+            <span style="line-height:44px;color:var(--ts);font-weight:700">:</span>
+            <input id="cfg_eid_start_m" type="number" min="0" max="59" value="30" style="width:58px;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:14px;text-align:center"/>
+            <span style="font-size:11px;color:var(--tm)">AM on Eid day</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:600;color:var(--ts);display:block;margin-bottom:6px">Eid Priority Ends — if Eid falls on Friday, switches back to Jumuah after:</label>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input id="cfg_eid_cut_h" type="number" min="0" max="23" value="10" style="width:58px;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:14px;text-align:center"/>
+          <span style="line-height:44px;color:var(--ts);font-weight:700">:</span>
+          <input id="cfg_eid_cut_m" type="number" min="0" max="59" value="30" style="width:58px;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 8px;font-family:inherit;font-size:14px;text-align:center"/>
+          <span style="font-size:11px;color:var(--tm)">Jumuah takes priority again</span>
+        </div>
       </div>
     </div>
 
