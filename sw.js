@@ -4,16 +4,17 @@
  * Enables offline support and faster loading
  */
 
-var CACHE = 'deenlocator-v8';
+var CACHE = 'deenlocator-v9';
 
 var FILES = [
-  '/deenlocator/',
-  '/deenlocator/index.html',
-  '/deenlocator/app.js',
-  '/deenlocator/share-card.js',
-  '/deenlocator/styles.css',
-  '/deenlocator/locations.js',
-  '/deenlocator/config.js'
+  '/',
+  '/index.html',
+  '/app.js',
+  '/share-card.js',
+  '/styles.css',
+  '/locations.js',
+  '/config.js',
+  '/faq-items.js'
 ];
 
 /* Install — cache core files */
@@ -72,7 +73,7 @@ self.addEventListener('fetch', function(e) {
         return response;
       }).catch(function() {
         /* Offline fallback — return cached index */
-        return caches.match('/deenlocator/index.html');
+        return caches.match('/index.html');
       });
     })
   );

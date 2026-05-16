@@ -222,17 +222,14 @@ function openEventShare(locId, evIdx){
   ctx.fillStyle=pal.accent; ctx.fillRect(0,hH-3,W,3);
 
   /* Brand — always left-aligned */
-  function drawBrand(){
+  function drawScBrand(){
     ctx.textAlign='left';
-    ctx.font='bold 44px sans-serif'; ctx.fillStyle=pal.accent;
-    ctx.fillText('Deen',148,76);
-    ctx.fillStyle='rgba(255,255,255,0.92)';
-    ctx.fillText('Locator',148+ctx.measureText('Deen').width+4,76);
+    drawBrand(ctx, 148, 76, 44);
     ctx.font='22px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)';
     ctx.fillText('by 2now Technology',148,104);
   }
-  _loadImg(LOGO, function(img){ ctx.drawImage(img,50,22,80,80); drawBrand(); });
-  drawBrand();
+  _loadImg(LOGO, function(img){ ctx.drawImage(img,50,22,80,80); drawScBrand(); });
+  drawScBrand();
 
   /* Category pill top-right */
   var catLabel=(ev.category||'General').charAt(0).toUpperCase()+(ev.category||'General').slice(1);
@@ -534,8 +531,8 @@ function openEventShare(locId, evIdx){
   var _appUrl='https://'+((typeof APP_CONFIG!=='undefined'&&APP_CONFIG.appUrl)||'deenlocator.ng').replace(/^https?:\/\//,'');
   ctx.textAlign='left'; ctx.font='bold 25px sans-serif'; ctx.fillStyle='#fff';
   ctx.fillText('\uD83D\uDCF1 Download DeenLocator \u2014 Free App',50,fY+38);
-  ctx.font='21px sans-serif'; ctx.fillStyle=pal.accent;
-  ctx.fillText(_appUrl,50,fY+64);
+  ctx.font='26px sans-serif'; ctx.fillStyle=pal.accent;
+  ctx.fillText(_appUrl,50,fY+66);
   ctx.font='17px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.4)';
   ctx.fillText('Free Eid & Jumuah locator \u2022 Abuja FCT',50,fY+90);
   var _fPhone=(typeof APP_CONFIG!=='undefined'&&APP_CONFIG.contactPhone)||'+234 806 590 0110';

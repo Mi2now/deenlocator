@@ -1875,8 +1875,8 @@ function buildJS(){
 }
 
 function toggleExp(){var p=document.getElementById("expanel");if(p.classList.contains("show")){p.classList.remove("show");}else{document.getElementById("expcode").textContent=buildJS();p.classList.add("show");p.scrollIntoView({behavior:"smooth"});}}
-function copyExp(){var t=buildJS();if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){toast("Copied! Paste into locations.js and upload to GitHub.");}).catch(function(){toast("Copy failed — use Download instead.");});}else{toast("Use Download button.");}}
-function dlExp(){var a=document.createElement("a");a.download="locations.js";a.href="data:text/javascript;charset=utf-8,"+encodeURIComponent(buildJS());document.body.appendChild(a);a.click();document.body.removeChild(a);toast("Downloaded! Upload to github.com/mi2now/deenlocator");}
+function copyExp(){var t=buildJS();if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){toast("Copied! Upload locations.js to Cloudflare → rough-mountain-3762 → New Deployment.");}).catch(function(){toast("Copy failed — use Download instead.");});}else{toast("Use Download button.");}}
+function dlExp(){var a=document.createElement("a");a.download="locations.js";a.href="data:text/javascript;charset=utf-8,"+encodeURIComponent(buildJS());document.body.appendChild(a);a.click();document.body.removeChild(a);toast("Downloaded! Upload to Cloudflare → rough-mountain-3762 → New Deployment");}
 
 
 
@@ -1948,7 +1948,7 @@ function saveFaqToLS(){
 function downloadFaqJs(){
   /* Generates a standalone faq-items.js that app.js reads automatically */
   var out = '/* DeenLocator FAQ Items\n'
-    + '   Generated from admin.html FAQ Editor\n'
+    + '   Generated from admin.html FAQ Editor — upload to Cloudflare\n'
     + '   Upload to GitHub alongside config.js\n'
     + '*/\n\n'
     + 'var FAQ_ITEMS = ' + JSON.stringify(FAQ_DATA, null, 2) + ';\n';
@@ -2067,7 +2067,7 @@ function exportConfig(){
   var a    = document.createElement('a');
   a.href = url; a.download = 'config.js';
   a.click(); URL.revokeObjectURL(url);
-  toast('config.js downloaded! Upload it to GitHub to go live.');
+  toast('config.js downloaded! Upload it to Cloudflare to go live.');
 }
 
 
@@ -2805,7 +2805,7 @@ function closeCSVPanel(){
     </label>
   </div>
   <div style="font-size:12px;color:var(--tm);margin-top:12px;line-height:1.6">
-    After downloading config.js, go to github.com/mi2now/deenlocator → click config.js → pencil icon → paste content → Commit. Live in 2 minutes.
+    After downloading config.js, go to Cloudflare → Workers & Pages → rough-mountain-3762 → Deployments → Upload files. Live in 2 minutes.
   </div>
 </div>
 

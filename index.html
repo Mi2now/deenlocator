@@ -12,10 +12,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="application-name" content="DeenLocator"/>
-  <link rel="apple-touch-startup-image" href="/deenlocator/icon-512.png"/>
+  <link rel="apple-touch-startup-image" href="/icon-512.png"/>
   <meta name="apple-mobile-web-app-title" content="DeenLocator"/>
-  <link rel="manifest" href="/deenlocator/manifest.json"/>
-  <link rel="apple-touch-icon" href="/deenlocator/icon-192.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="apple-touch-icon" href="/icon-192.png"/>
   <title>DeenLocator — Abuja Prayer Locator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -69,7 +69,7 @@
     <div class="header-brand">
       <div class="header-logo" style="background:transparent;padding:2px"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-logo="1" style="width:100%;height:100%;object-fit:contain;border-radius:8px" alt="DeenLocator"/></div>
       <div>
-        <div class="app-name">Deen<span>Locator</span></div>
+        <div class="app-name">Deen<span>Locator</span><sup class="ng-badge">.ng</sup></div>
         <div class="app-sub">Eid &amp; Jumuah Locator · Abuja</div>
       </div>
     </div>
@@ -251,7 +251,7 @@
   <div class="screen" id="screen-settings">
     <div class="settings-hero">
       <div class="settings-logo-wrap"><img id="settingsLogo" src="" alt="2now Technology"/></div>
-      <div class="settings-app-name">Deen<span>Locator</span></div>
+      <div class="settings-app-name">Deen<span>Locator</span><sup class="ng-badge">.ng</sup></div>
       <div class="settings-version">v2.0 · Launched 20 March 2026 · 1 Shawwal 1447</div>
       <div class="settings-tagline">Launched on Eid al-Fitr · 1 Shawwal 1447 AH</div>
     </div>
@@ -377,7 +377,7 @@
       <div class="settings-group">
         <div class="settings-row static"><div class="settings-row-icon">🕌</div><div class="settings-row-body"><div class="settings-row-title">Locations in Database</div><div class="settings-row-sub" id="settingsLocCount">28 verified locations</div></div></div>
         <div class="settings-row static"><div class="settings-row-icon">🗺️</div><div class="settings-row-body"><div class="settings-row-title">Coverage</div><div class="settings-row-sub">Abuja (FCT) · Expanding to all Nigeria</div></div></div>
-        <div class="settings-row static"><div class="settings-row-icon">📋</div><div class="settings-row-body"><div class="settings-row-title">Data Sources</div><div class="settings-row-sub">CFII (Committee of FCT Imams Initiative) · CEMA Masjid · praysalat.com</div></div></div>
+        <div class="settings-row static"><div class="settings-row-icon">📋</div><div class="settings-row-body"><div class="settings-row-title">Data Sources</div><div class="settings-row-sub">CFII (Committee of FCT Imams Initiative)</div></div></div>
         <div class="settings-row static"><div class="settings-row-icon">🗓️</div><div class="settings-row-body"><div class="settings-row-title">Launched</div><div class="settings-row-sub">Eid al-Fitr · 20 March 2026 · 1 Shawwal 1447 AH</div></div></div>
         <div class="settings-row static"><div class="settings-row-icon">ℹ️</div><div class="settings-row-body"><div class="settings-row-title">Version</div><div class="settings-row-sub">2.0 · Free · No login required</div></div></div>
         <div class="settings-row" onclick="shareApp()"><div class="settings-row-icon">↗️</div><div class="settings-row-body"><div class="settings-row-title">Share DeenLocator</div><div class="settings-row-sub">Help others find their nearest mosque</div></div><div class="settings-row-right">›</div></div>
@@ -410,7 +410,7 @@
       <div class="share-card-top">
         <div class="share-card-logo-row">
           <div class="share-card-logo-icon" style="background:transparent;padding:1px"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-logo="1" style="width:100%;height:100%;object-fit:contain;border-radius:5px" alt="DeenLocator"/></div>
-          <div class="share-card-app-name">Deen<span>Locator</span></div>
+          <div class="share-card-app-name">Deen<span>Locator</span><sup class="ng-badge-sm">.ng</sup></div>
         </div>
         <div class="share-card-badge" id="scBadge"></div>
         <div class="share-card-mosque-name" id="scName"></div>
@@ -548,7 +548,7 @@ function showToast(msg, duration){
 /* ══ SERVICE WORKER ══ */
 /* Register SW so notifications work via serviceWorker.showNotification() */
 if(navigator.serviceWorker){
-  navigator.serviceWorker.register('/deenlocator/sw.js').catch(function(e){
+  navigator.serviceWorker.register('/sw.js').catch(function(e){
     console.log('SW register failed:', e);
   });
 }

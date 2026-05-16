@@ -15,6 +15,24 @@ function getAppDomain(){
   return (cfg.appUrl || 'deenlocator.ng').replace(/^https?:\/\//,'');
 }
 
+/* ── Draw brand name with .ng badge on canvas ──
+   Usage: drawBrand(ctx, x, y, fontSize)
+   Draws 'Deen' (green) + 'Locator' (white) + '.ng' (gold) */
+function drawBrand(ctx, x, y, fontSize){
+  ctx.font = 'bold '+fontSize+'px sans-serif';
+  ctx.fillStyle = '#22c98a';
+  ctx.fillText('Deen', x, y);
+  var deenW = ctx.measureText('Deen').width;
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.fillText('Locator', x + deenW, y);
+  var locW = ctx.measureText('Locator').width;
+  ctx.font = 'bold '+Math.round(fontSize*0.52)+'px sans-serif';
+  ctx.fillStyle = '#f0c96a';
+  ctx.fillText('.ng', x + deenW + locW + 4, y);
+  /* Reset font */
+  ctx.font = fontSize+'px sans-serif';
+}
+
 /* LOCATIONS loaded from locations.js — edit via admin, then Export + upload */
 
 /* ══ LOGO ══ */
@@ -588,16 +606,13 @@ function shareMosqueTimeCard(){
 
   /* Logo + brand */
   var _li=new Image();
-  function drawBrand(){
-    ctx.font='bold 54px sans-serif'; ctx.fillStyle='#22c98a';
-    ctx.fillText('Deen',148,90);
-    ctx.fillStyle='rgba(255,255,255,0.92)';
-    ctx.fillText('Locator',148+ctx.measureText('Deen').width+4,90);
+  function drawEventBrand(){
+    drawBrand(ctx, 148, 90, 54);
     ctx.font='26px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.5)';
     ctx.fillText('by 2now Technology',148,122);
   }
-  _li.onload=function(){ try{ctx.drawImage(_li,50,51,76,76);}catch(e){} drawBrand(); };
-  _li.onerror=drawBrand; _li.src=LOGO; drawBrand();
+  _li.onload=function(){ try{ctx.drawImage(_li,50,51,76,76);}catch(e){} drawEventBrand(); };
+  _li.onerror=drawEventBrand; _li.src=LOGO; drawEventBrand();
 
   /* Mosque name — well below the header line */
   var curY=hH+56;
@@ -1338,10 +1353,7 @@ function saveShareCard(loc){
       try{ ctx.drawImage(_logoImg,72,52,68,68); }catch(e){}
     };
     try{ if(LOGO){ _logoImg.src = LOGO; logoX = 156; } }catch(e){}
-    ctx.font='bold 54px sans-serif'; ctx.fillStyle='#22c98a';
-    ctx.fillText('Deen', logoX, 104);
-    ctx.fillStyle='rgba(255,255,255,0.95)';
-    ctx.fillText('Locator', logoX+ctx.measureText('Deen').width+4, 104);
+    drawBrand(ctx, logoX, 104, 54);
     ctx.font='28px sans-serif'; ctx.fillStyle='rgba(255,255,255,0.45)';
     ctx.fillText('by 2now Technology', logoX, 144);
     ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.fillRect(80,168,W-160,2);
@@ -1688,11 +1700,7 @@ function drawBulkPage(items, pageNum, totalPages, filter){
       _li.src = LOGO;
     }
   })();
-  ctx.font = 'bold 68px sans-serif';
-  ctx.fillStyle = '#22c98a';
-  ctx.fillText('Deen', PAD + 86, 72);
-  ctx.fillStyle = 'rgba(255,255,255,0.95)';
-  ctx.fillText('Locator', PAD + 86 + ctx.measureText('Deen').width, 72);
+  drawBrand(ctx, PAD + 86, 72, 68);
 
   /* Subtitle */
   var subtitles = {
@@ -1899,17 +1907,15 @@ function drawBulkPage(items, pageNum, totalPages, filter){
   var _fBrand   = _cfg.brandName    || '2now Technology';
 
   /* Left: App name + tagline + link */
-  ctx.font = 'bold 36px sans-serif';
-  ctx.fillStyle = '#22c98a';
-  ctx.fillText('DeenLocator', PAD, footerY + 46);
+  drawBrand(ctx, PAD, footerY + 46, 36);
 
   ctx.font = '25px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.65)';
   ctx.fillText(_fTagline, PAD, footerY + 80);
 
-  ctx.font = 'bold 24px sans-serif';
+  ctx.font = 'bold 28px sans-serif';
   ctx.fillStyle = '#22c98a';
-  ctx.fillText(_fUrl, PAD, footerY + 114);
+  ctx.fillText(_fUrl, PAD, footerY + 118);
 
   /* Right: Icons + contact */
   ctx.textAlign = 'right';
@@ -2242,11 +2248,7 @@ function drawSuggestCard(){
       _li.src = LOGO;
     }
   })();
-  ctx.font = 'bold 72px sans-serif';
-  ctx.fillStyle = '#22c98a';
-  ctx.fillText('Deen', PAD + 84, 90);
-  ctx.fillStyle = 'rgba(255,255,255,0.95)';
-  ctx.fillText('Locator', PAD + 84 + ctx.measureText('Deen').width, 90);
+  drawBrand(ctx, PAD + 84, 90, 72);
 
   ctx.font = '32px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.5)';
@@ -2299,20 +2301,24 @@ function drawSuggestCard(){
   ctx.fillStyle = 'rgba(255,255,255,0.08)';
   ctx.fillRect(PAD, 1200, W-PAD*2, 1);
 
-  /* Left contact */
+  /* Left contact — read from APP_CONFIG */
+  var _sgCfg = (typeof APP_CONFIG !== 'undefined') ? APP_CONFIG : {};
+  var _sgEmail = _sgCfg.adminEmail || _sgCfg.contactEmail || 'mustytunau@gmail.com';
+  var _sgPhone = _sgCfg.contactPhone || '+234 806 590 0110';
+  var _sgWA    = _sgCfg.whatsappNumber ? ('+'+_sgCfg.whatsappNumber) : _sgPhone;
   ctx.font = 'bold 30px sans-serif';
   ctx.fillStyle = '#22c98a';
-  ctx.fillText('\u{1F4E7}  mustytunau@gmail.com', PAD, 1252);
+  ctx.fillText('\u{1F4E7}  '+_sgEmail, PAD, 1252);
   ctx.font = '28px sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.75)';
-  ctx.fillText('\u{1F4DE}  +234 806 590 0110', PAD, 1292);
+  ctx.fillText('\u{1F4DE}  '+_sgPhone, PAD, 1292);
 
   /* Right contact */
   ctx.textAlign = 'right';
   ctx.font = 'bold 28px sans-serif';
   ctx.fillStyle = '#25D366';
-  ctx.fillText('\u{1F4AC}  +234 806 590 0110', W-PAD, 1252);
-  ctx.font = '24px sans-serif';
+  ctx.fillText('\u{1F4AC}  '+_sgWA, W-PAD, 1252);
+  ctx.font = 'bold 28px sans-serif';
   ctx.fillStyle = '#22c98a';
   ctx.fillText(getAppDomain(), W-PAD, 1292);
   ctx.textAlign = 'left';
@@ -2376,9 +2382,9 @@ function shareSuggestText(){
     '\u2705 Prayer Time (Jumuah / Eid)',
     '\u2705 Contact number (if known)','',
     '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501',
-    '\u{1F4E7} mustytunau@gmail.com',
-    '\u{1F4DE} +234 806 590 0110',
-    '\u{1F4AC} +234 806 590 0110 (WhatsApp)','',
+    '\u{1F4E7} '+((typeof APP_CONFIG!=='undefined'&&APP_CONFIG.adminEmail)||'mustytunau@gmail.com'),
+    '\u{1F4DE} '+((typeof APP_CONFIG!=='undefined'&&APP_CONFIG.contactPhone)||'+234 806 590 0110'),
+    '\u{1F4AC} '+((typeof APP_CONFIG!=='undefined'&&APP_CONFIG.contactPhone)||'+234 806 590 0110')+' (WhatsApp)','',
     '\u{1F4F1} '+getAppDomain(),'',
     'Powered by *2now Technology*',
     'JazakAllahu khayran \u{1F64F}'
