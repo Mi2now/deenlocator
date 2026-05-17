@@ -3106,32 +3106,57 @@ function playBeep(){
 
 /* Play a remote audio file (adhan mp3 or nasheed from backend) */
 var _currentAudio = null;
-function playRemoteSound(url){
+var _soundStopTimer = null;
+
+function stopAlertSoundPreview(){
+  if(_soundStopTimer){ clearTimeout(_soundStopTimer); _soundStopTimer = null; }
+  if(_currentAudio){ _currentAudio.pause(); _currentAudio.currentTime=0; _currentAudio = null; }
+}
+
+function playRemoteSound(url, maxSecs){
   try{
-    if(_currentAudio){ _currentAudio.pause(); _currentAudio = null; }
+    stopAlertSoundPreview();
     var audio = new Audio(url);
     audio.volume = soundPrefs.volume;
     _currentAudio = audio;
     audio.play().catch(function(e){ console.log('Audio play error:', e); playBeep(); });
+    /* Auto-stop after maxSecs (default 30) */
+    var dur = (maxSecs || 30) * 1000;
+    _soundStopTimer = setTimeout(stopAlertSoundPreview, dur);
+    /* Also stop when audio ends naturally */
+    audio.onended = function(){ stopAlertSoundPreview(); updateSoundPreviewBtn(false); };
   }catch(e){ playBeep(); }
 }
 
+function updateSoundPreviewBtn(isPlaying){
+  var btns = document.querySelectorAll('[data-preview-btn]');
+  btns.forEach(function(b){
+    b.textContent = isPlaying ? '⏹ Stop Preview' : '▶ Preview Current Sound';
+  });
+}
+
 /* Main play function — called when notification fires */
-function playAlertSound(){
-  if(!soundPrefs.enabled) return;
+function playAlertSound(isPreview){
+  /* If already playing and this is a preview tap — stop instead */
+  if(isPreview && _currentAudio && !_currentAudio.paused){
+    stopAlertSoundPreview();
+    updateSoundPreviewBtn(false);
+    return;
+  }
+  if(!soundPrefs.enabled && !isPreview) return;
+
+  if(isPreview) updateSoundPreviewBtn(true);
 
   switch(soundPrefs.type){
     case 'adhan':
-      /* Use a reliable free adhan CDN — swap to your own URL when ready */
-      playRemoteSound('https://cdn.islamic.network/prayer-times/audio/1/ar.alafasy/1.mp3');
+      playRemoteSound('https://cdn.islamic.network/prayer-times/audio/1/ar.alafasy/1.mp3', 30);
       break;
     case 'custom':
-      /* Custom: base64 data URL loaded from phone file picker */
-      if(soundPrefs.customUrl) playRemoteSound(soundPrefs.customUrl);
+      if(soundPrefs.customUrl) playRemoteSound(soundPrefs.customUrl, 30);
       else { showToast('No file chosen yet — pick one in Sound Settings'); playBeep(); }
       break;
     default:
-      playBeep(); /* Simple tone — always works, no internet needed */
+      playBeep();
   }
 }
 
@@ -3171,11 +3196,11 @@ function openSoundSettings(){
       +'📱 Choose from Phone'
       +'<input type="file" accept="audio/*" style="display:none" onchange="loadCustomAudio(this)">'
       +'</label>'
-      +(customName?'<button onclick="playAlertSound()" style="margin-top:8px;width:100%;height:38px;background:transparent;border:1.5px solid var(--gd);border-radius:10px;color:var(--gd);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">▶ Preview Current Sound</button>':'')
+      ''
       +'</div>';
   }
 
-  html += '<button onclick="playAlertSound()" style="width:100%;height:46px;background:var(--white);border:1.5px solid var(--cd);border-radius:12px;color:var(--tp);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:4px">▶ Preview Current Sound</button>';
+  html += '<button data-preview-btn="1" onclick="playAlertSound(true)" style="width:100%;height:46px;background:var(--white);border:1.5px solid var(--cd);border-radius:12px;color:var(--tp);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:4px">▶ Preview Current Sound</button>';
 
   var el = document.getElementById('notifSheetContent');
   if(el) el.innerHTML = html;

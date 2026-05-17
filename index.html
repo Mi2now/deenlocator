@@ -26,15 +26,15 @@
   <script>/* faq-items.js is optional — loads admin-edited FAQs if uploaded to GitHub */</script>
   <script src="faq-items.js" onerror="void 0"></script>
 
-  <!-- Google Analytics GA4 — replace G-XXXXXXXXXX with your real Measurement ID -->
+  <!-- Google Analytics GA4 — DeenLocator · G-0MWE5CYWG6 -->
   <!-- Get yours free at analytics.google.com — takes 5 minutes to set up -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0MWE5CYWG6"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     /* Privacy-first config — no ad personalisation, anonymised IPs */
-    gtag('config', 'G-XXXXXXXXXX', {
+    gtag('config', 'G-0MWE5CYWG6', {
       anonymize_ip: true,
       allow_google_signals: false,
       allow_ad_personalization_signals: false
@@ -51,6 +51,29 @@
   <!-- LOCATIONS and CONFIG loaded from external files above -->
     <link rel="stylesheet" href="styles.css">
   <style>
+  /* Install banner */
+  .install-banner{
+    position:fixed;bottom:0;left:0;right:0;z-index:8000;
+    background:#0a3d2e;border-top:2px solid #22c98a;
+    display:flex;align-items:center;gap:12px;padding:12px 16px;
+    transform:translateY(100%);transition:transform .3s ease;
+    box-shadow:0 -4px 20px rgba(0,0,0,.3);
+  }
+  .install-banner.show{transform:translateY(0);}
+  .install-banner-icon{font-size:28px;flex-shrink:0;}
+  .install-banner-body{flex:1;min-width:0;}
+  .install-banner-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:2px;}
+  .install-banner-sub{font-size:12px;color:rgba(255,255,255,0.65);}
+  .install-banner-btn{
+    background:#22c98a;color:#0a3d2e;border:none;border-radius:20px;
+    padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;
+    font-family:inherit;flex-shrink:0;white-space:nowrap;
+  }
+  .install-banner-close{
+    background:none;border:none;color:rgba(255,255,255,0.5);
+    font-size:20px;cursor:pointer;padding:4px 8px;flex-shrink:0;line-height:1;
+  }
+
   /* Toast notification */
   .toast{
     position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
@@ -381,6 +404,7 @@
         <div class="settings-row static"><div class="settings-row-icon">🗓️</div><div class="settings-row-body"><div class="settings-row-title">Launched</div><div class="settings-row-sub">Eid al-Fitr · 20 March 2026 · 1 Shawwal 1447 AH</div></div></div>
         <div class="settings-row static"><div class="settings-row-icon">ℹ️</div><div class="settings-row-body"><div class="settings-row-title">Version</div><div class="settings-row-sub">2.0 · Free · No login required</div></div></div>
         <div class="settings-row" onclick="shareApp()"><div class="settings-row-icon">↗️</div><div class="settings-row-body"><div class="settings-row-title">Share DeenLocator</div><div class="settings-row-sub">Help others find their nearest mosque</div></div><div class="settings-row-right">›</div></div>
+        <div class="settings-row" onclick="manualInstall()" id="installSettingsRow"><div class="settings-row-icon">📲</div><div class="settings-row-body"><div class="settings-row-title">Install App</div><div class="settings-row-sub" id="installSettingsSub">Add to Home Screen for offline access</div></div><div class="settings-row-right">›</div></div>
       </div>
     </div>
     <div class="settings-footer">
@@ -547,6 +571,17 @@ function showToast(msg, duration){
 <script>
 /* ══ SERVICE WORKER ══ */
 /* Register SW so notifications work via serviceWorker.showNotification() */
+/* Update install settings row state */
+(function(){
+  var isStnd=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
+  if(isStnd){
+    var s=document.getElementById('installSettingsSub');
+    if(s) s.textContent='Already installed ✅';
+    var r=document.getElementById('installSettingsRow');
+    if(r) r.style.opacity='0.5';
+  }
+})();
+
 if(navigator.serviceWorker){
   navigator.serviceWorker.register('/sw.js').catch(function(e){
     console.log('SW register failed:', e);
@@ -555,6 +590,14 @@ if(navigator.serviceWorker){
 
 /* PWA Install */
 var _deferredPrompt=null;
+/* Clear old dismiss flag if set more than 7 days ago */
+try{
+  var _idts=localStorage.getItem('dl_install_dismissed_ts');
+  if(_idts && (Date.now()-parseInt(_idts)) > 7*24*60*60*1000){
+    localStorage.removeItem('dl_install_dismissed');
+    localStorage.removeItem('dl_install_dismissed_ts');
+  }
+}catch(e){}
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();_deferredPrompt=e;setTimeout(showInstallBanner,3000);});
 function showInstallBanner(){try{if(localStorage.getItem('dl_install_dismissed'))return;}catch(e){}
 var b=document.getElementById('installBanner');if(!b)return;
@@ -562,8 +605,34 @@ var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent),isStnd=window.navigator.
 if(isStnd)return;
 if(isIOS){var sb=document.getElementById('installSub');if(sb)sb.textContent='Tap Share then \"Add to Home Screen\"';var ib=document.getElementById('installBtn');if(ib){ib.textContent='How?';ib.onclick=function(){showToast('Tap the Share icon at the bottom, then choose Add to Home Screen');};}b.classList.add('show');}else if(_deferredPrompt){b.classList.add('show');}}
 function doInstall(){if(!_deferredPrompt)return;_deferredPrompt.prompt();_deferredPrompt.userChoice.then(function(c){if(c.outcome==='accepted')showToast('DeenLocator installed! Find it on your home screen.');_deferredPrompt=null;dismissInstall();});}
-function dismissInstall(){var b=document.getElementById('installBanner');if(b)b.classList.remove('show');try{localStorage.setItem('dl_install_dismissed','1');}catch(e){}}
-window.addEventListener('appinstalled',function(){dismissInstall();});
+function dismissInstall(){var b=document.getElementById('installBanner');if(b)b.classList.remove('show');try{localStorage.setItem('dl_install_dismissed','1');localStorage.setItem('dl_install_dismissed_ts',Date.now().toString());}catch(e){}}
+window.addEventListener('appinstalled',function(){
+  dismissInstall();
+  var r=document.getElementById('installSettingsRow');
+  var s=document.getElementById('installSettingsSub');
+  if(r) r.style.opacity='0.4';
+  if(s) s.textContent='Already installed ✅';
+});
+
+function manualInstall(){
+  var isStnd=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
+  if(isStnd){ showToast('DeenLocator is already installed on your device ✅'); return; }
+  var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  if(isIOS){
+    showToast('Tap the Share icon (□↑) at the bottom of Safari, then choose "Add to Home Screen"');
+    return;
+  }
+  if(_deferredPrompt){
+    _deferredPrompt.prompt();
+    _deferredPrompt.userChoice.then(function(c){
+      if(c.outcome==='accepted') showToast('DeenLocator installed! Find it on your home screen 🎉');
+      _deferredPrompt=null; dismissInstall();
+    });
+    return;
+  }
+  /* Chrome hasn't fired beforeinstallprompt yet — guide user manually */
+  showToast('Tap ⋮ menu in Chrome → "Add to Home Screen" or "Install app"');
+}
 
 function toggleFaq(row){
   var answer = row.querySelector('.faq-answer');

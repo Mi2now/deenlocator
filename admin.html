@@ -50,6 +50,28 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
 .btog-on{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
 .btog-off{background:#f9f9f9;color:#9a9a9a;border-color:#e0ddd6}
 .btog-warn{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+
+/* ── Scroll Time Picker ── */
+.tpick-wrap{position:relative;cursor:pointer}
+.tpick-display{height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 14px;font-family:inherit;font-size:14px;background:#fff;display:flex;align-items:center;justify-content:space-between;color:var(--tp);user-select:none}
+.tpick-display:hover{border-color:var(--gd)}
+.tpick-display .tpick-val{font-weight:600}
+.tpick-display .tpick-ico{color:var(--tm);font-size:16px}
+.tpick-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid var(--gd);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.15);z-index:500;padding:12px;display:none}
+.tpick-drop.open{display:block}
+.tpick-cols{display:flex;gap:8px;align-items:flex-start}
+.tpick-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tpick-col-label{font-size:10px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.tpick-scroll{height:168px;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;-ms-overflow-style:none;border-radius:8px;background:var(--bg)}
+.tpick-scroll::-webkit-scrollbar{display:none}
+.tpick-item{height:42px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:var(--ts);scroll-snap-align:center;cursor:pointer;border-radius:8px;transition:background .1s,color .1s}
+.tpick-item:hover{background:rgba(34,201,138,.1)}
+.tpick-item.selected{color:var(--gd);background:rgba(34,201,138,.12)}
+.tpick-highlight{position:absolute;top:50%;left:4px;right:4px;height:42px;transform:translateY(-50%);background:rgba(34,201,138,.1);border-radius:8px;pointer-events:none}
+.tpick-actions{display:flex;gap:8px;margin-top:10px}
+.tpick-clear{flex:1;height:36px;border-radius:8px;border:1.5px solid var(--cd);background:#fff;color:var(--tm);font-family:inherit;font-size:13px;cursor:pointer}
+.tpick-ok{flex:2;height:36px;border-radius:8px;border:none;background:var(--gd);color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.tpick-none{font-size:12px;color:var(--tm);text-align:center;padding:8px 0}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:16px}
 .ov.show{display:flex}
 .mod{background:#fff;border-radius:18px;width:100%;max-width:580px;max-height:92vh;overflow-y:auto}
@@ -184,7 +206,83 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafaf8}
       <div class="frow full"><div class="fg"><label>Full Address</label><input id="faddress" placeholder="Street, landmark, area, city"/></div></div>
       <div class="frow"><div class="fg"><label>Area *</label><input id="farea2" list="arealist" placeholder="e.g. Garki, Wuse"/><datalist id="arealist"></datalist></div><div class="fg"><label>City</label><input id="fcity" value="Abuja"/></div></div>
       <div class="frow"><div class="fg"><label>Type *</label><select id="ftype2" onchange="updType()"><option value="jumuah">Jumuah (Friday Mosque)</option><option value="eid">Eid Ground</option><option value="both">Both (Eid + Jumuah)</option></select></div><div class="fg"><label>Verified</label><select id="fverified"><option value="true">Yes - Verified</option><option value="false">No - Pending</option></select></div></div>
-      <div class="frow"><div class="fg" id="fjg"><label>Jumuah Time</label><input id="fjumuah" placeholder="e.g. 1:30 PM"/></div><div class="fg" id="feg"><label>Eid Time</label><input id="feid" placeholder="e.g. 8:00 AM"/></div></div>
+      <div class="frow"><div class="fg" id="fjg">
+        <label>Jumuah Time</label>
+        <div class="tpick-wrap" id="fjumuah-wrap">
+          <div class="tpick-display" onclick="openPicker('fjumuah')">
+            <span class="tpick-val" id="fjumuah-display">— not set —</span>
+            <span class="tpick-ico">🕐</span>
+          </div>
+          <div class="tpick-drop" id="fjumuah-drop">
+            <div class="tpick-cols">
+              <div class="tpick-col">
+                <div class="tpick-col-label">Hour</div>
+                <div style="position:relative">
+                  <div class="tpick-highlight"></div>
+                  <div class="tpick-scroll" id="fjumuah-hr"></div>
+                </div>
+              </div>
+              <div class="tpick-col" style="flex:0.7">
+                <div class="tpick-col-label">Min</div>
+                <div style="position:relative">
+                  <div class="tpick-highlight"></div>
+                  <div class="tpick-scroll" id="fjumuah-mn"></div>
+                </div>
+              </div>
+              <div class="tpick-col" style="flex:0.8">
+                <div class="tpick-col-label">AM/PM</div>
+                <div style="position:relative">
+                  <div class="tpick-highlight"></div>
+                  <div class="tpick-scroll" id="fjumuah-ap"></div>
+                </div>
+              </div>
+            </div>
+            <div class="tpick-actions">
+              <button class="tpick-clear" onclick="clearPicker('fjumuah')">Clear</button>
+              <button class="tpick-ok" onclick="confirmPicker('fjumuah')">✓ Set Time</button>
+            </div>
+          </div>
+          <input type="hidden" id="fjumuah" value=""/>
+        </div>
+      </div><div class="fg" id="feg">
+        <label>Eid Time</label>
+        <div class="tpick-wrap" id="feid-wrap">
+          <div class="tpick-display" onclick="openPicker('feid')">
+            <span class="tpick-val" id="feid-display">— not set —</span>
+            <span class="tpick-ico">🌙</span>
+          </div>
+          <div class="tpick-drop" id="feid-drop">
+            <div class="tpick-cols">
+              <div class="tpick-col">
+                <div class="tpick-col-label">Hour</div>
+                <div style="position:relative">
+                  <div class="tpick-highlight"></div>
+                  <div class="tpick-scroll" id="feid-hr"></div>
+                </div>
+              </div>
+              <div class="tpick-col" style="flex:0.7">
+                <div class="tpick-col-label">Min</div>
+                <div style="position:relative">
+                  <div class="tpick-highlight"></div>
+                  <div class="tpick-scroll" id="feid-mn"></div>
+                </div>
+              </div>
+              <div class="tpick-col" style="flex:0.8">
+                <div class="tpick-col-label">AM/PM</div>
+                <div style="position:relative">
+                  <div class="tpick-highlight"></div>
+                  <div class="tpick-scroll" id="feid-ap"></div>
+                </div>
+              </div>
+            </div>
+            <div class="tpick-actions">
+              <button class="tpick-clear" onclick="clearPicker('feid')">Clear</button>
+              <button class="tpick-ok" onclick="confirmPicker('feid')">✓ Set Time</button>
+            </div>
+          </div>
+          <input type="hidden" id="feid" value=""/>
+        </div>
+      </div></div>
       <div class="frow">
         <div class="fg" style="flex:0.7">
           <label>Role</label>
@@ -1638,8 +1736,8 @@ function clearForm(){
   document.getElementById("farea2").value=""; var cok=document.getElementById("coordsOk"); if(cok) cok.style.display="none";
   _currentEvents=[]; renderEventsEditor();
   document.getElementById("fcity").value="Abuja";
-  document.getElementById("fjumuah").value="";
-  document.getElementById("feid").value="";
+  setPickerValue('fjumuah','');
+  setPickerValue('feid','');
   document.getElementById("ftype2").value="jumuah";
   document.getElementById("fverified").value="true";
   updType();
@@ -1658,8 +1756,8 @@ function openEdit(id){
   document.getElementById("farea2").value=l.area||"";
   document.getElementById("fcity").value=l.city||"Abuja";
   document.getElementById("ftype2").value=l.type||"jumuah";
-  document.getElementById("fjumuah").value=l.jumuahTime||"";
-  document.getElementById("feid").value=l.eidTime||"";
+  setPickerValue('fjumuah', l.jumuahTime||'');
+  setPickerValue('feid', l.eidTime||'');
   // Imam role + name
   var _imamRole = l.imamRole || 'Imam';
   var _imamName = (l.imam === 'To be announced' ? '' : l.imam) || '';
@@ -2420,6 +2518,141 @@ function resetToDefault(){
 var _tt=null;
 function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("on");clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove("on");},3500);}
 
+/* ══ SCROLL TIME PICKER ══ */
+var _pickerState = {};  /* fieldId → {hr, mn, ap} */
+
+var PICKER_HOURS   = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+var PICKER_MINUTES = ['00','05','10','15','20','25','30','35','40','45','50','55'];
+var PICKER_AMPM    = ['AM','PM'];
+
+function buildPickerCol(scrollId, items, selected){
+  var el = document.getElementById(scrollId);
+  if(!el) return;
+  /* Padding items for centering */
+  var pad = '<div class="tpick-item" style="visibility:hidden">--</div><div class="tpick-item" style="visibility:hidden">--</div>';
+  el.innerHTML = pad + items.map(function(v){
+    var cls = 'tpick-item'+(v===selected?' selected':'');
+    return '<div class="'+cls+'" data-val="'+v+'" data-scroll="'+scrollId+'">'+v+'</div>';
+  }).join('') + pad;
+  el.onclick = function(ev){
+    var item = ev.target.closest ? ev.target.closest('[data-val]') : ev.target;
+    if(!item || !item.dataset || !item.dataset.val) return;
+    pickItem(item.dataset.scroll, item.dataset.val);
+  };
+  /* Scroll to selected */
+  setTimeout(function(){
+    var sel = el.querySelector('.selected');
+    if(sel) sel.scrollIntoView({block:'center', behavior:'instant'});
+    else el.scrollTop = 0;
+  }, 30);
+}
+
+function pickItem(scrollId, val){
+  var el = document.getElementById(scrollId);
+  if(!el) return;
+  el.querySelectorAll('.tpick-item').forEach(function(i){ i.classList.remove('selected'); });
+  var clicked = el.querySelector('[data-val="'+val+'"]');
+  if(clicked) clicked.classList.add('selected');
+  /* Update state */
+  var parts = scrollId.split('-'); /* e.g. fjumuah-hr */
+  var field = parts.slice(0,-1).join('-'); /* fjumuah */
+  var col   = parts[parts.length-1];      /* hr / mn / ap */
+  if(!_pickerState[field]) _pickerState[field]={hr:'1',mn:'00',ap:'PM'};
+  _pickerState[field][col] = val;
+  updatePickerDisplay(field);
+}
+
+function updatePickerDisplay(field){
+  var s = _pickerState[field] || {hr:'—',mn:'—',ap:''};
+  var disp = document.getElementById(field+'-display');
+  if(disp){
+    if(s.hr && s.hr !== '—'){
+      disp.textContent = s.hr + ':' + (s.mn||'00') + ' ' + (s.ap||'AM');
+      disp.style.color = 'var(--gd)';
+    } else {
+      disp.textContent = '— not set —';
+      disp.style.color = '';
+    }
+  }
+}
+
+function openPicker(field){
+  /* Close all others */
+  document.querySelectorAll('.tpick-drop.open').forEach(function(d){
+    if(d.id !== field+'-drop') d.classList.remove('open');
+  });
+  var drop = document.getElementById(field+'-drop');
+  if(!drop) return;
+  var isOpen = drop.classList.contains('open');
+  if(isOpen){ drop.classList.remove('open'); return; }
+  /* Read current hidden value to pre-select */
+  var hidden = document.getElementById(field);
+  var cur = hidden ? hidden.value : '';
+  var st = parseTimeStr(cur);
+  if(!_pickerState[field]) _pickerState[field] = st;
+  /* Build columns */
+  buildPickerCol(field+'-hr', PICKER_HOURS,   _pickerState[field].hr||st.hr);
+  buildPickerCol(field+'-mn', PICKER_MINUTES, _pickerState[field].mn||st.mn);
+  buildPickerCol(field+'-ap', PICKER_AMPM,    _pickerState[field].ap||st.ap);
+  drop.classList.add('open');
+}
+
+function confirmPicker(field){
+  var s = _pickerState[field];
+  if(!s || !s.hr){ clearPicker(field); return; }
+  var timeStr = s.hr + ':' + (s.mn||'00') + ' ' + (s.ap||'AM');
+  var hidden = document.getElementById(field);
+  if(hidden) hidden.value = timeStr;
+  var disp = document.getElementById(field+'-display');
+  if(disp){ disp.textContent = timeStr; disp.style.color='var(--gd)'; }
+  var drop = document.getElementById(field+'-drop');
+  if(drop) drop.classList.remove('open');
+  toast('✅ Time set: ' + timeStr);
+}
+
+function clearPicker(field){
+  _pickerState[field] = {hr:'',mn:'00',ap:'PM'};
+  var hidden = document.getElementById(field);
+  if(hidden) hidden.value = '';
+  var disp = document.getElementById(field+'-display');
+  if(disp){ disp.textContent = '— not set —'; disp.style.color=''; }
+  var drop = document.getElementById(field+'-drop');
+  if(drop) drop.classList.remove('open');
+}
+
+function parseTimeStr(str){
+  /* Parse "1:30 PM" → {hr:'1', mn:'30', ap:'PM'} */
+  var def = {hr:'1', mn:'00', ap:'PM'};
+  if(!str) return def;
+  var m = str.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if(!m) return def;
+  /* Round minutes to nearest 5 */
+  var rawMn = parseInt(m[2]);
+  var roundMn = Math.round(rawMn/5)*5;
+  if(roundMn >= 60) roundMn = 55;
+  return {hr: String(parseInt(m[1])), mn: String(roundMn).padStart(2,'0'), ap: m[3].toUpperCase()};
+}
+
+function setPickerValue(field, timeStr){
+  /* Called from openEdit to pre-fill picker with existing value */
+  var hidden = document.getElementById(field);
+  if(hidden) hidden.value = timeStr || '';
+  var st = parseTimeStr(timeStr);
+  _pickerState[field] = st;
+  var disp = document.getElementById(field+'-display');
+  if(disp){
+    if(timeStr){ disp.textContent = timeStr; disp.style.color='var(--gd)'; }
+    else{ disp.textContent = '— not set —'; disp.style.color=''; }
+  }
+}
+
+/* Close picker when clicking outside */
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.tpick-wrap')){
+    document.querySelectorAll('.tpick-drop.open').forEach(function(d){ d.classList.remove('open'); });
+  }
+});
+
 /* ══ CSV IMPORT FROM GOOGLE FORM ══ */
 var _csvPending = [];
 
@@ -2797,8 +3030,8 @@ function closeCSVPanel(){
       </div>
       <div>
         <label style="font-size:12px;font-weight:700;color:var(--ts);display:block;margin-bottom:4px">Hijri Date Offset (days)</label>
-        <input id="cfg_hijri_offset" type="number" min="-2" max="2" value="0" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
-        <div style="font-size:11px;color:var(--tm);margin-top:4px">0 = auto · +1 = forward 1 day · -1 = back 1 day</div>
+        <input id="cfg_hijri_offset" type="number" min="-14" max="14" value="0" style="width:100%;height:44px;border-radius:10px;border:1.5px solid var(--cd);padding:0 12px;font-family:inherit;font-size:14px"/>
+        <div style="font-size:11px;color:var(--tm);margin-top:4px">0 = auto · +1 to +14 = forward days · -1 to -14 = back days · use for testing or moon sighting adjustment</div>
       </div>
     </div>
 

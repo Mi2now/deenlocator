@@ -4,7 +4,7 @@
  * Enables offline support and faster loading
  */
 
-var CACHE = 'deenlocator-v9';
+var CACHE = 'deenlocator-v10';
 
 var FILES = [
   '/',
@@ -14,7 +14,8 @@ var FILES = [
   '/styles.css',
   '/locations.js',
   '/config.js',
-  '/faq-items.js'
+  '/faq-items.js',
+  '/manifest.json'
 ];
 
 /* Install — cache core files */
